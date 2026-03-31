@@ -118,32 +118,38 @@ apt-get update -y
 apt-get install -y iptables-persistent
 echo "[OK] iptables-persistent установлен."
 
-echo
-echo "================================================================"
-echo " [ИНТЕРАКТИВНЫЙ ШАГ] Во время установки iptables-persistent"
-echo " появятся два вопроса «Сохранить текущие правила?»"
-echo " → Отвечай YES оба раза (если не передан DEBIAN_FRONTEND)."
-echo "================================================================"
-
 # ------------------------------------------------------------------
 # ШАГ 6. Настройка правил iptables (NAT + DNAT DNS)
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 6: настройка правил iptables ---"
 
-# Сброс текущих правил
+# Полный сброс всех таблиц (filter, nat, mangle) —
+# предотвращает дублирование правил при повторном запуске скрипта
 iptables -F
+iptables -X
 iptables -t nat -F
+iptables -t nat -X
 iptables -t mangle -F
+iptables -t mangle -X
+
+# Политики по умолчанию
+iptables -P INPUT   ACCEPT
+iptables -P OUTPUT  ACCEPT
+iptables -P FORWARD ACCEPT
 
 # MASQUERADE для выхода в интернет через внешний интерфейс
 iptables -t nat -A POSTROUTING -o "${NET_IF_EXT}" -j MASQUERADE
+
+# Явный ACCEPT форвардинга из LAN → WAN и обратно
+iptables -A FORWARD -i "${NET_IF_INT}" -o "${NET_IF_EXT}" -j ACCEPT
+iptables -A FORWARD -i "${NET_IF_EXT}" -o "${NET_IF_INT}" -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Запрет петли внешний → внешний
 iptables -A FORWARD -i "${NET_IF_EXT}" -o "${NET_IF_EXT}" -j REJECT
 
 # MSS clamp (фикс для проблем с MTU)
-iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+iptables -I FORWARD 1 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 # DNAT DNS-запросов из локальной сети → Google 8.8.8.8
 iptables -t nat -A PREROUTING -i "${NET_IF_INT}" -p tcp --dport 53 -j DNAT --to-destination 8.8.8.8:53
