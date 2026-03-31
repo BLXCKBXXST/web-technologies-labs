@@ -112,21 +112,30 @@ sudo bash seafile_install.sh
 ```
 
 Что делает скрипт:
-- Устанавливает `python3`, `pip`, `libmysqlclient-dev`
+- Устанавливает `python3`, `pip`, `libmysqlclient-dev`, `pkg-config`
 - Устанавливает и запускает MariaDB
 - Устанавливает pip-зависимости Seafile
 - Скачивает и распаковывает Seafile в `/opt/seafile/`
 
-> **[Интерактивный шаг]** После скрипта — задай пароль root для MariaDB:
+> **[Интерактивный шаг]** После скрипта — защити MariaDB встроенным мастером:
 
 ```bash
-mysqladmin -u root password
-# введи пароль дважды
-
-mysql
-flush privileges;
-\q;
+sudo mysql_secure_installation
 ```
+
+Мастер задаст несколько вопросов:
+
+| Вопрос | Ответ |
+|---|---|
+| Enter current password for root | Enter (пароль пустой) |
+| Switch to unix_socket authentication | `n` |
+| Change the root password | `y` → введи пароль дважды |
+| Remove anonymous users | `y` |
+| Disallow root login remotely | `y` |
+| Remove test database | `y` |
+| Reload privilege tables | `y` |
+
+> После завершения мастера `flush privileges` **не нужен** — всё уже применено.
 
 ---
 
@@ -151,7 +160,7 @@ cd /opt/seafile/seafile-server-9.0.9/
 | [1 or 2] | `1` |
 | MySQL host | `localhost` (Enter) |
 | MySQL port | `3306` (Enter) |
-| MySQL root password | твой пароль от mysqladmin |
+| MySQL root password | твой пароль от mysql_secure_installation |
 | Остальное | Enter (по умолчанию) |
 
 ---
