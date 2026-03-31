@@ -100,11 +100,11 @@ sleep 2
 
 echo
 echo "[ИНФО] Статус isc-dhcp-server:"
-service isc-dhcp-server status || true
+systemctl --no-pager --full status isc-dhcp-server || true
 
 echo
 echo "[ИНФО] Статус bind9:"
-systemctl --no-pager status bind9 || true
+systemctl --no-pager --full status bind9 || true
 
 echo
 echo "================================================================"
