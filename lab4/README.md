@@ -73,7 +73,7 @@ sudo bash gateway_lab4_net.sh
 - Проверяет интернет на шлюзе (`ping ya.ru`)
 - Включает `net.ipv4.ip_forward=1` в `/etc/sysctl.conf`
 - Устанавливает `iptables-persistent`
-- Прописывает правила iptables: MASQUERADE, DNAT DNS → 8.8.8.8
+- Прописывает правила iptables: MASQUERADE, FORWARD LAN→WAN, DNAT DNS → 8.8.8.8
 - Сохраняет правила в `/etc/iptables/rules.v4`
 
 **[Интерактивный шаг]** При установке `iptables-persistent` — ответь **Yes** на оба вопроса «Сохранить текущие правила?».
@@ -84,6 +84,12 @@ ip -br a
 ping ya.ru
 iptables -t nat -L -n -v
 ```
+
+**[Обязательный шаг]** Перезагрузи шлюз, чтобы убедиться, что правила iptables восстанавливаются автоматически при старте системы:
+```bash
+reboot
+```
+После загрузки проверь с клиентской ВМ доступ в интернет.
 
 ---
 
@@ -117,7 +123,9 @@ ping ya.ru
 
 ### ВМ `gateway` — Часть 2: DHCP
 
-> Перед этим шагом рекомендуется сделать снимок ВМ (Snapshot → «Lab4»).
+**[Обязательный шаг]** Перед запуском скрипта создай снимок состояния ВМ (Snapshot).  
+Это позволит откатиться к работающему шлюзу, если что-то пойдёт не так при настройке DHCP.  
+В меню VirtualBox: **Снимки → Сделать снимок** → назвать `«Lab4»`.
 
 ```bash
 sudo bash gateway_lab4_dhcp.sh
@@ -131,7 +139,7 @@ sudo bash gateway_lab4_dhcp.sh
   - Диапазон `192.168.29.10 – 192.168.29.254`
   - Шлюз + DNS: `192.168.29.1`
   - Время аренды: 7 дней
-- Перезапускает сервис и проверяет статус
+- Включает автозапуск и запускает сервис
 
 Проверка DHCP:
 ```bash
@@ -161,6 +169,7 @@ ping ya.ru
 - **gateway**: доступ в Интернет, `isc-dhcp-server` работает
 - **Desktop1**: получает IP по DHCP, пингует шлюз и `ya.ru`
 - Оба `ping ya.ru` проходят
+- После перезагрузки gateway правила iptables восстанавливаются автоматически
 
 ---
 
@@ -172,6 +181,6 @@ ping ya.ru
 | `netplan apply` выдаёт warnings | Ошибки отступов в YAML (только пробелы!) | Проверь файл, сравни с эталоном, применить снова |
 | Desktop не пингует `192.168.29.1` | Неверные настройки IP/маска/шлюз, интерфейс down | Исправить IPv4-профиль в GUI, переподключить |
 | Ping шлюза есть, но нет `ping ya.ru` с Desktop | NAT не работает или не сохранился | Перезапусти `gateway_lab4_net.sh`, проверь `iptables -t nat -L` |
+| После перезагрузки gateway NAT пропал | Правила не сохранились в `rules.v4` | `iptables-save > /etc/iptables/rules.v4`, убедись что `iptables-persistent` установлен |
 | `isc-dhcp-server` не стартует (failed) | Синтаксическая ошибка в `dhcpd.conf` | `tail -50 /var/log/syslog` → найди строку ошибки → исправь → restart |
 | Клиент не получает IP по DHCP | DHCP не запущен, неверный `INTERFACESv4`, Desktop на статике | Включить DHCP на Desktop, проверить `/etc/default/isc-dhcp-server` |
-| После перезагрузки gateway NAT пропал | Правила не сохранились в `rules.v4` | `iptables-save > /etc/iptables/rules.v4`, убедись что `iptables-persistent` установлен |
