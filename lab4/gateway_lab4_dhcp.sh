@@ -92,11 +92,18 @@ echo "[OK] ${DHCP_CONF} записан:"
 cat "${DHCP_CONF}"
 
 # ------------------------------------------------------------------
-# ШАГ 4. Запуск сервиса
+# ШАГ 4. Включение автозапуска и запуск сервиса
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 4: запуск isc-dhcp-server ---"
-systemctl restart isc-dhcp-server
+echo "--- Шаг 4: включаем автозапуск и запускаем isc-dhcp-server ---"
+
+# enable запускается безошибочно даже если сервис уже включён
+systemctl enable isc-dhcp-server
+
+# stop игнорируем ошибку — сервис может быть ещё не запущен
+systemctl stop isc-dhcp-server 2>/dev/null || true
+
+systemctl start isc-dhcp-server
 sleep 2
 
 echo "[ИНФО] Статус сервиса:"
