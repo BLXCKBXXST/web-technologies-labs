@@ -123,17 +123,16 @@ sudo bash seafile_install.sh
 sudo mysql_secure_installation
 ```
 
-Мастер задаст несколько вопросов:
+Мастер задаст несколько вопросов (порядок для MariaDB 10.3):
 
 | Вопрос | Ответ |
 |---|---|
 | Enter current password for root | Enter (пароль пустой) |
-| Switch to unix_socket authentication | `n` |
-| Change the root password | `y` → введи пароль дважды |
-| Remove anonymous users | `y` |
-| Disallow root login remotely | `y` |
-| Remove test database | `y` |
-| Reload privilege tables | `y` |
+| Set root password? | `y` → введи пароль дважды |
+| Remove anonymous users? | `y` |
+| Disallow root login remotely? | `y` |
+| Remove test database and access to it? | `y` |
+| Reload privilege tables now? | `y` |
 
 > После завершения мастера `flush privileges` **не нужен** — всё уже применено.
 
