@@ -30,13 +30,24 @@ if [[ ! -f "${FORWARD_DB}" ]]; then
 fi
 
 # ------------------------------------------------------------------
-# ШАГ 1. Добавление A-записи в forward.db
+# ШАГ 1. Добавление / обновление A-записи в forward.db
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 1: добавление A-записи для ${SEAFILE_HOSTNAME} ---"
+echo "--- Шаг 1: проверка/обновление A-записи для ${SEAFILE_HOSTNAME} ---"
 
 if grep -qE "^${SEAFILE_HOSTNAME}[[:space:]]" "${FORWARD_DB}"; then
-  echo "[ИНФО] Запись для ${SEAFILE_HOSTNAME} уже существует в ${FORWARD_DB} — пропускаю."
+  # Запись есть — проверяем совпадает ли IP
+  EXISTING_IP=$(grep -E "^${SEAFILE_HOSTNAME}[[:space:]]" "${FORWARD_DB}" | awk '{print $NF}')
+  if [[ "${EXISTING_IP}" == "${SEAFILE_IP}" ]]; then
+    echo "[OK] Запись ${SEAFILE_HOSTNAME} IN A ${SEAFILE_IP} уже актуальна — пропускаю."
+  else
+    echo "[ИНФО] Найдена устаревшая запись: ${SEAFILE_HOSTNAME} -> ${EXISTING_IP}"
+    echo "[ИНФО] Обновляю на: ${SEAFILE_HOSTNAME} -> ${SEAFILE_IP}"
+    # Удаляем старую запись и добавляем новую
+    sed -i "/^${SEAFILE_HOSTNAME}[[:space:]]/d" "${FORWARD_DB}"
+    echo "${SEAFILE_HOSTNAME}    IN    A    ${SEAFILE_IP}" >> "${FORWARD_DB}"
+    echo "[OK] Запись обновлена: ${SEAFILE_HOSTNAME} IN A ${SEAFILE_IP}"
+  fi
 else
   echo "${SEAFILE_HOSTNAME}    IN    A    ${SEAFILE_IP}" >> "${FORWARD_DB}"
   echo "[OK] Добавлена запись: ${SEAFILE_HOSTNAME} IN A ${SEAFILE_IP}"
@@ -58,7 +69,13 @@ echo
 echo "--- Шаг 3: проверка DNS ---"
 if nslookup "${SEAFILE_HOSTNAME}" >/dev/null 2>&1; then
   nslookup "${SEAFILE_HOSTNAME}"
-  echo "[OK] DNS-запись для ${SEAFILE_HOSTNAME} работает."
+  RESOLVED_IP=$(nslookup "${SEAFILE_HOSTNAME}" | awk '/^Address: / && !/192\.168\..*\.1$/ {print $2}' | head -1)
+  if [[ "${RESOLVED_IP}" == "${SEAFILE_IP}" ]]; then
+    echo "[OK] DNS резолвит правильно: ${SEAFILE_HOSTNAME} -> ${SEAFILE_IP}"
+  else
+    echo "[ПРЕДУПРЕЖДЕНИЕ] DNS вернул неожиданный IP: ${RESOLVED_IP} (ожидался ${SEAFILE_IP})"
+    echo "         Проверь: cat ${FORWARD_DB}"
+  fi
 else
   echo "[ОШИБКА] nslookup ${SEAFILE_HOSTNAME} не удался."
   echo "         Проверь: nano ${FORWARD_DB}"
