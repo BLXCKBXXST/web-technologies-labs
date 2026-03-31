@@ -53,13 +53,19 @@ else
   echo "[ИНФО] systemd-resolved уже отключен."
 fi
 
+# Снять immutable-флаг если был выставлен ранее
+chattr -i /etc/resolv.conf 2>/dev/null || true
 rm -f /etc/resolv.conf
+
 cat >/etc/resolv.conf <<EOF
 nameserver 192.168.${N}.1
 search ${DOMAIN}
 EOF
 
-echo "[OK] /etc/resolv.conf → nameserver 192.168.${N}.1"
+# Защитить от перезаписи NetworkManager
+chattr +i /etc/resolv.conf
+echo "[OK] /etc/resolv.conf защищён (immutable), содержимое:"
+cat /etc/resolv.conf
 
 # ------------------------------------------------------------------
 # ШАГ 3. Подсказки по настройке сети в GUI
