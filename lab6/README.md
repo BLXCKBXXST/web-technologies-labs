@@ -10,8 +10,8 @@
 
 ```bash
 # config.sh
-N="14"                          # Номер в журнале
-STUDENT="mazurina"              # Фамилия транслитом
+N="29"                          # Номер в журнале
+STUDENT="yazikov"              # Фамилия транслитом
 GROUP="iks531"                  # Номер группы
 SEAFILE_HOSTNAME="seafile"      # Имя новой ВМ
 SEAFILE_VER="9.0.9"             # Версия Seafile
@@ -56,14 +56,14 @@ sudo bash gateway_lab6_dns.sh
 ```
 
 Что делает скрипт:
-- Добавляет A-запись `seafile → 192.168.14.4` в `/var/lib/bind/forward.db`
+- Добавляет A-запись `seafile → 192.168.29.4` в `/var/lib/bind/forward.db`
 - Перезапускает bind9
 - Проверяет `nslookup seafile`
 
 Проверка:
 ```bash
 nslookup seafile
-# ожидаем: seafile.mazurina.iks531.local -> 192.168.14.4
+# ожидаем: seafile.yazikov.iks531.local -> 192.168.29.4
 ```
 
 ---
@@ -85,8 +85,8 @@ sudo bash seafile_net_hostname.sh
 ```
 
 Что делает скрипт:
-- Прописывает статический IP `192.168.14.4/24` через netplan
-- Устанавливает gateway `192.168.14.1`, DNS `192.168.14.1`
+- Прописывает статический IP `192.168.29.4/24` через netplan
+- Устанавливает gateway `192.168.29.1`, DNS `192.168.29.1`
 - Переименовывает сервер в `seafile`
 - Обновляет `/etc/hosts`
 
@@ -98,7 +98,7 @@ sudo reboot
 Проверки после перезагрузки:
 ```bash
 hostname              # seafile
-ping 192.168.14.1     # gateway
+ping 192.168.29.1     # gateway
 ping ya.ru            # интернет
 nslookup gateway      # DNS работает
 ```
@@ -146,7 +146,7 @@ cd /opt/seafile/seafile-server-9.0.9/
 | Вопрос | Ответ |
 |---|---|
 | Server name | `seafile` |
-| Server IP/Domain | `192.168.14.4` |
+| Server IP/Domain | `192.168.29.4` |
 | Seafile server port | `8082` (Enter) |
 | [1 or 2] | `1` |
 | MySQL host | `localhost` (Enter) |
@@ -164,7 +164,7 @@ sudo bash seafile_nginx.sh
 
 Что делает скрипт:
 - Устанавливает nginx
-- Создаёт конфиг reverse-proxy на `192.168.14.4:80 → 127.0.0.1:8000`
+- Создаёт конфиг reverse-proxy на `192.168.29.4:80 → 127.0.0.1:8000`
 - Удаляет дефолтный конфиг, создаёт симлинк, перезапускает nginx
 - Проверяет синтаксис конфига (`nginx -t`)
 
@@ -195,7 +195,7 @@ sudo bash seafile_services.sh
 
 | Вопрос | Ответ |
 |---|---|
-| E-mail | `admin@mazurina.iks531.local` |
+| E-mail | `admin@yazikov.iks531.local` |
 | Password | придумай сам |
 | Password (again) | повтори |
 
@@ -213,8 +213,8 @@ sudo bash desktop_lab6_client.sh
 - Проверяет доступность сервера seafile
 
 Далее **вручную**:
-1. Открыть браузер → `http://seafile.lan` или `http://192.168.14.4`
-2. Войти как `admin@mazurina.iks531.local`
+1. Открыть браузер → `http://seafile.lan` или `http://192.168.29.4`
+2. Войти как `admin@yazikov.iks531.local`
 3. Создать пользователя через веб-интерфейс
 4. Запустить приложение Seafile, подключить сервер, синхронизировать библиотеку
 
@@ -225,7 +225,7 @@ sudo bash desktop_lab6_client.sh
 | Симптом | Причина | Решение |
 |---|---|---|
 | `nslookup seafile` не работает с gateway | Нет A-записи в forward.db или bind не перезапущен | Проверь `nano /var/lib/bind/forward.db`, потом `systemctl restart bind9` |
-| `ping 192.168.14.1` с seafile не работает | Неверный netplan или тип адаптера VirtualBox | Проверь `ip a`, тип адаптера должен быть «Внутренняя сеть intnet» |
+| `ping 192.168.29.1` с seafile не работает | Неверный netplan или тип адаптера VirtualBox | Проверь `ip a`, тип адаптера должен быть «Внутренняя сеть intnet» |
 | `ping ya.ru` с seafile не работает | Нет маршрута через gateway | Убедись, что лаб.4 настроена и gateway работает, проверь `gateway4` в netplan |
 | `mysqladmin: connect to server failed` | MariaDB не запущена | `systemctl start mariadb`, `systemctl status mariadb` |
 | `setup-seafile-mysql.sh` падает на MySQL | Неверный пароль root или MariaDB не запущена | Перепроверь пароль, `systemctl status mariadb` |
@@ -233,4 +233,4 @@ sudo bash desktop_lab6_client.sh
 | `http://seafile.lan` не открывается с Desktop | nginx не слушает или DNS не резолвит | `ss -tnlp \| grep :80` на seafile, `nslookup seafile` на Desktop |
 | Seahub не стартует (ошибки при `seahub.sh start`) | Не установлены pip-зависимости или БД не создана | Проверь `seafile_install.sh`, повтори `setup-seafile-mysql.sh` |
 | После перезагрузки Seafile не поднимается | systemd-юниты не включены | `systemctl enable seafile seahub`, проверь пути в unit-файлах |
-| Клиент не подключается к серверу | Неверный URL или сервисы не запущены | URL = `http://192.168.14.4`, `systemctl status seafile seahub` |
+| Клиент не подключается к серверу | Неверный URL или сервисы не запущены | URL = `http://192.168.29.4`, `systemctl status seafile seahub` |
