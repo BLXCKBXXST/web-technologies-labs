@@ -30,21 +30,32 @@ apt-get update -y
 echo "[OK] Пакеты обновлены."
 
 # ------------------------------------------------------------------
-# ШАГ 2. Добавление PPA seafile-client
+# ШАГ 2. Установка зависимостей
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: добавление PPA ppa:seafile/seafile-client ---"
-apt-get install -y software-properties-common
-add-apt-repository -y ppa:seafile/seafile-client
-apt-get update -y
-echo "[OK] PPA добавлен."
+echo "--- Шаг 2: установка зависимостей ---"
+apt-get install -y wget libsecret-1-0 python3 python3-gi \
+  gir1.2-gtk-3.0 gir1.2-glib-2.0 gir1.2-notify-0.7
+echo "[OK] Зависимости установлены."
 
 # ------------------------------------------------------------------
-# ШАГ 3. Установка seafile-gui
+# ШАГ 3. Скачивание и установка seafile-gui .deb
+# PPA ppa:seafile/seafile-client для focal удалён,
+# используем последний .deb с GitHub Releases
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 3: установка seafile-gui ---"
-apt-get install -y seafile-gui
+echo "--- Шаг 3: скачивание seafile-gui ---"
+
+DEB_URL="https://github.com/haiwen/seafile-client/releases/download/v9.0.6/seafile-gui_9.0.6-focal_amd64.deb"
+DEB_FILE="/tmp/seafile-gui.deb"
+
+if [[ ! -f "${DEB_FILE}" ]]; then
+  wget -O "${DEB_FILE}" "${DEB_URL}"
+else
+  echo "[ИНФО] Архив уже скачан."
+fi
+
+dpkg -i "${DEB_FILE}" || apt-get install -f -y
 echo "[OK] Seafile GUI-клиент установлен."
 
 # ------------------------------------------------------------------
