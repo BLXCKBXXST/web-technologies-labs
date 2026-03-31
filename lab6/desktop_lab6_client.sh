@@ -30,63 +30,18 @@ apt-get update -y
 echo "[OK] Пакеты обновлены."
 
 # ------------------------------------------------------------------
-# ШАГ 2. Установка зависимостей
+# ШАГ 2. Установка Seafile GUI-клиента
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: установка зависимостей ---"
-apt-get install -y wget libsecret-1-0 python3 python3-gi \
-  gir1.2-gtk-3.0 gir1.2-glib-2.0 gir1.2-notify-0.7 libfuse2
-echo "[OK] Зависимости установлены."
+echo "--- Шаг 2: установка seafile-gui ---"
+apt-get install -y seafile-gui
+echo "[OK] Seafile GUI-клиент установлен."
 
 # ------------------------------------------------------------------
-# ШАГ 3. Скачивание Seafile AppImage
-# Начиная с v9.0.7 .deb-пакеты для focal не выпускаются;
-# официальный формат поставки для Linux — AppImage.
+# ШАГ 3. Проверка доступности сервера
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 3: скачивание seafile-gui (AppImage) ---"
-
-APPIMAGE_URL="https://github.com/haiwen/seafile-client/releases/download/v9.0.9/Seafile-x86_64.AppImage"
-APPIMAGE_FILE="/opt/seafile-gui.AppImage"
-
-if [[ ! -f "${APPIMAGE_FILE}" ]]; then
-  wget -c -O "${APPIMAGE_FILE}" "${APPIMAGE_URL}"
-else
-  echo "[ИНФО] AppImage уже скачан: ${APPIMAGE_FILE}"
-fi
-
-chmod +x "${APPIMAGE_FILE}"
-echo "[OK] Seafile AppImage скачан: ${APPIMAGE_FILE}"
-
-# ------------------------------------------------------------------
-# ШАГ 4. Создание команды запуска и .desktop-файла
-# ------------------------------------------------------------------
-echo
-echo "--- Шаг 4: создание ярлыка запуска ---"
-
-cat > /usr/local/bin/seafile-gui << 'EOF'
-#!/bin/bash
-exec /opt/seafile-gui.AppImage "$@"
-EOF
-chmod +x /usr/local/bin/seafile-gui
-
-cat > /usr/share/applications/seafile-gui.desktop << EOF2
-[Desktop Entry]
-Name=Seafile
-Comment=Seafile Desktop Client
-Exec=/opt/seafile-gui.AppImage
-Icon=seafile
-Terminal=false
-Type=Application
-Categories=Network;FileTransfer;
-EOF2
-echo "[OK] Команда: seafile-gui | Desktop-ярлык создан."
-
-# ------------------------------------------------------------------
-# ШАГ 5. Проверка доступности сервера
-# ------------------------------------------------------------------
-echo
-echo "--- Шаг 5: проверка доступности сервера seafile ---"
+echo "--- Шаг 3: проверка доступности сервера seafile ---"
 
 if ping -c 3 -W 2 "${SEAFILE_HOSTNAME}" >/dev/null 2>&1; then
   echo "[OK] ping ${SEAFILE_HOSTNAME} (${SEAFILE_IP}) — доступен."
@@ -100,8 +55,7 @@ echo "================================================================"
 echo " Seafile-клиент установлен."
 echo ""
 echo " [Дальнейшие шаги]"
-echo " 1. Запусти приложение: seafile-gui"
-echo "    или через меню приложений."
+echo " 1. Запусти приложение Seafile через меню приложений."
 echo " 2. При первом запуске введи:"
 echo "      Server URL: http://${SEAFILE_IP}"
 echo "      (или http://seafile.lan, если DNS работает)"
