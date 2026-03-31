@@ -160,7 +160,10 @@ cd /opt/seafile/seafile-server-9.0.9/
 | MySQL host | `localhost` (Enter) |
 | MySQL port | `3306` (Enter) |
 | MySQL root password | твой пароль от mysql_secure_installation |
+| Enter the password for mysql user "seafile" | придумай пароль (пустой не принимается) |
 | Остальное | Enter (по умолчанию) |
+
+> Пароль пользователя `seafile` в MariaDB — служебный, Seafile сохранит его в `/opt/seafile/conf/seafile.conf` автоматически. Тебе его вводить вручную больше не придётся.
 
 ---
 
