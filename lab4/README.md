@@ -10,8 +10,8 @@
 
 ```bash
 # config.sh
-N="14"                     # Номер в журнале
-STUDENT="mazurina"         # Фамилия транслитом
+N="29"                     # Номер в журнале
+STUDENT="yazikov"         # Фамилия транслитом
 GROUP="iks531"             # Номер группы
 SERVER_HOSTNAME="gateway"  # Имя сервера
 DESKTOP_HOSTNAME="desktop1"
@@ -38,8 +38,8 @@ EXT_GW="10.0.2.2"          # Шлюз внешней сети
 
 | ВМ | ОС | Роль | Адрес |
 |---|---|---|---|
-| gateway | Ubuntu Server 20.04 | Шлюз + DHCP | enp0s3: 10.0.2.15/24 (NAT), enp0s8: 192.168.14.1/24 |
-| Desktop1 | Ubuntu Desktop | Клиент | 192.168.14.10 (статик) → DHCP |
+| gateway | Ubuntu Server 20.04 | Шлюз + DHCP | enp0s3: 10.0.2.15/24 (NAT), enp0s8: 192.168.29.1/24 |
+| Desktop1 | Ubuntu Desktop | Клиент | 192.168.29.10 (статик) → DHCP |
 
 > **Тип адаптеров в VirtualBox:**  
 > gateway enp0s3 → NAT или Сетевой мост  
@@ -68,7 +68,7 @@ sudo bash gateway_lab4_net.sh
 
 Что делает скрипт:
 - Проверяет наличие интерфейсов `enp0s3` и `enp0s8`
-- Записывает `/etc/netplan/00-installer-config.yaml` (enp0s3: 10.0.2.15, enp0s8: 192.168.14.1)
+- Записывает `/etc/netplan/00-installer-config.yaml` (enp0s3: 10.0.2.15, enp0s8: 192.168.29.1)
 - Применяет `netplan apply`
 - Проверяет интернет на шлюзе (`ping ya.ru`)
 - Включает `net.ipv4.ip_forward=1` в `/etc/sysctl.conf`
@@ -102,14 +102,14 @@ sudo bash desktop_lab4_prepare.sh
 | Параметр | Значение |
 |---|---|
 | IPv4 Method | Manual |
-| Address | 192.168.14.10 |
+| Address | 192.168.29.10 |
 | Netmask | 255.255.255.0 |
-| Gateway | 192.168.14.1 |
-| DNS | 192.168.14.1 |
+| Gateway | 192.168.29.1 |
+| DNS | 192.168.29.1 |
 
 Проверка:
 ```bash
-ping 192.168.14.1
+ping 192.168.29.1
 ping ya.ru
 ```
 
@@ -127,9 +127,9 @@ sudo bash gateway_lab4_dhcp.sh
 - Устанавливает `isc-dhcp-server`
 - Прописывает `INTERFACESv4="enp0s8"` в `/etc/default/isc-dhcp-server`
 - Создаёт `/etc/dhcp/dhcpd.conf`:
-  - Подсеть `192.168.14.0/24`
-  - Диапазон `192.168.14.10 – 192.168.14.254`
-  - Шлюз + DNS: `192.168.14.1`
+  - Подсеть `192.168.29.0/24`
+  - Диапазон `192.168.29.10 – 192.168.29.254`
+  - Шлюз + DNS: `192.168.29.1`
   - Время аренды: 7 дней
 - Перезапускает сервис и проверяет статус
 
@@ -149,8 +149,8 @@ cat /var/lib/dhcp/dhcpd.leases    # аренды после подключени
 
 Проверка:
 ```bash
-ip a                               # убедись, что IP из диапазона 192.168.14.x
-ping 192.168.14.1
+ip a                               # убедись, что IP из диапазона 192.168.29.x
+ping 192.168.29.1
 ping ya.ru
 ```
 
@@ -170,7 +170,7 @@ ping ya.ru
 |---|---|---|
 | Нет Интернета на `gateway` | Неверный IP/GW для enp0s3, тип адаптера не NAT/мост | Проверь netplan-файл и настройки VirtualBox, `netplan apply` |
 | `netplan apply` выдаёт warnings | Ошибки отступов в YAML (только пробелы!) | Проверь файл, сравни с эталоном, применить снова |
-| Desktop не пингует `192.168.14.1` | Неверные настройки IP/маска/шлюз, интерфейс down | Исправить IPv4-профиль в GUI, переподключить |
+| Desktop не пингует `192.168.29.1` | Неверные настройки IP/маска/шлюз, интерфейс down | Исправить IPv4-профиль в GUI, переподключить |
 | Ping шлюза есть, но нет `ping ya.ru` с Desktop | NAT не работает или не сохранился | Перезапусти `gateway_lab4_net.sh`, проверь `iptables -t nat -L` |
 | `isc-dhcp-server` не стартует (failed) | Синтаксическая ошибка в `dhcpd.conf` | `tail -50 /var/log/syslog` → найди строку ошибки → исправь → restart |
 | Клиент не получает IP по DHCP | DHCP не запущен, неверный `INTERFACESv4`, Desktop на статике | Включить DHCP на Desktop, проверить `/etc/default/isc-dhcp-server` |
