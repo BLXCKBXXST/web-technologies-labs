@@ -54,10 +54,38 @@ netplan apply
 echo "[OK] netplan применён."
 
 # ------------------------------------------------------------------
-# ШАГ 2. Проверка сети
+# ШАГ 2. Отключение systemd-resolved → фиксированный resolv.conf
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: проверка сети ---"
+echo "--- Шаг 2: отключение systemd-resolved ---"
+
+if systemctl is-enabled systemd-resolved >/dev/null 2>&1 || \
+   systemctl is-active  systemd-resolved >/dev/null 2>&1; then
+  echo "[ИНФО] Отключаю systemd-resolved..."
+  systemctl disable --now systemd-resolved || true
+else
+  echo "[ИНФО] systemd-resolved уже отключен."
+fi
+
+# Снять immutable-флаг если был выставлен ранее
+chattr -i /etc/resolv.conf 2>/dev/null || true
+rm -f /etc/resolv.conf
+
+cat > /etc/resolv.conf <<EOF
+nameserver ${GW_IP}
+search ${DOMAIN}
+EOF
+
+# Защитить от перезаписи
+chattr +i /etc/resolv.conf
+echo "[OK] /etc/resolv.conf защищён (immutable), содержимое:"
+cat /etc/resolv.conf
+
+# ------------------------------------------------------------------
+# ШАГ 3. Проверка сети
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 3: проверка сети ---"
 ip a show "${NET_IF}" | grep -A1 "inet " || echo "[ПРЕДУПРЕЖДЕНИЕ] Не вижу IP на ${NET_IF}"
 
 echo "[ИНФО] Пингую gateway (${GW_IP})..."
@@ -75,10 +103,10 @@ else
 fi
 
 # ------------------------------------------------------------------
-# ШАГ 3. Hostname и /etc/hosts
+# ШАГ 4. Hostname и /etc/hosts
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 3: hostname = ${SEAFILE_HOSTNAME} ---"
+echo "--- Шаг 4: hostname = ${SEAFILE_HOSTNAME} ---"
 hostnamectl set-hostname "${SEAFILE_HOSTNAME}"
 
 cat > /etc/hosts <<EOF
@@ -93,8 +121,12 @@ echo "[OK] /etc/hosts обновлён."
 
 echo
 echo "================================================================"
-echo " Сеть и hostname настроены."
+echo " Сеть, DNS и hostname настроены."
 echo " РЕКОМЕНДУЕТСЯ перезагрузить ВМ seafile:"
 echo "   sudo reboot"
-echo " После перезагрузки — запусти seafile_install.sh"
+echo " После перезагрузки проверь:"
+echo "   nslookup gateway"
+echo "   nslookup ${SEAFILE_HOSTNAME}"
+echo "   ping ya.ru"
+echo " Затем запусти seafile_install.sh"
 echo "================================================================"
