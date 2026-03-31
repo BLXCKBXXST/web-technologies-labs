@@ -10,8 +10,8 @@
 
 ```bash
 # config.sh
-N="14"                     # Номер в журнале
-STUDENT="mazurina"         # Фамилия транслитом
+N="29"                     # Номер в журнале
+STUDENT="yazikov"         # Фамилия транслитом
 GROUP="iks531"             # Номер группы
 SERVER_HOSTNAME="gateway"  # Имя сервера
 DESKTOP_HOSTNAME="desktop1"
@@ -60,7 +60,7 @@ sudo bash gateway_lab5.sh
 - Настраивает `named.conf.options` (forwarders 8.8.8.8, listen-on)
 - Настраивает `named.conf.local` (зоны прямая + обратная)
 - Создаёт `/var/lib/bind/forward.db` и `reverse.db`
-- Обновляет netplan (DNS → 192.168.14.1, search → mazurina.iks531.local)
+- Обновляет netplan (DNS → 192.168.29.1, search → yazikov.iks531.local)
 - **Отключает `systemd-resolved`** и прописывает статический `resolv.conf`
 - Перезапускает bind9, делает `nslookup` для самопроверки
 
@@ -72,7 +72,7 @@ reboot
 Проверь после перезагрузки:
 ```bash
 nslookup gateway
-nslookup 192.168.14.1
+nslookup 192.168.29.1
 ping ya.ru
 ```
 
@@ -105,7 +105,7 @@ sudo bash desktop_lab5_prepare.sh
 
 Что делает скрипт:
 - Меняет hostname → `desktop1`, обновляет `/etc/hosts`
-- Отключает `systemd-resolved`, прописывает `resolv.conf` с DNS 192.168.14.1
+- Отключает `systemd-resolved`, прописывает `resolv.conf` с DNS 192.168.29.1
 - Выводит подсказки по настройке сети в GUI
 
 **[Интерактивный шаг]** Настрой сеть вручную в GUI:
@@ -113,14 +113,14 @@ sudo bash desktop_lab5_prepare.sh
 | Параметр | Статика (Вариант А) | DHCP (Вариант Б) |
 |---|---|---|
 | IPv4 Method | Manual | Automatic (DHCP) |
-| Address | 192.168.14.10 | — |
+| Address | 192.168.29.10 | — |
 | Netmask | 255.255.255.0 | — |
-| Gateway | 192.168.14.1 | — |
-| DNS | 192.168.14.1 | — |
+| Gateway | 192.168.29.1 | — |
+| DNS | 192.168.29.1 | — |
 
 Проверка с Desktop:
 ```bash
-ping 192.168.14.1
+ping 192.168.29.1
 ping ya.ru
 nslookup gateway
 nslookup desktop1
@@ -143,5 +143,5 @@ nslookup <IP клиента>
 | `isc-dhcp-server` failed | Ошибка синтаксиса в dhcpd.conf (пропущен `;`) | `tail -40 /var/log/syslog` → найди строку с ошибкой → исправь → restart |
 | Клиент не получает IP по DHCP | Неверный интерфейс в `/etc/default/isc-dhcp-server` | Должно быть `INTERFACESv4="enp0s8"` |
 | `nslookup desktop1` — нет ответа после DHCP | DDNS не обновил зону | Проверь `rndc.key`, блоки `zone` в dhcpd.conf, рестартни оба сервиса |
-| Нет интернета на Desktop, ping 192.168.14.1 ок | NAT/iptables или DNS не тот | Проверь `nslookup ya.ru`, переписать правила NAT из лаб.4 |
+| Нет интернета на Desktop, ping 192.168.29.1 ок | NAT/iptables или DNS не тот | Проверь `nslookup ya.ru`, переписать правила NAT из лаб.4 |
 | После `netplan apply` пропал доступ | Ошибка YAML (отступы пробелами) | Восстанови `*.bak_lab5`, правь аккуратно, `netplan apply` снова |
