@@ -114,7 +114,7 @@ sudo bash seafile_install.sh
 Что делает скрипт:
 - Устанавливает `python3`, `pip`, `libmysqlclient-dev`, `pkg-config`
 - Устанавливает и запускает MariaDB
-- Устанавливает pip-зависимости Seafile
+- Устанавливает pip-зависимости Seafile (Pillow зафиксирован на 9.5.0)
 - Скачивает и распаковывает Seafile в `/opt/seafile/`
 
 > **[Интерактивный шаг]** После скрипта — защити MariaDB встроенным мастером:
@@ -242,6 +242,7 @@ sudo bash desktop_lab6_client.sh
 | `setup-seafile-mysql.sh` падает на MySQL | Неверный пароль root или MariaDB не запущена | Перепроверь пароль, `systemctl status mariadb` |
 | `nginx -t` выдаёт ошибку | Синтаксис в `seafile.conf` | `nano /etc/nginx/sites-available/seafile.conf`, исправь, `nginx -t` снова |
 | `http://seafile.lan` не открывается с Desktop | nginx не слушает или DNS не резолвит | `ss -tnlp \| grep :80` на seafile, `nslookup seafile` на Desktop |
-| Seahub не стартует (ошибки при `seahub.sh start`) | Не установлены pip-зависимости или БД не создана | Проверь `seafile_install.sh`, повтори `setup-seafile-mysql.sh` |
+| `Seahub failed to start` — ошибка `PIL.Image has no attribute ANTIALIAS` | Pillow 10+ несовместим с Seafile 9.x | `pip3 install Pillow==9.5.0`, затем повтори `seahub.sh start` |
+| Seahub не стартует (другие ошибки при `seahub.sh start`) | Не установлены pip-зависимости или БД не создана | Проверь `seafile_install.sh`, повтори `setup-seafile-mysql.sh` |
 | После перезагрузки Seafile не поднимается | systemd-юниты не включены | `systemctl enable seafile seahub`, проверь пути в unit-файлах |
 | Клиент не подключается к серверу | Неверный URL или сервисы не запущены | URL = `http://192.168.29.4`, `systemctl status seafile seahub` |

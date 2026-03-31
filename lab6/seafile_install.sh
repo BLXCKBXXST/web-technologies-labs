@@ -50,11 +50,13 @@ echo "[OK] MariaDB запущена: $(systemctl is-active mariadb)"
 
 # ------------------------------------------------------------------
 # ШАГ 4. Python-зависимости Seafile (может занять несколько минут)
+# Pillow зафиксирован на 9.5.0 — версии 10+ несовместимы с Seafile 9.x
+# (убрали PIL.Image.ANTIALIAS, seahub падает при старте)
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 4: pip-зависимости Seafile (ждите ~2-5 мин) ---"
 pip3 install --timeout=3600 \
-  "django==3.2.*" Pillow pylibmc captcha jinja2 \
+  "django==3.2.*" "Pillow==9.5.0" pylibmc captcha jinja2 \
   "sqlalchemy==1.4.3" django-pylibmc django-simple-captcha \
   python3-ldap mysqlclient "pycryptodome==3.12.0" "cffi==1.14.0"
 echo "[OK] Python-зависимости установлены."
@@ -93,15 +95,10 @@ echo
 echo "================================================================"
 echo " Установка зависимостей завершена."
 echo ""
-echo " [ИНТЕРАКТИВНЫЙ ШАГ] Теперь нужно задать пароль root для MariaDB."
+echo " [ИНТЕРАКТИВНЫЙ ШАГ] Теперь нужно защитить MariaDB."
 echo " Выполни вручную:"
 echo ""
-echo "   mysqladmin -u root password"
-echo "   (введи пароль дважды)"
-echo ""
-echo "   mysql"
-echo "   flush privileges;"
-echo "   \\q;"
+echo "   sudo mysql_secure_installation"
 echo ""
 echo " После этого запусти: sudo bash seafile_setup.sh"
 echo "================================================================"
