@@ -29,11 +29,13 @@ apt-get update -y
 echo "[OK] Списки пакетов обновлены."
 
 # ------------------------------------------------------------------
-# ШАГ 2. Python и dev-пакеты
+# ШАГ 2. Python, dev-пакеты и pkg-config
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: python3, pip, libmysqlclient-dev ---"
-apt-get install -y python3 python3-setuptools python3-pip libmysqlclient-dev
+echo "--- Шаг 2: python3, pip, libmysqlclient-dev, pkg-config ---"
+apt-get install -y \
+  python3 python3-setuptools python3-pip \
+  libmysqlclient-dev pkg-config
 echo "[OK] Python-пакеты установлены."
 
 # ------------------------------------------------------------------
