@@ -6,9 +6,23 @@
 \setmainlanguage{russian}
 \setotherlanguage{english}
 
-%% Шрифт XITS (клон Times New Roman с полной кириллицей)
-\setmainfont{XITS}
-\newfontfamily\cyrillicfont{XITS}
+%% Times New Roman (файлы .ttf должны лежать в папке проекта Overleaf)
+\setmainfont{Times New Roman}[
+    Path = ./,
+    Extension = .ttf,
+    UprightFont = times,
+    BoldFont = timesbd,
+    ItalicFont = timesi,
+    BoldItalicFont = timesbi
+]
+\newfontfamily\cyrillicfont{Times New Roman}[
+    Path = ./,
+    Extension = .ttf,
+    UprightFont = times,
+    BoldFont = timesbd,
+    ItalicFont = timesi,
+    BoldItalicFont = timesbi
+]
 \newfontfamily\cyrillicfonttt{FreeMono}
 
 %% Поля (ГОСТ)
