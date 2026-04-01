@@ -1,0 +1,667 @@
+\documentclass[a4paper,14pt,oneside,openany]{memoir}
+
+%%% Поля и отступы %%%
+\usepackage[left=30mm, right=15mm, top=20mm, bottom=20mm]{geometry}
+\pagestyle{plain}
+\parindent=1.25cm
+\usepackage{indentfirst}
+
+%%% Языковые параметры и шрифт %%%
+\usepackage{polyglossia}
+\setdefaultlanguage[indentfirst=true,forceheadingpunctuation=false]{russian}
+\setotherlanguages{english}
+
+\IfFontExistsTF{Times New Roman}
+{\setmainfont{Times New Roman}
+\newfontfamily\cyrillicfont{Times New Roman}[Script=Cyrillic]}
+{\setmainfont[Script=Cyrillic]{FreeSerif}}
+
+\IfFontExistsTF{Courier New}
+{\setmonofont{Courier New}
+\newfontfamily\cyrillicfonttt{Courier New}[Script=Cyrillic]}
+{\setmonofont[Script=Cyrillic]{FreeMono}}
+
+\IfFontExistsTF{Arial}
+{\setsansfont{Arial}
+\newfontfamily\cyrillicfontsf{Arial}[Script=Cyrillic]}
+{\setsansfont[Script=Cyrillic]{FreeSans}}
+
+%%% Стиль заголовков %%%
+\setsecnumdepth{subsection}
+\renewcommand*{\chapterheadstart}{}
+\renewcommand*{\printchaptername}{}
+\renewcommand*{\chapnumfont}{\normalfont\bfseries}
+\renewcommand*{\afterchapternum}{\hspace{1em}}
+\renewcommand*{\printchaptertitle}{\normalfont\bfseries\centering\MakeUppercase}
+\setbeforesecskip{20pt}
+\setaftersecskip{20pt}
+\setsecheadstyle{\raggedright\normalfont\bfseries}
+\setbeforesubsecskip{20pt}
+\setaftersubsecskip{20pt}
+\setsubsecheadstyle{\raggedright\normalfont\bfseries}
+
+%%% Оглавление %%%
+\addto\captionsrussian{\renewcommand\contentsname{Содержание}}
+\setrmarg{2.55em plus1fil}
+\renewcommand{\aftertoctitle}{\afterchaptertitle \vspace{-\cftbeforechapterskip}}
+\renewcommand*{\cftchapternumwidth}{1.5em}
+\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase}
+\renewcommand*{\cftchapterpagefont}{\normalfont}
+\renewcommand*{\cftchapterdotsep}{\cftdotsep}
+\renewcommand*{\cftdotsep}{1}
+\renewcommand*{\cftchapterleader}{\cftdotfill{\cftchapterdotsep}}
+\maxtocdepth{subsection}
+
+%%% Выравнивание и переносы %%%
+\tolerance 1414
+\hbadness 1414
+\emergencystretch 1.5em
+\hfuzz 0.3pt
+\vfuzz \hfuzz
+\clubpenalty=10000
+\widowpenalty=10000
+\brokenpenalty=4991
+
+%%% Кириллица в перечислениях %%%
+\makeatletter
+    \def\russian@Alph#1{\ifcase#1\or
+       А\or Б\or В\or Г\or Д\or Е\or Ж\or
+       И\or К\or Л\or М\or Н\or
+       П\or Р\or С\or Т\or У\or Ф\or Х\or
+       Ц\or Ш\or Щ\or Э\or Ю\or Я\else\xpg@ill@value{#1}{russian@Alph}\fi}
+    \def\russian@alph#1{\ifcase#1\or
+       а\or б\or в\or г\or д\or е\or ж\or
+       и\or к\or л\or м\or н\or
+       п\or р\or с\or т\or у\or ф\or х\or
+       ц\or ш\or щ\or э\or ю\or я\else\xpg@ill@value{#1}{russian@alph}\fi}
+\makeatother
+
+%%% Рисунки и таблицы %%%
+\usepackage{graphicx, caption, subcaption}
+\captionsetup[figure]{font=small, width=\textwidth, name=Рисунок, justification=centering}
+\captionsetup[subfigure]{font=small}
+\captionsetup[table]{singlelinecheck=false,font=small,width=\textwidth,justification=justified}
+\captiondelim{ --- }
+\setkeys{Gin}{width=\textwidth}
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+\usepackage[section]{placeins}
+
+%%% Гиперссылки %%%
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linktoc=all,
+    linktocpage=true,
+    linkcolor=red,
+    citecolor=red
+}
+
+%%% Списки %%%
+\usepackage{enumitem}
+\renewcommand*{\labelitemi}{\normalfont{--}}
+\makeatletter
+    \AddEnumerateCounter{\asbuk}{\russian@alph}
+\makeatother
+\renewcommand{\labelenumii}{\asbuk{enumii})}
+\renewcommand{\labelenumiii}{\arabic{enumiii})}
+\setlist{noitemsep, leftmargin=*}
+\setlist[1]{labelindent=\parindent}
+\setlist[2]{leftmargin=\parindent}
+\setlist[3]{leftmargin=\parindent}
+
+%%% Счётчики %%%
+\counterwithout{figure}{chapter}
+\counterwithout{equation}{chapter}
+\counterwithout{table}{chapter}
+
+%%% Листинги (блоки кода) %%%
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    showstringspaces=false
+}
+
+%%% Библиография %%%
+\usepackage{csquotes}
+\usepackage[%
+    backend=biber,
+    bibencoding=utf8,
+    sorting=none,
+    style=gost-numeric,
+    language=auto,
+    autolang=other,
+    sortcites=true,
+    movenames=false,
+    maxnames=5,
+    minnames=3,
+    doi=false,
+    isbn=false,
+]{biblatex}
+\DeclareDelimFormat{bibinitdelim}{}
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+        \step[fieldsource=title, match=\regexp{^\P{Cyrillic}*\p{Cyrillic}.*}, final]
+        \step[fieldset=langid, fieldvalue={russian}]
+    }
+    \map{
+        \step[fieldset=langid, fieldvalue={english}]
+    }
+  }
+}
+
+%%% Доп. пакеты %%%
+\usepackage{longtable,ltcaption}
+\usepackage{multirow,makecell}
+\usepackage{booktabs}
+\usepackage{soulutf8}
+\usepackage{icomma}
+\usepackage{textcomp}
+\usepackage{amsmath}
+
+%%% Встроенная библиография (без .bib файла) %%%
+\usepackage{filecontents}
+\begin{filecontents}{\jobname.bib}
+@online{bind9_admin,
+    author    = {{Internet Systems Consortium}},
+    title     = {BIND 9 Administrator Reference Manual},
+    year      = {2024},
+    url       = {https://bind9.readthedocs.io/en/latest/},
+    urldate   = {2025-04-01},
+    language  = {english}
+}
+@techreport{rfc1034,
+    author      = {P. Mockapetris},
+    title       = {Domain names --- concepts and facilities},
+    institution = {IETF},
+    year        = {1987},
+    type        = {RFC},
+    number      = {1034},
+    url         = {https://www.rfc-editor.org/rfc/rfc1034},
+    language    = {english}
+}
+@techreport{rfc2136,
+    author      = {P. Vixie and S. Thomson and Y. Rekhter and J. Bound},
+    title       = {Dynamic Updates in the Domain Name System (DNS UPDATE)},
+    institution = {IETF},
+    year        = {1997},
+    type        = {RFC},
+    number      = {2136},
+    url         = {https://www.rfc-editor.org/rfc/rfc2136},
+    language    = {english}
+}
+@book{linux_admin,
+    author    = {Немет, Эви and Снайдер, Гарт and Хейн, Трент and Уэйли, Бен},
+    title     = {Руководство администратора Linux},
+    edition   = {4},
+    publisher = {Вильямс},
+    year      = {2020},
+    address   = {Москва},
+    language  = {russian}
+}
+@online{isc_dhcp,
+    author    = {{Internet Systems Consortium}},
+    title     = {ISC DHCP --- Dynamic Host Configuration Protocol},
+    year      = {2023},
+    url       = {https://www.isc.org/dhcp/},
+    urldate   = {2025-04-01},
+    language  = {english}
+}
+\end{filecontents}
+
+\addbibresource{\jobname.bib}
+
+% ==============================================================
+%                        ДОКУМЕНТ
+% ==============================================================
+\begin{document}
+
+% ============================================================
+% ТИТУЛЬНЫЙ ЛИСТ
+% ============================================================
+\thispagestyle{empty}
+
+\begin{center}
+    МИНИСТЕРСТВО ЦИФРОВОГО РАЗВИТИЯ, СВЯЗИ И МАССОВЫХ КОММУНИКАЦИЙ \\
+    РОССИЙСКОЙ ФЕДЕРАЦИИ
+
+    \vspace{20pt}
+
+    Федеральное государственное бюджетное образовательное учреждение \\
+    высшего образования \\
+    «Сибирский государственный университет телекоммуникаций и информатики» \\
+
+    \vspace{20pt}
+
+    Кафедра телекоммуникационных систем и вычислительных средств \\
+    (ТС и ВС)
+\end{center}
+
+\vfill
+
+\begin{center}
+    РЕФЕРАТ \\
+    по дисциплине \\
+    \textit{«Web-технологии»}
+
+    \vspace{20pt}
+
+    по теме: \\
+    \uppercase{DNS-сервер bind9, зоны forward/reverse,\\
+    динамическое обновление DNS (DDNS)}
+\end{center}
+
+\vfill
+
+\noindent Студент: \\
+\textit{Группа №~ИКС-531 \hfill Д.А.~Язиков}
+
+\vspace{20pt}
+
+\noindent Преподаватель: \\
+\textit{ст.~преподаватель \hfill А.В.~Андреев}
+
+\vfill
+
+\begin{center}
+    Новосибирск 2025~г.
+\end{center}
+
+% ============================================================
+% СОДЕРЖАНИЕ
+% ============================================================
+\newpage
+\setcounter{page}{2}
+\OnehalfSpacing*
+
+\tableofcontents*
+
+% ============================================================
+% ВВЕДЕНИЕ
+% ============================================================
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
+
+Система доменных имён (DNS) является одним из фундаментальных компонентов современных компьютерных сетей. Она обеспечивает преобразование символьных доменных имён, удобных для восприятия человеком, в числовые IP-адреса, необходимые для маршрутизации пакетов. Без DNS пользователь был бы вынужден запоминать IP-адреса каждого сетевого ресурса вместо привычных имён типа \texttt{example.com}.
+
+В рамках данной практической работы рассматривается развёртывание собственного DNS-сервера на базе пакета \textbf{BIND9} (Berkeley Internet Name Domain) в операционной системе Ubuntu~20.04~LTS. BIND9 является наиболее распространённым DNS-сервером в мире и де-факто стандартом для Unix-подобных операционных систем~\cite{bind9_admin}.
+
+Целью работы является настройка полноценного DNS-сервера для локальной сети, включающая:
+\begin{itemize}
+    \item создание прямой зоны (forward zone) для преобразования имён в IP-адреса;
+    \item создание обратной зоны (reverse zone) для преобразования IP-адресов в имена;
+    \item настройку динамического обновления DNS (DDNS) для автоматической регистрации клиентов через DHCP-сервер.
+\end{itemize}
+
+В ходе выполнения работы используется стенд на базе VirtualBox: виртуальная машина \texttt{gateway} с двумя сетевыми интерфейсами~--- \texttt{enp0s3}~(WAN/NAT) и \texttt{enp0s8}~(LAN с адресом \texttt{192.168.N.1/24}), где \texttt{N}~--- номер студента в учебном журнале.
+
+% ============================================================
+% ГЛАВА 1 — ТЕОРИЯ
+% ============================================================
+\chapter{Теоретические сведения}
+\label{ch:theory}
+
+\section{Система доменных имён DNS}
+
+DNS (Domain Name System)~--- иерархическая распределённая система именования узлов сети~\cite{rfc1034}. Пространство имён DNS имеет древовидную структуру: в корне находится безымянный корневой домен, ниже расположены домены верхнего уровня (TLD: \texttt{.ru}, \texttt{.com}, \texttt{.local} и др.), затем домены второго уровня и так далее.
+
+Основные понятия DNS:
+\begin{itemize}
+    \item \textbf{Зона}~--- административная единица пространства имён, за которую отвечает конкретный DNS-сервер;
+    \item \textbf{Авторитативный сервер} (authoritative)~--- сервер, хранящий оригинальные записи зоны и отвечающий на запросы с пометкой «авторитативный ответ»;
+    \item \textbf{Рекурсивный резолвер}~--- сервер, выполняющий цепочку запросов к другим DNS-серверам от имени клиента;
+    \item \textbf{Форвардер} (forwarder)~--- сервер, которому локальный DNS-сервер перенаправляет запросы для нелокальных зон.
+\end{itemize}
+
+\section{Типы ресурсных записей DNS}
+
+Каждая запись в зоне DNS имеет определённый тип. Основные типы, используемые в данной работе, приведены в таблице~\ref{tab:rr}.
+
+\begin{table}[h]
+    \caption{Основные типы ресурсных записей DNS}
+    \label{tab:rr}
+    \begin{tabular}{|l|p{10cm}|}
+        \hline
+        \textbf{Тип} & \textbf{Назначение} \\
+        \hline
+        SOA   & Start of Authority~--- описывает зону: первичный NS, e-mail администратора, параметры обновления \\
+        \hline
+        NS    & Name Server~--- указывает авторитативный сервер зоны \\
+        \hline
+        A     & Адресная запись~--- сопоставляет имя хоста с IPv4-адресом \\
+        \hline
+        PTR   & Pointer~--- обратная запись, сопоставляет IP-адрес с именем хоста \\
+        \hline
+        CNAME & Canonical Name~--- псевдоним для другого доменного имени \\
+        \hline
+        MX    & Mail Exchanger~--- указывает почтовый сервер домена \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Прямая и обратная зоны}
+
+\textbf{Прямая зона} (forward zone) используется для разрешения имён в IP-адреса. Имя зоны совпадает с именем домена, например \texttt{STUDENT.GROUP.local}. Файл зоны содержит записи типов SOA, NS, A.
+
+\textbf{Обратная зона} (reverse zone) используется для разрешения IP-адресов в имена. Имя зоны строится по принципу инвертирования первых октетов подсети с добавлением суффикса \texttt{.in-addr.arpa}. Например, для сети \texttt{192.168.N.0/24} зона будет называться \texttt{N.168.192.in-addr.arpa}. Файл зоны содержит записи типов SOA, NS, PTR.
+
+\section{BIND9}
+
+BIND (Berkeley Internet Name Domain) версии~9~--- наиболее распространённое и функционально полное ПО DNS-сервера~\cite{bind9_admin}. В Ubuntu~20.04 устанавливается из стандартного репозитория командой \texttt{apt install bind9}. Конфигурационные файлы расположены в каталоге \texttt{/etc/bind/}:
+\begin{itemize}
+    \item \texttt{named.conf}~--- главный файл, включает остальные;
+    \item \texttt{named.conf.options}~--- глобальные настройки (форвардеры, listen-on, dnssec);
+    \item \texttt{named.conf.local}~--- описание локальных зон;
+    \item файлы зон хранятся в \texttt{/var/lib/bind/}~--- в этом каталоге BIND имеет права на запись, что необходимо для работы DDNS.
+\end{itemize}
+
+\section{Динамическое обновление DNS (DDNS)}
+
+DDNS (Dynamic DNS, RFC~2136) позволяет клиентам или другим серверам автоматически обновлять записи DNS в зоне без ручного вмешательства администратора~\cite{rfc2136}. В данной работе DDNS используется совместно с DHCP-сервером \texttt{isc-dhcp-server}: при получении клиентом IP-адреса DHCP-сервер автоматически создаёт A-запись и PTR-запись в DNS.
+
+Для аутентификации обновлений используется TSIG-ключ (Transaction SIGnature)~--- симметричный ключ HMAC-MD5, генерируемый утилитой \texttt{rndc-confgen}. Ключ хранится в файле \texttt{/etc/bind/rndc.key} и должен быть доступен как BIND9, так и DHCP-серверу.
+
+% ============================================================
+% ГЛАВА 2 — СТЕНД И ПОДГОТОВКА
+% ============================================================
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
+
+\section{Конфигурация виртуального стенда}
+
+Лабораторная работа выполняется на виртуальной машине \texttt{gateway} под управлением ОС \textbf{Ubuntu 20.04.5 LTS (Focal Fossa)}, развёрнутой в среде Oracle VirtualBox. ВМ имеет два сетевых адаптера:
+\begin{itemize}
+    \item \texttt{enp0s3}~--- WAN-интерфейс, подключён в режиме NAT; получает адрес \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
+    \item \texttt{enp0s8}~--- LAN-интерфейс, подключён к внутренней сети (Internal Network); статический адрес \texttt{192.168.N.1/24}.
+\end{itemize}
+
+Лаба~5 выполняется на той же ВМ, что и лаба~4. К моменту начала лабы~5 уже настроены: маршрутизация (ip\_forward + iptables MASQUERADE) и DHCP-сервер \texttt{isc-dhcp-server}.
+
+\section{Предварительная подготовка}
+
+Перед установкой BIND9 необходимо выполнить ряд подготовительных шагов.
+
+\subsection{Установка hostname}
+
+Имя хоста сервера задаётся командой:
+\begin{lstlisting}
+hostnamectl set-hostname SERVERHOSTNAME
+\end{lstlisting}
+gде \texttt{SERVERHOSTNAME}~--- выбранное имя ВМ (например, \texttt{gateway}). Файл \texttt{/etc/hosts} редактируется вручную:
+\begin{lstlisting}
+nano /etc/hosts
+# добавить строку:
+127.0.1.1   SERVERHOSTNAME
+\end{lstlisting}
+
+\subsection{Удаление DNS DNAT-правил}
+
+В лабе~4 в файл \texttt{/etc/iptables/rules.v4} были добавлены правила перенаправления DNS-запросов на Google~8.8.8.8. Теперь эти правила необходимо удалить, поскольку DNS-сервер будет обрабатывать запросы самостоятельно:
+\begin{lstlisting}
+nano /etc/iptables/rules.v4
+# удалить строки:
+-A PREROUTING -i enp0s8 -p tcp -m tcp --dport 53 \
+  -j DNAT --to-destination 8.8.8.8:53
+-A PREROUTING -i enp0s8 -p udp -m udp --dport 53 \
+  -j DNAT --to-destination 8.8.8.8:53
+\end{lstlisting}
+
+После редактирования применить изменения и перезагрузить ВМ:
+\begin{lstlisting}
+reboot
+\end{lstlisting}
+
+\section{Установка BIND9}
+
+Установка пакетов производится стандартными средствами менеджера пакетов:
+\begin{lstlisting}
+apt-get update
+apt install bind9
+apt install dnsutils
+\end{lstlisting}
+
+Пакет \texttt{dnsutils} предоставляет утилиты \texttt{nslookup} и \texttt{dig}, необходимые для проверки работы DNS.
+
+% ============================================================
+% ГЛАВА 3 — НАСТРОЙКА DNS + DDNS
+% ============================================================
+\chapter{Настройка DNS-сервера BIND9}
+\label{ch:config}
+
+\section{Настройка named.conf.options}
+
+Открываем файл глобальных опций BIND9:
+\begin{lstlisting}
+nano /etc/bind/named.conf.options
+\end{lstlisting}
+
+Приводим блок \texttt{options} к следующему виду:
+\begin{lstlisting}
+options {
+    directory "/var/cache/bind";
+
+    forwarders {
+        8.8.8.8;
+    };
+
+    dnssec-validation auto;
+    auth-nxdomain no;
+    listen-on { 127.0.0.1; 192.168.N.1; };
+};
+\end{lstlisting}
+
+Параметр \texttt{forwarders} задаёт DNS-сервер Google~(8.8.8.8) для разрешения имён, не входящих в локальные зоны. Параметр \texttt{listen-on} ограничивает интерфейсы, на которых BIND принимает запросы: только localhost и LAN-интерфейс \texttt{enp0s8}.
+
+\section{Настройка named.conf.local}
+
+В файле \texttt{named.conf.local} описываются локальные зоны:
+\begin{lstlisting}
+nano /etc/bind/named.conf.local
+\end{lstlisting}
+
+Добавляем содержимое:
+\begin{lstlisting}
+include "/etc/bind/rndc.key";
+
+controls {
+    inet 127.0.0.1 allow { localhost; } keys { rndc-key; };
+};
+
+zone "STUDENT.GROUP.local" IN {
+    type master;
+    file "/var/lib/bind/forward.db";
+    allow-update { key rndc-key; };
+};
+
+zone "N.168.192.in-addr.arpa" IN {
+    type master;
+    file "/var/lib/bind/reverse.db";
+    allow-update { key rndc-key; };
+};
+\end{lstlisting}
+
+Файлы зон размещаются в \texttt{/var/lib/bind/}, а не в \texttt{/etc/bind/}, так как демон BIND9 имеет права на запись только в \texttt{/var/lib/bind/}~--- это необходимо для работы DDNS (динамическое обновление создаёт журнальные файлы \texttt{.jnl}).
+
+Директива \texttt{allow-update~\{~key~rndc-key;~\}} разрешает обновление зоны только запросам, подписанным ключом \texttt{rndc-key}.
+
+\section{Создание файла прямой зоны (forward.db)}
+
+\begin{lstlisting}
+nano /var/lib/bind/forward.db
+\end{lstlisting}
+
+\begin{lstlisting}
+$TTL 86400
+STUDENT.GROUP.local. IN SOA SERVERHOSTNAME.STUDENT.GROUP.local. \
+    admin.STUDENT.GROUP.local. (
+        20110103 ; Serial
+        604800   ; Refresh
+        86400    ; Retry
+        2419200  ; Expire
+        604800 ) ; Negative Cache TTL
+
+@               IN NS  SERVERHOSTNAME.STUDENT.GROUP.local.
+@               IN A   192.168.N.1
+localhost       IN A   127.0.0.1
+SERVERHOSTNAME  IN A   192.168.N.1
+\end{lstlisting}
+
+Запись \texttt{SOA} (Start of Authority) является обязательной и содержит: имя первичного NS-сервера, e-mail администратора (точка вместо @), серийный номер зоны (увеличивается при каждом изменении), а также параметры репликации. Запись \texttt{A} для \texttt{@} задаёт IP самого домена; запись для \texttt{SERVERHOSTNAME}~--- адрес сервера шлюза.
+
+\section{Создание файла обратной зоны (reverse.db)}
+
+\begin{lstlisting}
+nano /var/lib/bind/reverse.db
+\end{lstlisting}
+
+\begin{lstlisting}
+$TTL 86400
+N.168.192.in-addr.arpa. IN SOA STUDENT.GROUP.local. \
+    STUDENT.GROUP.local. (
+        20110104 ; Serial
+        10800    ; Refresh
+        3600     ; Retry
+        604800   ; Expire
+        3600 )   ; Minimum
+
+        IN NS  SERVERHOSTNAME.STUDENT.GROUP.local.
+1       IN PTR STUDENT.GROUP.local.
+1       IN PTR SERVERHOSTNAME.STUDENT.GROUP.local.
+\end{lstlisting}
+
+Запись \texttt{PTR} для узла с последним октетом \texttt{1} (то есть \texttt{192.168.N.1}) указывает на имя сервера. Имена зон в обратном файле записаны относительно \texttt{N.168.192.in-addr.arpa}, поэтому достаточно указывать только последний октет.
+
+\section{Перезапуск BIND9 и проверка конфигурации}
+
+Проверяем синтаксис конфигурации и зон:
+\begin{lstlisting}
+named-checkconf
+named-checkzone STUDENT.GROUP.local /var/lib/bind/forward.db
+named-checkzone N.168.192.in-addr.arpa /var/lib/bind/reverse.db
+\end{lstlisting}
+
+Перезапускаем сервис:
+\begin{lstlisting}
+systemctl restart bind9
+\end{lstlisting}
+
+Настраиваем netplan на использование локального DNS и добавляем домен поиска:
+\begin{lstlisting}
+nano /etc/netplan/00-installer-config.yaml
+\end{lstlisting}
+
+\begin{lstlisting}
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 10.0.2.15/24
+      gateway4: 10.0.2.2
+    enp0s8:
+      dhcp4: no
+      addresses:
+        - 192.168.N.1/24
+      nameservers:
+        addresses: [192.168.N.1]
+        search: [STUDENT.GROUP.local]
+  version: 2
+\end{lstlisting}
+
+Применяем настройки и перезагружаем ВМ:
+\begin{lstlisting}
+netplan apply
+reboot
+\end{lstlisting}
+
+Проверяем разрешение имён:
+\begin{lstlisting}
+nslookup SERVERHOSTNAME
+nslookup 192.168.N.1
+\end{lstlisting}
+
+\section{Настройка DDNS}
+
+\subsection{Копирование ключа RNDC для DHCP-сервера}
+
+Ключ \texttt{rndc.key} генерируется автоматически при установке BIND9. Для работы DDNS DHCP-сервер должен иметь к нему доступ:
+\begin{lstlisting}
+cp -Rr /etc/bind/rndc.key /etc/dhcp/ddns-keys/
+\end{lstlisting}
+
+\subsection{Обновление конфигурации DHCP-сервера}
+
+Открываем файл \texttt{/etc/dhcp/dhcpd.conf} и приводим его к следующему виду:
+\begin{lstlisting}
+include "/etc/dhcp/ddns-keys/rndc.key";
+
+ddns-updates on;
+ddns-update-style standard;
+ddns-domainname "STUDENT.GROUP.local";
+
+zone STUDENT.GROUP.local. {
+    primary 192.168.N.1;
+    key rndc-key;
+}
+
+zone N.168.192.in-addr.arpa. {
+    primary 192.168.N.1;
+    key rndc-key;
+}
+
+authoritative;
+
+subnet 192.168.N.0 netmask 255.255.255.0 {
+    range 192.168.N.10 192.168.N.254;
+    option domain-name-servers 192.168.N.1;
+    option domain-name "STUDENT.GROUP.local";
+    option routers 192.168.N.1;
+    option broadcast-address 192.168.N.255;
+    default-lease-time 604800;
+    max-lease-time 604800;
+}
+\end{lstlisting}
+
+\subsection{Перезапуск сервисов и проверка DDNS}
+
+Перезапускаем оба сервиса:
+\begin{lstlisting}
+systemctl restart bind9
+service isc-dhcp-server restart
+\end{lstlisting}
+
+После того как клиентская машина (Desktop) получит IP-адрес через DHCP, выполняем проверку:
+\begin{lstlisting}
+nslookup DESKTOPNAME01
+\end{lstlisting}
+
+Если DDNS работает корректно, команда должна вернуть IP-адрес, выданный клиенту DHCP-сервером. При возникновении ошибок анализируем системный журнал:
+\begin{lstlisting}
+tail -40 /var/log/syslog
+\end{lstlisting}
+
+% ============================================================
+% ЗАКЛЮЧЕНИЕ
+% ============================================================
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+\label{ch:conclusion}
+
+В ходе выполнения практической работы был развёрнут и настроен DNS-сервер BIND9 на виртуальной машине \texttt{gateway} под управлением Ubuntu~20.04~LTS. Были созданы прямая зона \texttt{STUDENT.GROUP.local} и обратная зона \texttt{N.168.192.in-addr.arpa}, обеспечивающие разрешение имён хостов локальной сети в IP-адреса и обратно.
+
+Настройка динамического обновления DNS (DDNS) с использованием TSIG-ключа \texttt{rndc-key} позволила автоматизировать регистрацию клиентов в DNS при получении ими IP-адреса через DHCP-сервер. В результате клиентские машины автоматически получают доменные имена вида \texttt{HOSTNAME.STUDENT.GROUP.local} без какого-либо ручного вмешательства.
+
+Приобретённые навыки~--- администрирование BIND9, работа с файлами зон, настройка форвардеров и DDNS~--- являются базовыми компетенциями сетевого администратора и широко применяются при построении корпоративных сетей.
+
+% ============================================================
+% СПИСОК ЛИТЕРАТУРЫ
+% ============================================================
+\printbibliography[title=Список использованных источников]
+
+\end{document}
