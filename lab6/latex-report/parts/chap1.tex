@@ -1,0 +1,36 @@
+\section{Теоретические сведения}
+
+\subsection{Seafile}
+
+Seafile~--- платформа облачного хранения файлов с открытым исходным кодом~\cite{seafile_docs}.
+Архитектура включает три компонента:
+\begin{itemize}
+  \item \textbf{seafile-server} (ccnet + seafile) --- хранение данных и блочная синхронизация;
+  \item \textbf{seahub} --- веб-интерфейс на Django;
+  \item \textbf{MariaDB/MySQL} --- база данных для метаданных~\cite{mariadb_docs}.
+\end{itemize}
+
+Для продакшн-развёртывания рекомендуется выносить seahub за обратный прокси-сервер
+(Nginx или Apache), который обрабатывает HTTP-запросы от браузеров и передаёт их
+на внутренний порт seahub (\texttt{127.0.0.1:8000}).
+
+\subsection{Nginx как обратный прокси}
+
+Nginx~\cite{nginx_docs} принимает входящие соединения на порту~80 и перенаправляет их
+через директиву \texttt{proxy\_pass} на seahub. Ключевые заголовки:
+\texttt{Host}, \texttt{X-Real-IP}, \texttt{X-Forwarded-For}~--- передают оригинальный
+адрес клиента в приложение.
+
+\subsection{MariaDB}
+
+MariaDB~--- форк MySQL с открытым кодом, полностью совместимый на уровне протокола~\cite{mariadb_docs}.
+Seafile автоматически создаёт три базы данных: \texttt{ccnet-db},
+\texttt{seafile-db}, \texttt{seahub-db} при первом запуске скрипта
+\texttt{setup-seafile-mysql.sh}.
+
+\subsection{Systemd-сервисы}
+
+Для автозапуска seafile и seahub при старте системы создаются unit-файлы
+\texttt{seafile.service} и \texttt{seahub.service} в \texttt{/etc/systemd/system/}.
+После регистрации командой \texttt{systemctl enable} они запускаются автоматически
+после \texttt{mariadb.service}.

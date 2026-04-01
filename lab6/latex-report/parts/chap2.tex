@@ -1,0 +1,57 @@
+\section{Подготовка виртуальной машины}
+
+\subsection{Клонирование ВМ и настройка сети}
+
+Клонируем золотой образ Ubuntu~22.04, задаём имя \texttt{seafile},
+генерируем новый MAC-адрес. В настройках VirtualBox: 1 адаптер,
+тип <<Внутренняя сеть intnet>>.
+
+Редактируем Netplan~\cite{netplan_docs}:
+
+\begin{lstlisting}
+nano /etc/netplan/00-installer-config.yaml
+\end{lstlisting}
+
+\begin{lstlisting}
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 192.168.N.4/24
+      gateway4: 192.168.N.1
+      nameservers:
+        addresses: [192.168.N.1]
+        search: [STUDENT.GROUP.local]
+\end{lstlisting}
+
+\begin{lstlisting}
+netplan apply
+ping gateway
+ping ya.ru
+\end{lstlisting}
+
+После применения конфигурации ВМ получает адрес \texttt{\cfgSeafileIP/24},
+шлюз \texttt{192.168.\cfgLabStudentN.1}.
+
+\subsection{Переименование хоста}
+
+\begin{lstlisting}
+hostnamectl set-hostname seafile
+nano /etc/hosts
+  127.0.0.1 localhost
+  127.0.1.1 seafile
+\end{lstlisting}
+
+\subsection{Добавление записей в домен}
+
+На сервере \texttt{gateway} (DNS) добавляем прямую запись:
+
+\begin{lstlisting}
+nano /var/lib/bind/forward.db
+  seafile   IN   A   192.168.N.4
+systemctl restart bind9
+nslookup seafile
+\end{lstlisting}
+
+Прямое разрешение имени \texttt{seafile} вернуло \texttt{\cfgSeafileIP}.

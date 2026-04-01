@@ -1,0 +1,27 @@
+\section*{Заключение}
+\addcontentsline{toc}{section}{Заключение}
+
+В ходе выполнения практической работы~\cfgLabNumber{} была развёрнута и настроена
+платформа облачного файлового хранилища Seafile~\cfgSeafileVersion{}
+на виртуальной машине \texttt{seafile} (Ubuntu~22.04).
+
+Выполненные задачи:
+\begin{itemize}
+  \item статический IP \texttt{\cfgSeafileIP/24} настроен через Netplan;
+  \item прямая DNS-запись \texttt{seafile~IN~A~\cfgSeafileIP} добавлена
+    в зону \texttt{\cfgStudentDomain};
+  \item установлены MariaDB~\cite{mariadb_docs} и Python-зависимости;
+  \item Seafile инициализирован через скрипт \texttt{setup-seafile-mysql.sh},
+    созданы три базы данных;
+  \item Nginx настроен как обратный прокси: принимает запросы на
+    \texttt{\cfgSeafileIP:80}, передаёт seahub на
+    \texttt{127.0.0.1:8000}~\cite{nginx_docs};
+  \item службы \texttt{seafile} и \texttt{seahub} зарегистрированы
+    в systemd и добавлены в автозапуск;
+  \item клиент Seafile установлен на Desktop, синхронизация библиотек
+    проверена и работает.
+\end{itemize}
+
+Полученные навыки~--- развёртывание web-приложения с базой данных,
+настройка обратного прокси и управление системными сервисами~---
+являются базовыми компетенциями системного администратора.

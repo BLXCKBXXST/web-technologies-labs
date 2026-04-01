@@ -1,0 +1,135 @@
+\section{Установка и настройка Seafile}
+
+\subsection{Системные зависимости}
+
+\begin{lstlisting}
+sudo su
+apt-get update
+apt install python3 python3-setuptools python3-pip libmysqlclient-dev
+\end{lstlisting}
+
+\begin{lstlisting}
+pip3 install --timeout=3600 django==3.2.* Pillow pylibmc captcha jinja2 \
+  sqlalchemy==1.4.3 django-pylibmc django-simple-captcha python3-ldap \
+  mysqlclient pycryptodome==3.12.0 cffi==1.14.0
+\end{lstlisting}
+
+\subsection{Установка MariaDB}
+
+\begin{lstlisting}
+apt install mariadb-server
+mysqladmin -u root password
+mysql
+  flush privileges;
+  \q;
+systemctl enable mariadb
+\end{lstlisting}
+
+\subsection{Загрузка и установка Seafile}
+
+\begin{lstlisting}
+mkdir /opt/seafile && cd /opt/seafile
+wget https://s3.eu-central-1.amazonaws.com/download.seadrive.org/\
+seafile-server_9.0.9_x86-64.tar.gz
+tar -xzf seafile-server_9.0.9_x86-64.tar.gz
+chown -R N_USER:N_USER /opt/seafile/
+\end{lstlisting}
+
+Запускаем мастер-установщик:
+
+\begin{lstlisting}
+cd ./seafile-server-9.0.9/
+./setup-seafile-mysql.sh
+  # Имя сервера:  seafile
+  # IP сервера:   192.168.N.4
+  # Порт:         8082 (по умолчанию)
+  # MySQL host:   localhost
+  # MySQL port:   3306
+  # MySQL root pw: <ваш пароль>
+  # Создать новые БД: [1]
+\end{lstlisting}
+
+Скрипт создал базы данных \texttt{ccnet-db}, \texttt{seafile-db}, \texttt{seahub-db}.
+
+\subsection{Настройка Nginx}
+
+\begin{lstlisting}
+apt install nginx -y
+touch /etc/nginx/sites-available/seafile.conf
+ln -s /etc/nginx/sites-available/seafile.conf \
+       /etc/nginx/sites-enabled/seafile.conf
+rm /etc/nginx/sites-enabled/default
+\end{lstlisting}
+
+\begin{lstlisting}
+nano /etc/nginx/sites-enabled/seafile.conf
+\end{lstlisting}
+
+\begin{lstlisting}
+server {
+    listen 192.168.N.4:80;
+    server_name seafile.lan;
+    index index.html;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_buffering off;
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+service nginx restart
+\end{lstlisting}
+
+Nginx принимает запросы на \texttt{\cfgSeafileIP:80} и
+передаёт их seahub (\texttt{127.0.0.1:8000})~\cite{nginx_docs}.
+
+\subsection{Первый запуск Seafile}
+
+\begin{lstlisting}
+/opt/seafile/seafile-server-9.0.9/seafile.sh start
+/opt/seafile/seafile-server-9.0.9/seahub.sh start
+# Создать аккаунт администратора: admin@STUDENT.GROUP.local
+\end{lstlisting}
+
+\subsection{Автозапуск через systemd}
+
+\begin{lstlisting}
+nano /etc/systemd/system/seafile.service
+\end{lstlisting}
+
+\begin{lstlisting}
+[Unit]
+Description=Seafile
+After=mariadb.service
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/seafile/seafile-server-9.0.9/seafile.sh start
+ExecStop=/opt/seafile/seafile-server-9.0.9/seafile.sh stop
+
+[Install]
+WantedBy=multi-user.target
+\end{lstlisting}
+
+\begin{lstlisting}
+systemctl enable seafile
+systemctl enable seahub
+\end{lstlisting}
+
+\subsection{Установка клиента Seafile на Desktop}
+
+\begin{lstlisting}
+sudo su
+add-apt-repository ppa:seafile/seafile-client
+apt-get update
+apt-get install seafile-gui
+\end{lstlisting}
+
+В графическом клиенте подключились к серверу \texttt{http://\cfgSeafileIP},
+синхронизировали тестовую библиотеку. Файлы появились на сервере и на Desktop
+одновременно --- синхронизация работает корректно.

@@ -1,0 +1,93 @@
+\documentclass[a4paper,14pt]{article}
+
+%% Кодировка и язык
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian,english]{babel}
+
+%% Поля (ГОСТ)
+\usepackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+
+%% Шрифт Times
+\usepackage{times}
+\usepackage{mathptmx}
+
+%% Межстрочный интервал и отступ абзаца
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\usepackage{indentfirst}
+
+%% Заголовки секций
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\bfseries\large}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\section}{0pt}{20pt}{10pt}
+\titlespacing*{\subsection}{0pt}{16pt}{8pt}
+
+%% Оглавление
+\usepackage{tocloft}
+\renewcommand{\contentsname}{\centering Содержание}
+\renewcommand{\cftsecfont}{}
+\renewcommand{\cftsecpagefont}{}
+\setlength{\cftbeforesecskip}{2pt}
+
+%% Таблицы и рисунки
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\captionsetup[table]{justification=raggedright,singlelinecheck=false}
+\captionsetup[figure]{name=Рисунок,justification=centering}
+
+%% Списки
+\usepackage{enumitem}
+\setlist{noitemsep}
+
+%% Листинги
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    showstringspaces=false,
+    inputencoding=utf8,
+    extendedchars=true
+}
+
+%% Библиография
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{ugost2008}
+
+%% Гиперссылки
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+
+%% Доп. пакеты
+\usepackage{amsmath}
+\usepackage{textcomp}
+
+%% !! Все переменные: студент, преподаватель, тема и т.д. !!
+\input{config}
+
+%% Документ
+\begin{document}
+
+\input{parts/title}
+
+\newpage
+\setcounter{page}{2}
+\tableofcontents
+\newpage
+
+\input{parts/intro}
+\input{parts/chap1}
+\input{parts/chap2}
+\input{parts/chap3}
+\input{parts/conclusion}
+
+\newpage
+\bibliography{refs}
+
+\end{document}
