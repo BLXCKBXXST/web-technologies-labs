@@ -16,6 +16,14 @@
   \item \textbf{Desktop1}~--- Ubuntu Desktop, один адаптер (Внутренняя сеть).
 \end{itemize}
 
+% --- Скриншот: настройка сетевых адаптеров ВМ gateway в VirtualBox ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/01_vbox_adapters}
+  \caption{Настройка сетевых адаптеров ВМ gateway в VirtualBox}
+  \label{fig:vbox-adapters}
+\end{figure}
+
 \section{Настройка сетевых интерфейсов через Netplan}
 \label{sec:netplan-setup}
 
@@ -27,11 +35,27 @@ sudo su
 ip a
 \end{lstlisting}
 
+% --- Скриншот: вывод команды ip a (список интерфейсов до настройки) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/02_ip_a_before}
+  \caption{Список сетевых интерфейсов до настройки (\texttt{ip a})}
+  \label{fig:ip-a-before}
+\end{figure}
+
 Редактируем конфигурационный файл Netplan:
 
 \begin{lstlisting}
 nano /etc/netplan/00-installer-config.yaml
 \end{lstlisting}
+
+% --- Скриншот: содержимое файла 00-installer-config.yaml в nano ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/03_netplan_yaml}
+  \caption{Файл конфигурации Netplan \texttt{00-installer-config.yaml}}
+  \label{fig:netplan-yaml}
+\end{figure}
 
 Содержимое файла для VirtualBox (тип адаптера NAT):
 
@@ -62,6 +86,22 @@ ip a
 ping ya.ru
 \end{lstlisting}
 
+% --- Скриншот: вывод ip a после netplan apply (интерфейсы получили адреса) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/04_ip_a_after}
+  \caption{Состояние интерфейсов после \texttt{netplan apply}}
+  \label{fig:ip-a-after}
+\end{figure}
+
+% --- Скриншот: успешный ping ya.ru с сервера ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/05_ping_yaru_server}
+  \caption{Проверка доступа в Интернет с сервера (\texttt{ping ya.ru})}
+  \label{fig:ping-server}
+\end{figure}
+
 После \texttt{netplan apply} интерфейс \texttt{enp0s3} получил адрес
 \texttt{10.0.2.15/24}, \texttt{enp0s8}~---
 \texttt{192.168.\cfgLabStudentN.1/24}.
@@ -79,5 +119,21 @@ ping ya.ru
   \item DNS-сервер: \texttt{192.168.\cfgLabStudentN.1}.
 \end{itemize}
 
+% --- Скриншот: настройка IPv4 вручную в nm-connection-editor на Desktop1 ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/06_desktop_ip_manual}
+  \caption{Настройка статического IP-адреса на клиенте Desktop1}
+  \label{fig:desktop-manual}
+\end{figure}
+
 Проверка связи: \texttt{ping~192.168.\cfgLabStudentN.1}~--- запросы
 проходят успешно.
+
+% --- Скриншот: ping с Desktop1 на шлюз  192.168.N.1 ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/07_ping_gateway_from_desktop}
+  \caption{Проверка связи с клиента до шлюза (\texttt{ping 192.168.\cfgLabStudentN.1})}
+  \label{fig:ping-gw}
+\end{figure}

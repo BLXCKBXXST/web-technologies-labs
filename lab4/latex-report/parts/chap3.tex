@@ -13,6 +13,14 @@ nano /etc/sysctl.conf
 net.ipv4.ip_forward=1
 \end{lstlisting}
 
+% --- Скриншот: файл sysctl.conf с разкомментированной строкой ip_forward ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/08_sysctl_ipforward}
+  \caption{Файл \texttt{/etc/sysctl.conf}: включён параметр \texttt{net.ipv4.ip\_forward=1}}
+  \label{fig:sysctl}
+\end{figure}
+
 \section{Установка iptables-persistent}
 \label{sec:iptables-persistent}
 
@@ -24,6 +32,14 @@ net.ipv4.ip_forward=1
 apt-get update
 apt install iptables-persistent
 \end{lstlisting}
+
+% --- Скриншот: диалог сохранения правил во время установки iptables-persistent ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_iptables_persistent_dialog}
+  \caption{Диалог сохранения правил при установке \texttt{iptables-persistent}}
+  \label{fig:iptables-dialog}
+\end{figure}
 
 \section{Настройка правил iptables}
 \label{sec:iptables-rules}
@@ -54,6 +70,14 @@ iptables-save > /etc/iptables/rules.v4
 reboot
 \end{lstlisting}
 
+% --- Скриншот: вывод iptables -L -n -v или iptables -t nat -L ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/10_iptables_rules}
+  \caption{Созданные правила NAT (вывод \texttt{iptables -t nat -L})}
+  \label{fig:iptables-rules}
+\end{figure}
+
 Правило \texttt{MASQUERADE} заменяет IP-адрес источника в исходящем пакете
 на \texttt{10.0.2.15}. Правила \texttt{DNAT} перенаправляют DNS-запросы
 внутренней сети на сервер Google.
@@ -76,6 +100,14 @@ nano /etc/default/isc-dhcp-server
 INTERFACESv4="enp0s8"
 \end{lstlisting}
 
+% --- Скриншот: файл /etc/default/isc-dhcp-server с указанным INTERFACESv4 ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/11_dhcp_interfaces}
+  \caption{Файл \texttt{/etc/default/isc-dhcp-server}: указан интерфейс \texttt{enp0s8}}
+  \label{fig:dhcp-interfaces}
+\end{figure}
+
 \textbf{Подготовка конфигурационного файла} (предварительно делаем резервную
 копию и очищаем оригинал):
 
@@ -84,6 +116,14 @@ cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.example
 echo "" > /etc/dhcp/dhcpd.conf
 nano /etc/dhcp/dhcpd.conf
 \end{lstlisting}
+
+% --- Скриншот: содержимое файла dhcpd.conf в nano ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/12_dhcpd_conf}
+  \caption{Конфигурационный файл \texttt{/etc/dhcp/dhcpd.conf}}
+  \label{fig:dhcpd-conf}
+\end{figure}
 
 \textbf{Содержимое конфигурационного файла:}
 
@@ -109,6 +149,14 @@ subnet 192.168.N.0 netmask 255.255.255.0 {
 service isc-dhcp-server start
 service isc-dhcp-server status
 \end{lstlisting}
+
+% --- Скриншот: вывод service isc-dhcp-server status (статус active running) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/13_dhcp_status}
+  \caption{Статус сервиса \texttt{isc-dhcp-server}: \texttt{active (running)}}
+  \label{fig:dhcp-status}
+\end{figure}
 
 В статусе должна присутствовать строка
 \texttt{Active: active (running)}, а в логах~--- указание на прослушивание
@@ -143,12 +191,28 @@ a \texttt{fixed-address}~--- IP-адрес, который будет выдав
 nano /var/lib/dhcp/dhcpd.leases
 \end{lstlisting}
 
+% --- Скриншот: Desktop1 получил IP от DHCP (настройки сети графического интерфейса или ip a) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/14_desktop_dhcp_ip}
+  \caption{Клиент Desktop1 получил IP-адрес от DHCP-сервера}
+  \label{fig:dhcp-client}
+\end{figure}
+
 \textbf{Проверка связи и доступа в Интернет с клиента:}
 
 \begin{lstlisting}
 ping 192.168.N.1
 ping ya.ru
 \end{lstlisting}
+
+% --- Скриншот: ping ya.ru с Desktop1 (Интернет работает) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/15_ping_yaru_desktop}
+  \caption{Проверка доступа в Интернет с \texttt{Desktop1} (\texttt{ping ya.ru})}
+  \label{fig:ping-desktop}
+\end{figure}
 
 \section{Траблшутинг}
 \label{sec:troubleshoot}
@@ -161,6 +225,14 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 tail -50 /var/log/syslog
 \end{lstlisting}
+
+% --- Скриншот: вывод tail -50 /var/log/syslog с примером ошибки (semicolon expected) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/16_syslog_error}
+  \caption{Пример ошибки в \texttt{/var/log/syslog}: отсутствие точки с запятой в \texttt{dhcpd.conf}}
+  \label{fig:syslog-error}
+\end{figure}
 
 Файл \texttt{/var/log/syslog} позволяет определить причину ошибки~---
 например, пропущенную точку с запятой после \texttt{authoritative}
