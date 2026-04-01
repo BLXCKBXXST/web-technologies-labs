@@ -1,23 +1,39 @@
-\section{Описание стенда и подготовка}
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
 
-\subsection{Конфигурация виртуального стенда}
+\section{Конфигурация виртуального стенда}
+\label{sec:stand-conf}
 
-Для выполнения работы использовались две виртуальные машины (VirtualBox):
+Для выполнения практической работы использовались две виртуальные машины
+на платформе VirtualBox:
 \begin{itemize}
-  \item \textbf{gateway}~--- Ubuntu~20.04.5~LTS Server, 2 сетевых адаптера:
+  \item \textbf{gateway}~--- Ubuntu~20.04.5~LTS Server, два сетевых адаптера:
     \begin{itemize}
-      \item \texttt{enp0s3} (NAT): \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
-      \item \texttt{enp0s8} (Внутренняя сеть): \texttt{192.168.\cfgLabStudentN.1/24}.
+      \item \texttt{enp0s3}~(NAT): адрес \texttt{10.0.2.15/24},
+        шлюз \texttt{10.0.2.2}, DNS \texttt{8.8.8.8};
+      \item \texttt{enp0s8}~(Внутренняя сеть): \texttt{192.168.\cfgLabStudentN.1/24}.
     \end{itemize}
-  \item \textbf{Desktop1}~--- Ubuntu~Desktop, 1 адаптер (внутренняя сеть).
+  \item \textbf{Desktop1}~--- Ubuntu Desktop, один адаптер (Внутренняя сеть).
 \end{itemize}
 
-\subsection{Настройка netplan на сервере}
+\section{Настройка сетевых интерфейсов через Netplan}
+\label{sec:netplan-setup}
+
+После клонирования ВМ из шаблонов поднимаем права до root и просматриваем
+список интерфейсов:
 
 \begin{lstlisting}
 sudo su
+ip a
+\end{lstlisting}
+
+Редактируем конфигурационный файл Netplan:
+
+\begin{lstlisting}
 nano /etc/netplan/00-installer-config.yaml
 \end{lstlisting}
+
+Содержимое файла для VirtualBox (тип адаптера NAT):
 
 \begin{lstlisting}
 network:
@@ -37,6 +53,9 @@ network:
         - 192.168.N.1/24
 \end{lstlisting}
 
+Где \texttt{N}~--- номер студента в журнале. Применяем конфигурацию и
+проверяем результат:
+
 \begin{lstlisting}
 netplan apply
 ip a
@@ -44,18 +63,21 @@ ping ya.ru
 \end{lstlisting}
 
 После \texttt{netplan apply} интерфейс \texttt{enp0s3} получил адрес
-\texttt{10.0.2.15/24}, \texttt{enp0s8}~--- \texttt{192.168.\cfgLabStudentN.1/24}.
-Доступ в Интернет с сервера подтверждён \texttt{ping~ya.ru}.
+\texttt{10.0.2.15/24}, \texttt{enp0s8}~---
+\texttt{192.168.\cfgLabStudentN.1/24}.
+Доступ в Интернет с сервера подтверждён командой \texttt{ping~ya.ru}.
 
-\subsection{Настройка клиента Desktop1 (вручную)}
+\section{Настройка клиента Desktop1 вручную}
+\label{sec:desktop-manual}
 
-До развёртывания DHCP-сервера IP-адрес клиенту назначался вручную через графический
-интерфейс \texttt{nm-connection-editor}:
+До развёртывания DHCP-сервера IP-адрес клиенту назначался вручную через
+графический интерфейс \texttt{nm-connection-editor} со следующими параметрами:
 \begin{itemize}
-  \item IP: \texttt{192.168.\cfgLabStudentN.10};
-  \item Маска: \texttt{255.255.255.0};
-  \item Шлюз: \texttt{192.168.\cfgLabStudentN.1};
-  \item DNS: \texttt{192.168.\cfgLabStudentN.1}.
+  \item IP-адрес: \texttt{192.168.\cfgLabStudentN.10};
+  \item маска подсети: \texttt{255.255.255.0};
+  \item шлюз: \texttt{192.168.\cfgLabStudentN.1};
+  \item DNS-сервер: \texttt{192.168.\cfgLabStudentN.1}.
 \end{itemize}
 
-Проверка связи: \texttt{ping~192.168.\cfgLabStudentN.1}~--- запросы проходят.
+Проверка связи: \texttt{ping~192.168.\cfgLabStudentN.1}~--- запросы
+проходят успешно.

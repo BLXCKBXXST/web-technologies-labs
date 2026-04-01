@@ -1,22 +1,25 @@
-\section*{Введение}
-\addcontentsline{toc}{section}{Введение}
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
 
-Для обеспечения клиентам локальной сети доступа в Интернет необходимо настроить шлюз, который
-принимает запросы клиентов и пересылает их во внешнюю сеть, а поступающие ответы
-передаёт обратно во внутреннюю сеть. Такой шлюз реализуется с использованием механизма
-\textbf{NAT} (Network Address Translation)~\cite{iptables_man}.
+Для обеспечения клиентам локальной сети доступа в Интернет необходимо настроить шлюз,
+который принимает запросы клиентов и пересылает их во внешнюю сеть, а поступающие
+ответы передаёт обратно во внутреннюю сеть. Такой шлюз реализуется с использованием
+механизма \textbf{NAT} (Network Address Translation)~\cite{iptables_man}.
 
-Целью данной практической работы является настройка виртуальной машины \texttt{gateway} на базе
- Ubuntu~20.04~LTS в качестве сетевого шлюза с двумя интерфейсами.
+Целью данной практической работы является настройка виртуальной машины
+\texttt{gateway} на базе Ubuntu~20.04~LTS в качестве сетевого шлюза с двумя сетевыми
+интерфейсами.
 
 В рамках работы решаются следующие задачи:
 \begin{itemize}
-  \item настройка сетевых интерфейсов (netplan);
-  \item включение передачи IP-пакетов (ip\_forward);
-  \item настройка правил NAT через iptables (MASQUERADE);
+  \item настройка сетевых интерфейсов через Netplan;
+  \item включение передачи IP-пакетов (\texttt{ip\_forward});
+  \item настройка правил NAT через \texttt{iptables} (цель \texttt{MASQUERADE});
   \item развёртывание и настройка DHCP-сервера \texttt{isc-dhcp-server}~\cite{isc_dhcp}.
 \end{itemize}
 
-Стенд: виртуальная машина \texttt{gateway} (VirtualBox),
-интерфейсы \texttt{enp0s3}~(WAN/NAT) и \texttt{enp0s8}~(LAN, \texttt{192.168.\cfgLabStudentN.1/24});
-клиентская виртуальная машина \texttt{Desktop1} (Ubuntu~Desktop).
+Стенд: виртуальная машина \texttt{gateway}~(VirtualBox),
+интерфейсы \texttt{enp0s3}~(WAN/NAT) и \texttt{enp0s8}~(LAN,
+\texttt{192.168.\cfgLabStudentN.1/24});
+клиентская виртуальная машина \texttt{Desktop1}~(Ubuntu Desktop).
