@@ -1,3 +1,4 @@
+% !TEX program = xelatex
 \documentclass[a4paper,14pt,oneside,openany]{memoir}
 
 %%% Поля и отступы %%%
@@ -115,7 +116,7 @@
 \counterwithout{equation}{chapter}
 \counterwithout{table}{chapter}
 
-%%% Блоки кода (листинги) %%%
+%%% Листинги (блоки кода) %%%
 \usepackage{listings}
 \usepackage{xcolor}
 \lstset{
@@ -123,9 +124,7 @@
     breaklines=true,
     frame=single,
     tabsize=2,
-    showstringspaces=false,
-    extendedchars=true,
-    inputencoding=utf8
+    showstringspaces=false
 }
 
 %%% Библиография %%%
