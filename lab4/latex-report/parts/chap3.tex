@@ -1,0 +1,113 @@
+\section{Настройка NAT и DHCP-сервера}
+
+\subsection{Включение IP-форвардинга}
+
+\begin{lstlisting}
+nano /etc/sysctl.conf
+# снять комментарий:
+net.ipv4.ip_forward=1
+\end{lstlisting}
+
+\subsection{Установка iptables-persistent}
+
+\begin{lstlisting}
+apt-get update
+apt install iptables-persistent
+# Соглашаемся с обоими запросами сохранения правил
+\end{lstlisting}
+
+\subsection{Правила iptables}
+
+\begin{lstlisting}
+iptables -F
+iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+iptables -A FORWARD -i enp0s3 -o enp0s3 -j REJECT
+iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+# DNS DNAT (перенаправление DNS-запросов LAN -> Google 8.8.8.8)
+iptables -t nat -A PREROUTING -i enp0s8 -p tcp --dport 53 -j DNAT --to-destination 8.8.8.8:53
+iptables -t nat -A PREROUTING -i enp0s8 -p udp --dport 53 -j DNAT --to-destination 8.8.8.8:53
+iptables-save > /etc/iptables/rules.v4
+reboot
+\end{lstlisting}
+
+Правило \texttt{MASQUERADE} заменяет IP-адрес источника в исходящем пакете на \texttt{10.0.2.15}.
+Правила \texttt{DNAT} перенаправляют DNS-запросы внутренней сети на сервер Google.
+
+\subsection{Установка и настройка DHCP-сервера}
+
+\begin{lstlisting}
+apt-get update
+apt install isc-dhcp-server
+\end{lstlisting}
+
+\textbf{Указываем интерфейс:}
+\begin{lstlisting}
+nano /etc/default/isc-dhcp-server
+# INTERFACESv4="enp0s8"
+\end{lstlisting}
+
+\textbf{Конфигурационный файл DHCP:}
+\begin{lstlisting}
+cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.example
+echo "" > /etc/dhcp/dhcpd.conf
+nano /etc/dhcp/dhcpd.conf
+\end{lstlisting}
+
+\begin{lstlisting}
+authoritative;
+subnet 192.168.N.0 netmask 255.255.255.0 {
+    range 192.168.N.10 192.168.N.254;
+    option domain-name-servers 192.168.N.1;
+    option routers 192.168.N.1;
+    option broadcast-address 192.168.N.255;
+    default-lease-time 604800;
+    max-lease-time 604800;
+}
+\end{lstlisting}
+
+\textbf{Запуск и проверка:}
+\begin{lstlisting}
+service isc-dhcp-server start
+service isc-dhcp-server status
+\end{lstlisting}
+
+Статус содержит \texttt{Active: active (running)} и указывает, что сервер слушает
+на \texttt{enp0s8} с сетью \texttt{192.168.\cfgLabStudentN.0/24}.
+
+\subsection{Резервирование IP-адреса по MAC}
+
+При необходимости закрепить постоянный IP за определённой машиной добавляется секция:
+\begin{lstlisting}
+host testhost {
+    hardware ethernet 00:01:8a:e3:5e:92;
+    fixed-address 192.168.N.51;
+}
+\end{lstlisting}
+
+\subsection{Проверка выдачи IP клиенту}
+
+На Desktop1 переключили получение IP-адреса на «автоматически».
+Машина получила адрес из диапазона \texttt{192.168.\cfgLabStudentN.10}--\texttt{192.168.\cfgLabStudentN.254}.
+
+\begin{lstlisting}
+# На сервере — просмотр выданных аренд:
+nano /var/lib/dhcp/dhcpd.leases
+\end{lstlisting}
+
+\textbf{Проверка связи и доступа в Интернет:}
+\begin{lstlisting}
+# На Desktop:
+ping 192.168.N.1
+ping ya.ru
+\end{lstlisting}
+
+\subsection{Траблшутинг}
+
+\begin{lstlisting}
+service isc-dhcp-server restart
+service isc-dhcp-server status
+tail -50 /var/log/syslog
+\end{lstlisting}
+
+Лог-файл \texttt{/var/log/syslog} помогает определить ошибки в конфигурационном
+файле (\u043dапример, пропущенная точка с запятой \texttt{authoritative;}).

@@ -1,0 +1,61 @@
+\section{Описание стенда и подготовка}
+
+\subsection{Конфигурация виртуального стенда}
+
+Для выполнения работы использовались две виртуальные машины (VirtualBox):
+\begin{itemize}
+  \item \textbf{gateway}~--- Ubuntu~20.04.5~LTS Server, 2 сетевых адаптера:
+    \begin{itemize}
+      \item \texttt{enp0s3} (NAT): \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
+      \item \texttt{enp0s8} (Внутренняя сеть): \texttt{192.168.\cfgLabStudentN.1/24}.
+    \end{itemize}
+  \item \textbf{Desktop1}~--- Ubuntu~Desktop, 1 адаптер (внутренняя сеть).
+\end{itemize}
+
+\subsection{Настройка netplan на сервере}
+
+\begin{lstlisting}
+sudo su
+nano /etc/netplan/00-installer-config.yaml
+\end{lstlisting}
+
+\begin{lstlisting}
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 10.0.2.15/24
+      gateway4: 10.0.2.2
+      nameservers:
+        addresses: [8.8.8.8]
+    enp0s8:
+      dhcp4: no
+      addresses:
+        - 192.168.N.1/24
+\end{lstlisting}
+
+\begin{lstlisting}
+netplan apply
+ip a
+ping ya.ru
+\end{lstlisting}
+
+После \texttt{netplan apply} интерфейс \texttt{enp0s3} получил адрес
+\texttt{10.0.2.15/24}, \texttt{enp0s8}~--- \texttt{192.168.\cfgLabStudentN.1/24}.
+Доступ в Интернет с сервера подтверждён \texttt{ping~ya.ru}.
+
+\subsection{Настройка клиента Desktop1 (вручную)}
+
+До развёртывания DHCP-сервера IP-адрес клиенту назначался вручную через графический
+интерфейс \texttt{nm-connection-editor}:
+\begin{itemize}
+  \item IP: \texttt{192.168.\cfgLabStudentN.10};
+  \item Маска: \texttt{255.255.255.0};
+  \item Шлюз: \texttt{192.168.\cfgLabStudentN.1};
+  \item DNS: \texttt{192.168.\cfgLabStudentN.1}.
+\end{itemize}
+
+Проверка связи: \texttt{ping~192.168.\cfgLabStudentN.1}~--- запросы проходят.

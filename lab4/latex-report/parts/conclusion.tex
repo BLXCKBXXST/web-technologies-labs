@@ -1,0 +1,22 @@
+\section*{Заключение}
+\addcontentsline{toc}{section}{Заключение}
+
+В ходе выполнения практической работы~\cfgLabNumber{} была настроена виртуальная машина
+\texttt{gateway} под управлением Ubuntu~20.04~LTS, выполняющая роль шлюза локальной сети.
+
+Были выполнены следующие задачи:
+\begin{itemize}
+  \item настроены интерфейсы \texttt{enp0s3} (WAN) и \texttt{enp0s8} (LAN \texttt{192.168.\cfgLabStudentN.1/24})
+    через netplan;
+  \item включён IP-форвардинг (\texttt{net.ipv4.ip\_forward=1}) и созданы
+    правила NAT \texttt{MASQUERADE} через iptables;
+  \item настроен и запущен DHCP-сервер \texttt{isc-dhcp-server} с адресным
+    пулом \texttt{192.168.\cfgLabStudentN.10}--\texttt{192.168.\cfgLabStudentN.254};
+  \item клиентская машина Desktop1 автоматически получила адрес, маршрут и DNS
+    через DHCP.
+\end{itemize}
+
+Связь Desktop1 с шлюзом и доступ в Интернет проверены командами \texttt{ping~192.168.\cfgLabStudentN.1}
+и \texttt{ping~ya.ru}. Полученные навыки~--- настройка маршрутизации и NAT,
+администрирование DHCP-сервера~--- являются базовыми компетенциями
+сетевого администратора.

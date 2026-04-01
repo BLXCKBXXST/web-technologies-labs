@@ -1,0 +1,39 @@
+\section{Теоретические сведения}
+
+\subsection{NAT и маршрутизация пакетов}
+
+NAT (Network Address Translation)~--- механизм преобразования сетевых адресов
+в IP-пакетах при передаче через шлюз~\cite{iptables_man}. В режиме \textbf{MASQUERADE}
+исходящий адрес заменяется адресом внешнего интерфейса шлюза,
+что позволяет множеству внутренних узлов выходить в Интернет через один внешний IP-адрес.
+
+Для маршрутизации IPv4-пакетов ядро Linux содержит параметр \texttt{net.ipv4.ip\_forward}.
+По умолчанию он выключен (\texttt{= 0}); для работы шлюза его необходимо
+включить (\texttt{= 1}) в \texttt{/etc/sysctl.conf}.
+
+\subsection{iptables и netfilter}
+
+\textbf{netfilter}~--- подсистема ядра Linux, выполняющая фильтрацию и трансформацию
+пакетов.
+\textbf{iptables}~--- пользовательский интерфейс для управления netfilter~\cite{iptables_man}.
+Основные цепочки (chains) таблицы \texttt{nat}:
+\begin{itemize}
+  \item \texttt{PREROUTING}~--- обработка входящих пакетов до принятия решения о маршруте;
+  \item \texttt{POSTROUTING}~--- обработка исходящих пакетов перед отправкой;
+  \item цель \texttt{MASQUERADE}~--- подстановка внешнего IP-адреса вместо внутреннего.
+\end{itemize}
+
+\subsection{DHCP}
+
+DHCP (Dynamic Host Configuration Protocol, RFC~2131)~\cite{rfc2131}~--- протокол
+автоматической настройки сетевых параметров клиента (IP-адрес, маска,
+шлюз, DNS). Клиент отправляет броадкаст \texttt{DHCPDISCOVER}, сервер отвечает
+\texttt{DHCPOFFER}, далее клиент подтверждает запрос (\texttt{DHCPREQUEST}) и получает
+\texttt{DHCPACK} с параметрами.
+
+\subsection{Netplan}
+
+Netplan~--- утилита настройки сетевых интерфейсов в Ubuntu~\cite{netplan_docs}.
+Конфигурация описывается в YAML-файле \texttt{/etc/netplan/*.yaml} и применяется
+командой \texttt{netplan apply}. Параметры языка YAML: отступы только пробелами,
+значения --- после двоеточия с пробелом.
