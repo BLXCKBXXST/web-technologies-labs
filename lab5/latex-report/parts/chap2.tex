@@ -1,0 +1,35 @@
+\section{Описание стенда и подготовка}
+
+\subsection{Конфигурация виртуального стенда}
+
+ВМ \texttt{gateway}~--- Ubuntu~20.04.5~LTS (VirtualBox), два сетевых адаптера:
+\begin{itemize}
+  \item \texttt{enp0s3}~--- WAN (NAT): \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
+  \item \texttt{enp0s8}~--- LAN (Internal): \texttt{192.168.\cfgLabStudentN.1/24}.
+\end{itemize}
+
+К началу лабы~\cfgLabNumber{} уже настроены маршрутизация (ip\_forward + iptables MASQUERADE)
+и DHCP-сервер \texttt{isc-dhcp-server} (лаба~4).
+
+\subsection{Предварительная подготовка}
+
+\textbf{Установка hostname:}
+\begin{lstlisting}
+hostnamectl set-hostname SERVERHOSTNAME
+nano /etc/hosts
+# добавить: 127.0.1.1  SERVERHOSTNAME
+\end{lstlisting}
+
+\textbf{Удаление DNS DNAT-правил из лабы~4:}
+\begin{lstlisting}
+nano /etc/iptables/rules.v4
+# удалить строки:
+-A PREROUTING -i enp0s8 -p tcp --dport 53 -j DNAT --to-destination 8.8.8.8:53
+-A PREROUTING -i enp0s8 -p udp --dport 53 -j DNAT --to-destination 8.8.8.8:53
+reboot
+\end{lstlisting}
+
+\subsection{Установка BIND9}
+\begin{lstlisting}
+apt-get update && apt install bind9 dnsutils
+\end{lstlisting}
