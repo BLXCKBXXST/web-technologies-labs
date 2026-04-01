@@ -1,5 +1,13 @@
 # Lab 5 — LaTeX Report
 
+## ⬇️ Скачать папку архивом
+
+**[📦 Скачать latex-report.zip](https://github.com/BLXCKBXXST/linux-admin-labs/archive/refs/heads/main.zip)**
+
+> После распаковки нужная папка: `linux-admin-labs-main/lab5/latex-report/`
+
+---
+
 ## Структура проекта
 
 ```
