@@ -5,7 +5,7 @@
 Для обеспечения клиентам локальной сети доступа в Интернет необходимо настроить шлюз,
 который принимает запросы клиентов и пересылает их во внешнюю сеть, а поступающие
 ответы передаёт обратно во внутреннюю сеть. Такой шлюз реализуется с использованием
-механизма \textbf{NAT} (Network Address Translation)~\cite{iptables_man}.
+механизма \textbf{NAT} (Network Address Translation).
 
 Целью данной практической работы является настройка виртуальной машины
 \texttt{gateway} на базе Ubuntu~20.04~LTS в качестве сетевого шлюза с двумя сетевыми
@@ -16,7 +16,7 @@
   \item настройка сетевых интерфейсов через Netplan;
   \item включение передачи IP-пакетов (\texttt{ip\_forward});
   \item настройка правил NAT через \texttt{iptables} (цель \texttt{MASQUERADE});
-  \item развёртывание и настройка DHCP-сервера \texttt{isc-dhcp-server}~\cite{isc_dhcp}.
+  \item развёртывание и настройка DHCP-сервера \texttt{isc-dhcp-server}.
 \end{itemize}
 
 Стенд: виртуальная машина \texttt{gateway}~(VirtualBox),
