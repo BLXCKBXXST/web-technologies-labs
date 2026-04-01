@@ -1,16 +1,16 @@
 \documentclass[a4paper,14pt]{article}
 
-%% Кодировка и язык
-\usepackage[utf8]{inputenc}
-\usepackage[T2A]{fontenc}
-\usepackage[russian,english]{babel}
+%% Язык и кодировка (XeLaTeX)
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+%% Шрифт Times New Roman
+\setmainfont{Times New Roman}
 
 %% Поля (ГОСТ)
 \usepackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
-
-%% Шрифт Times
-\usepackage{times}
-\usepackage{mathptmx}
 
 %% Межстрочный интервал и отступ абзаца
 \usepackage{setspace}
@@ -52,9 +52,7 @@
     breaklines=true,
     frame=single,
     tabsize=2,
-    showstringspaces=false,
-    inputencoding=utf8,
-    extendedchars=true
+    showstringspaces=false
 }
 
 %% Библиография
