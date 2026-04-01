@@ -1,122 +1,52 @@
-% !TEX program = xelatex
-\documentclass[a4paper,14pt,oneside,openany]{memoir}
+\documentclass[a4paper,14pt]{article}
 
-%%% Поля и отступы %%%
-\usepackage[left=30mm, right=15mm, top=20mm, bottom=20mm]{geometry}
-\pagestyle{plain}
-\parindent=1.25cm
+%% Кодировка и язык
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian,english]{babel}
+
+%% Поля
+\usepackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+
+%% Шрифт Times
+\usepackage{times}
+\usepackage{mathptmx}
+
+%% Межстрочный интервал и отступ
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+
+%% Первый абзац с отступом
 \usepackage{indentfirst}
 
-%%% Языковые параметры и шрифт %%%
-\usepackage{polyglossia}
-\setdefaultlanguage[indentfirst=true,forceheadingpunctuation=false]{russian}
-\setotherlanguages{english}
+%% Заголовки секций --- по РОСТ
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\bfseries\large}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\section}{0pt}{20pt}{10pt}
+\titlespacing*{\subsection}{0pt}{16pt}{8pt}
 
-\IfFontExistsTF{Times New Roman}
-{\setmainfont{Times New Roman}
-\newfontfamily\cyrillicfont{Times New Roman}[Script=Cyrillic]}
-{\setmainfont[Script=Cyrillic]{FreeSerif}}
+%% Оглавление
+\usepackage{tocloft}
+\renewcommand{\contentsname}{\centering Содержание}
+\renewcommand{\cftsecfont}{}
+\renewcommand{\cftsecpagefont}{}
+\setlength{\cftbeforesecskip}{2pt}
 
-\IfFontExistsTF{Courier New}
-{\setmonofont{Courier New}
-\newfontfamily\cyrillicfonttt{Courier New}[Script=Cyrillic]}
-{\setmonofont[Script=Cyrillic]{FreeMono}}
+%% Таблицы и рисунки
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\captionsetup[table]{justification=raggedright,singlelinecheck=false}
+\captionsetup[figure]{name=Рисунок,justification=centering}
 
-\IfFontExistsTF{Arial}
-{\setsansfont{Arial}
-\newfontfamily\cyrillicfontsf{Arial}[Script=Cyrillic]}
-{\setsansfont[Script=Cyrillic]{FreeSans}}
-
-%%% Стиль заголовков %%%
-\setsecnumdepth{subsection}
-\renewcommand*{\chapterheadstart}{}
-\renewcommand*{\printchaptername}{}
-\renewcommand*{\chapnumfont}{\normalfont\bfseries}
-\renewcommand*{\afterchapternum}{\hspace{1em}}
-\renewcommand*{\printchaptertitle}{\normalfont\bfseries\centering\MakeUppercase}
-\setbeforesecskip{20pt}
-\setaftersecskip{20pt}
-\setsecheadstyle{\raggedright\normalfont\bfseries}
-\setbeforesubsecskip{20pt}
-\setaftersubsecskip{20pt}
-\setsubsecheadstyle{\raggedright\normalfont\bfseries}
-
-%%% Оглавление %%%
-\addto\captionsrussian{\renewcommand\contentsname{Содержание}}
-\setrmarg{2.55em plus1fil}
-\renewcommand{\aftertoctitle}{\afterchaptertitle \vspace{-\cftbeforechapterskip}}
-\renewcommand*{\cftchapternumwidth}{1.5em}
-\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase}
-\renewcommand*{\cftchapterpagefont}{\normalfont}
-\renewcommand*{\cftchapterdotsep}{\cftdotsep}
-\renewcommand*{\cftdotsep}{1}
-\renewcommand*{\cftchapterleader}{\cftdotfill{\cftchapterdotsep}}
-\maxtocdepth{subsection}
-
-%%% Выравнивание и переносы %%%
-\tolerance 1414
-\hbadness 1414
-\emergencystretch 1.5em
-\hfuzz 0.3pt
-\vfuzz \hfuzz
-\clubpenalty=10000
-\widowpenalty=10000
-\brokenpenalty=4991
-
-%%% Кириллица в перечислениях %%%
-\makeatletter
-    \def\russian@Alph#1{\ifcase#1\or
-       А\or Б\or В\or Г\or Д\or Е\or Ж\or
-       И\or К\or Л\or М\or Н\or
-       П\or Р\or С\or Т\or У\or Ф\or Х\or
-       Ц\or Ш\or Щ\or Э\or Ю\or Я\else\xpg@ill@value{#1}{russian@Alph}\fi}
-    \def\russian@alph#1{\ifcase#1\or
-       а\or б\or в\or г\or д\or е\or ж\or
-       и\or к\or л\or м\or н\or
-       п\or р\or с\or т\or у\or ф\or х\or
-       ц\or ш\or щ\or э\or ю\or я\else\xpg@ill@value{#1}{russian@alph}\fi}
-\makeatother
-
-%%% Рисунки и таблицы %%%
-\usepackage{graphicx, caption, subcaption}
-\graphicspath{{images/}}
-\captionsetup[figure]{font=small, width=\textwidth, name=Рисунок, justification=centering}
-\captionsetup[subfigure]{font=small}
-\captionsetup[table]{singlelinecheck=false,font=small,width=\textwidth,justification=justified}
-\captiondelim{ --- }
-\setkeys{Gin}{width=\textwidth}
-\renewcommand{\thesubfigure}{\asbuk{subfigure}}
-\usepackage[section]{placeins}
-
-%%% Гиперссылки %%%
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linktoc=all,
-    linktocpage=true,
-    linkcolor=red,
-    citecolor=red
-}
-
-%%% Списки %%%
+%% Списки
 \usepackage{enumitem}
-\renewcommand*{\labelitemi}{\normalfont{--}}
-\makeatletter
-    \AddEnumerateCounter{\asbuk}{\russian@alph}
-\makeatother
-\renewcommand{\labelenumii}{\asbuk{enumii})}
-\renewcommand{\labelenumiii}{\arabic{enumiii})}
-\setlist{noitemsep, leftmargin=*}
-\setlist[1]{labelindent=\parindent}
-\setlist[2]{leftmargin=\parindent}
-\setlist[3]{leftmargin=\parindent}
+\setlist{noitemsep}
 
-%%% Счётчики %%%
-\counterwithout{figure}{chapter}
-\counterwithout{equation}{chapter}
-\counterwithout{table}{chapter}
-
-%%% Листинги (блоки кода) %%%
+%% Листинги
 \usepackage{listings}
 \usepackage{xcolor}
 \lstset{
@@ -124,60 +54,38 @@
     breaklines=true,
     frame=single,
     tabsize=2,
-    showstringspaces=false
+    showstringspaces=false,
+    inputencoding=utf8,
+    extendedchars=true
 }
 
-%%% Библиография %%%
-\usepackage{csquotes}
-\usepackage[%
-backend=biber,
-bibencoding=utf8,
-sorting=none,
-style=gost-numeric,
-language=auto,
-autolang=other,
-sortcites=true,
-movenames=false,
-maxnames=5,
-minnames=3,
-doi=false,
-isbn=false,
-]{biblatex}[2016/09/17]
-\DeclareDelimFormat{bibinitdelim}{}
-\addbibresource{bibl.bib}
+%% Библиография
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{ugost2008}
 
-\DeclareSourcemap{
-  \maps[datatype=bibtex]{
-    \map{
-        \step[fieldsource=title, match=\regexp{^\P{Cyrillic}*\p{Cyrillic}.*}, final]
-        \step[fieldset=langid, fieldvalue={russian}]
-    }
-    \map{
-        \step[fieldset=langid, fieldvalue={english}]
-    }
-  }
-}
+%% Гиперссылки
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
 
-%%% Доп. пакеты %%%
-\usepackage{longtable,ltcaption}
-\usepackage{multirow,makecell}
-\usepackage{booktabs}
-\usepackage{soulutf8}
-\usepackage{icomma}
-\usepackage{hyphenat}
-\usepackage{textcomp}
+%% Прочее
 \usepackage{amsmath}
+\usepackage{textcomp}
 
-%%% Документ %%%
+%% Числовые заголовки без слова "Глава"
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-20\p@ \@plus -4\p@ \@minus -4\p@}%
+  {10\p@ \@plus 4\p@ \@minus 4\p@}%
+  {\normalfont\large\bfseries\raggedright}}
+\makeatother
+
 \begin{document}
 
 \input{1_title}
 
 \newpage
 \setcounter{page}{2}
-\OnehalfSpacing*
-
-\tableofcontents*
+\tableofcontents
+\newpage
 
 \input{2_intro}
 \input{3_chap1}
@@ -185,6 +93,7 @@ isbn=false,
 \input{5_chap3}
 \input{6_chap4}
 
-\printbibliography[title=Список использованных источников]
+\newpage
+\bibliography{bibl}
 
 \end{document}

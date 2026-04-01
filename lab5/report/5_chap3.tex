@@ -1,51 +1,39 @@
-\chapter{Настройка DNS-сервера BIND9}
-\label{ch:config}
+\section{Настройка DNS-сервера BIND9}
 
-\section{Настройка named.conf.options}
+\subsection{Настройка named.conf.options}
 
-Открываем файл глобальных опций BIND9:
 \begin{lstlisting}
 nano /etc/bind/named.conf.options
 \end{lstlisting}
 
-Приводим блок \texttt{options} к следующему виду:
 \begin{lstlisting}
 options {
     directory "/var/cache/bind";
-
-    forwarders {
-        8.8.8.8;
-    };
-
+    forwarders { 8.8.8.8; };
     dnssec-validation auto;
     auth-nxdomain no;
     listen-on { 127.0.0.1; 192.168.N.1; };
 };
 \end{lstlisting}
 
-Параметр \texttt{forwarders} задаёт DNS-сервер Google~(8.8.8.8) для разрешения имён, не входящих в локальные зоны. Параметр \texttt{listen-on} ограничивает интерфейсы, на которых BIND принимает запросы: только localhost и LAN-интерфейс \texttt{enp0s8}.
+\texttt{forwarders}~--- DNS Google для внешних зон; \texttt{listen-on}~--- принимать запросы только с localhost и LAN-интерфейса.
 
-\section{Настройка named.conf.local}
+\subsection{Настройка named.conf.local}
 
-В файле \texttt{named.conf.local} описываются локальные зоны. Открываем файл:
 \begin{lstlisting}
 nano /etc/bind/named.conf.local
 \end{lstlisting}
 
-Добавляем содержимое:
 \begin{lstlisting}
 include "/etc/bind/rndc.key";
-
 controls {
     inet 127.0.0.1 allow { localhost; } keys { rndc-key; };
 };
-
 zone "STUDENT.GROUP.local" IN {
     type master;
     file "/var/lib/bind/forward.db";
     allow-update { key rndc-key; };
 };
-
 zone "N.168.192.in-addr.arpa" IN {
     type master;
     file "/var/lib/bind/reverse.db";
@@ -53,11 +41,9 @@ zone "N.168.192.in-addr.arpa" IN {
 };
 \end{lstlisting}
 
-Файлы зон размещаются в \texttt{/var/lib/bind/}, а не в \texttt{/etc/bind/}, так как демон BIND9 имеет права на запись только в \texttt{/var/lib/bind/} --- это необходимо для работы DDNS (динамическое обновление создаёт журнальные файлы \texttt{.jnl}).
+Файлы зон в \texttt{/var/lib/bind/}: здесь BIND имеет права на запись, что нужно для DDNS (журнальные файлы \texttt{.jnl}).
 
-Директива \texttt{allow-update~\{~key~rndc-key;~\}} разрешает обновление зоны только запросам, подписанным ключом \texttt{rndc-key}.
-
-\section{Создание файла прямой зоны (forward.db)}
+\subsection{Файл прямой зоны forward.db}
 
 \begin{lstlisting}
 nano /var/lib/bind/forward.db
@@ -65,23 +51,20 @@ nano /var/lib/bind/forward.db
 
 \begin{lstlisting}
 $TTL 86400
-STUDENT.GROUP.local. IN SOA SERVERHOSTNAME.STUDENT.GROUP.local. \
+STUDENT.GROUP.local. IN SOA SERVERHOSTNAME.STUDENT.GROUP.local.
     admin.STUDENT.GROUP.local. (
         20110103 ; Serial
         604800   ; Refresh
         86400    ; Retry
         2419200  ; Expire
         604800 ) ; Negative Cache TTL
-
-@               IN NS  SERVERHOSTNAME.STUDENT.GROUP.local.
-@               IN A   192.168.N.1
-localhost       IN A   127.0.0.1
-SERVERHOSTNAME  IN A   192.168.N.1
+@       IN NS  SERVERHOSTNAME.STUDENT.GROUP.local.
+@       IN A   192.168.N.1
+localhost IN A  127.0.0.1
+SERVERHOSTNAME IN A 192.168.N.1
 \end{lstlisting}
 
-Запись \texttt{SOA} (Start of Authority) является обязательной и содержит: имя первичного NS-сервера, e-mail администратора (точка вместо @), серийный номер зоны (увеличивается при каждом изменении), а также параметры репликации. Запись \texttt{A} для \texttt{@} задаёт IP самого домена; запись для \texttt{SERVERHOSTNAME} --- адрес сервера шлюза.
-
-\section{Создание файла обратной зоны (reverse.db)}
+\subsection{Файл обратной зоны reverse.db}
 
 \begin{lstlisting}
 nano /var/lib/bind/reverse.db
@@ -89,36 +72,29 @@ nano /var/lib/bind/reverse.db
 
 \begin{lstlisting}
 $TTL 86400
-N.168.192.in-addr.arpa. IN SOA STUDENT.GROUP.local. \
+N.168.192.in-addr.arpa. IN SOA STUDENT.GROUP.local.
     STUDENT.GROUP.local. (
         20110104 ; Serial
         10800    ; Refresh
         3600     ; Retry
         604800   ; Expire
         3600 )   ; Minimum
-
         IN NS  SERVERHOSTNAME.STUDENT.GROUP.local.
 1       IN PTR STUDENT.GROUP.local.
 1       IN PTR SERVERHOSTNAME.STUDENT.GROUP.local.
 \end{lstlisting}
 
-Запись \texttt{PTR} для узла с последним октетом \texttt{1} (то есть \texttt{192.168.N.1}) указывает на имя сервера. Имена зон в обратном файле записаны относительно \texttt{N.168.192.in-addr.arpa}, поэтому достаточно указывать только последний октет.
+\subsection{Проверка и перезапуск BIND9}
 
-\section{Перезапуск BIND9 и проверка конфигурации}
-
-Проверяем синтаксис конфигурации и зон:
 \begin{lstlisting}
 named-checkconf
 named-checkzone STUDENT.GROUP.local /var/lib/bind/forward.db
 named-checkzone N.168.192.in-addr.arpa /var/lib/bind/reverse.db
-\end{lstlisting}
-
-Перезапускаем сервис:
-\begin{lstlisting}
 systemctl restart bind9
 \end{lstlisting}
 
-Настраиваем netplan на использование локального DNS и добавляем домен поиска:
+\subsection{Настройка netplan}
+
 \begin{lstlisting}
 nano /etc/netplan/00-installer-config.yaml
 \end{lstlisting}
@@ -128,62 +104,46 @@ network:
   ethernets:
     enp0s3:
       dhcp4: no
-      addresses:
-        - 10.0.2.15/24
+      addresses: [10.0.2.15/24]
       gateway4: 10.0.2.2
     enp0s8:
       dhcp4: no
-      addresses:
-        - 192.168.N.1/24
+      addresses: [192.168.N.1/24]
       nameservers:
         addresses: [192.168.N.1]
         search: [STUDENT.GROUP.local]
   version: 2
 \end{lstlisting}
 
-Применяем настройки и перезагружаем ВМ:
 \begin{lstlisting}
-netplan apply
-reboot
+netplan apply && reboot
 \end{lstlisting}
 
-Проверяем разрешение имён:
 \begin{lstlisting}
 nslookup SERVERHOSTNAME
 nslookup 192.168.N.1
 \end{lstlisting}
 
-\section{Настройка DDNS}
+\subsection{Настройка DDNS}
 
-\subsection{Копирование ключа RNDC для DHCP-сервера}
-
-Ключ \texttt{rndc.key} генерируется автоматически при установке BIND9. Для работы DDNS DHCP-сервер должен иметь к нему доступ:
+\textbf{Копирование ключа RNDC:}
 \begin{lstlisting}
 cp -Rr /etc/bind/rndc.key /etc/dhcp/ddns-keys/
 \end{lstlisting}
 
-\subsection{Обновление конфигурации DHCP-сервера}
-
-Открываем файл \texttt{/etc/dhcp/dhcpd.conf} и приводим его к виду:
+\textbf{Обновление dhcpd.conf:}
 \begin{lstlisting}
 include "/etc/dhcp/ddns-keys/rndc.key";
-
 ddns-updates on;
 ddns-update-style standard;
 ddns-domainname "STUDENT.GROUP.local";
-
 zone STUDENT.GROUP.local. {
-    primary 192.168.N.1;
-    key rndc-key;
+    primary 192.168.N.1; key rndc-key;
 }
-
 zone N.168.192.in-addr.arpa. {
-    primary 192.168.N.1;
-    key rndc-key;
+    primary 192.168.N.1; key rndc-key;
 }
-
 authoritative;
-
 subnet 192.168.N.0 netmask 255.255.255.0 {
     range 192.168.N.10 192.168.N.254;
     option domain-name-servers 192.168.N.1;
@@ -195,22 +155,10 @@ subnet 192.168.N.0 netmask 255.255.255.0 {
 }
 \end{lstlisting}
 
-\subsection{Перезапуск сервисов и проверка DDNS}
-
-Перезапускаем оба сервиса:
+\textbf{Перезапуск и проверка:}
 \begin{lstlisting}
 systemctl restart bind9
 service isc-dhcp-server restart
-\end{lstlisting}
-
-После того как клиентская машина (Desktop) получит IP-адрес через DHCP, выполняем проверку:
-\begin{lstlisting}
 nslookup DESKTOPNAME01
-\end{lstlisting}
-
-Если DDNS работает корректно, команда должна вернуть IP-адрес, выданный клиенту DHCP-сервером. При возникновении ошибок анализируем системный журнал:
-\begin{lstlisting}
 tail -40 /var/log/syslog
 \end{lstlisting}
-
-\endinput

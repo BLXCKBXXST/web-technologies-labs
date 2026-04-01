@@ -1,59 +1,35 @@
-\chapter{Описание стенда и подготовка}
-\label{ch:stand}
+\section{Описание стенда и подготовка}
 
-\section{Конфигурация виртуального стенда}
+\subsection{Виртуальный стенд}
 
-Лабораторная работа выполняется на виртуальной машине \texttt{gateway} под управлением ОС \textbf{Ubuntu 20.04.5 LTS (Focal Fossa)}, развёрнутой в среде Oracle VirtualBox. ВМ имеет два сетевых адаптера:
+ВМ \texttt{gateway}~--- Ubuntu~20.04.5~LTS (VirtualBox), два адаптера:
 \begin{itemize}
-    \item \texttt{enp0s3} --- WAN-интерфейс, подключён в режиме NAT; получает адрес \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
-    \item \texttt{enp0s8} --- LAN-интерфейс, подключён к внутренней сети (Internal Network); статический адрес \texttt{192.168.N.1/24}.
+  \item \texttt{enp0s3}~--- WAN (NAT): \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
+  \item \texttt{enp0s8}~--- LAN (Internal): \texttt{192.168.N.1/24}.
 \end{itemize}
 
-Лаба 5 выполняется на той же ВМ, что и лаба 4. К моменту начала лабы 5 уже настроены: маршрутизация (ip\_forward + iptables MASQUERADE) и DHCP-сервер \texttt{isc-dhcp-server}.
+К началу лабы~5 уже настроены маршрутизация (ip\_forward + iptables MASQUERADE) и DHCP-сервер \texttt{isc-dhcp-server} (лаба~4).
 
-\section{Предварительная подготовка}
+\subsection{Предварительная подготовка}
 
-Перед установкой BIND9 необходимо выполнить ряд подготовительных шагов.
-
-\subsection{Установка hostname}
-
-Имя хоста сервера задаётся командой:
+\textbf{Установка hostname:}
 \begin{lstlisting}
 hostnamectl set-hostname SERVERHOSTNAME
-\end{lstlisting}
-где \texttt{SERVERHOSTNAME} --- выбранное имя ВМ (например, \texttt{gateway}). Файл \texttt{/etc/hosts} редактируется вручную:
-\begin{lstlisting}
 nano /etc/hosts
-# добавить строку:
-127.0.1.1   SERVERHOSTNAME
+# добавить: 127.0.1.1  SERVERHOSTNAME
 \end{lstlisting}
 
-\subsection{Удаление DNS DNAT-правил}
-
-В лабе 4 в файл \texttt{/etc/iptables/rules.v4} были добавлены правила перенаправления DNS-запросов на Google~8.8.8.8. Теперь эти правила необходимо удалить, поскольку DNS-сервер будет обрабатывать запросы самостоятельно:
+\textbf{Удаление DNS DNAT-правил из лабы~4:}
 \begin{lstlisting}
 nano /etc/iptables/rules.v4
 # удалить строки:
--A PREROUTING -i enp0s8 -p tcp -m tcp --dport 53 \
-  -j DNAT --to-destination 8.8.8.8:53
--A PREROUTING -i enp0s8 -p udp -m udp --dport 53 \
-  -j DNAT --to-destination 8.8.8.8:53
-\end{lstlisting}
-
-После редактирования применить изменения и перезагрузить ВМ:
-\begin{lstlisting}
+-A PREROUTING -i enp0s8 -p tcp --dport 53 -j DNAT --to-destination 8.8.8.8:53
+-A PREROUTING -i enp0s8 -p udp --dport 53 -j DNAT --to-destination 8.8.8.8:53
 reboot
 \end{lstlisting}
 
-\section{Установка BIND9}
-
-Установка пакетов производится стандартными средствами менеджера пакетов:
+\subsection{Установка BIND9}
 \begin{lstlisting}
 apt-get update
-apt install bind9
-apt install dnsutils
+apt install bind9 dnsutils
 \end{lstlisting}
-
-Пакет \texttt{dnsutils} предоставляет утилиты \texttt{nslookup} и \texttt{dig}, необходимые для проверки работы DNS.
-
-\endinput
