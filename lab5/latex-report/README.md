@@ -19,6 +19,11 @@ latex-report/
 ├── main.tex
 ├── config.tex
 ├── refs.bib
+├── fonts/
+│   ├── times.ttf
+│   ├── timesbd.ttf
+│   ├── timesi.ttf
+│   └── timesbi.ttf
 ├── img/
 └── parts/
     ├── title.tex
@@ -28,3 +33,5 @@ latex-report/
     ├── chap3.tex
     └── conclusion.tex
 ```
+
+> ⚠️ Шрифты `times*.ttf` нужно добавить вручную в папку `fonts/` — скопируй из `lab4/latex-report/fonts/`.

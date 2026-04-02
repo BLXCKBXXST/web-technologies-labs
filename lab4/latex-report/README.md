@@ -19,6 +19,11 @@ latex-report/
 ├── main.tex
 ├── config.tex
 ├── refs.bib
+├── fonts/
+│   ├── times.ttf
+│   ├── timesbd.ttf
+│   ├── timesi.ttf
+│   └── timesbi.ttf
 ├── img/
 └── parts/
     ├── title.tex
@@ -28,3 +33,11 @@ latex-report/
     ├── chap3.tex
     └── conclusion.tex
 ```
+
+> ⚠️ Шрифты `times*.ttf` лежат в папке `fonts/`. Если склонировал репозиторий до рефакторинга, выполни:
+> ```bash
+> cd lab4/latex-report
+> mkdir fonts && git mv times*.ttf fonts/
+> git commit -m "lab4: перенос шрифтов в fonts/"
+> git push
+> ```
