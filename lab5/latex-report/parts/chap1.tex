@@ -3,29 +3,29 @@
 
 \section{Система доменных имён DNS}
 
-\textbf{DNS} (Domain Name System) --- иерархическая распределённая система именования
+\textbf{DNS} (Domain Name System) — иерархическая распределённая система именования
 узлов сети. Пространство имён имеет древовидную структуру: корень, домены верхнего
 уровня (\texttt{.ru}, \texttt{.com}, \texttt{.local}), домены второго уровня и т.д.
 
 Основные понятия:
 \begin{itemize}
-  \item \textbf{Зона} --- административная единица пространства имён;
-  \item \textbf{Авторитативный сервер} --- хранит оригинальные записи зоны;
-  \item \textbf{Рекурсивный резолвер} --- выполняет цепочку запросов от имени клиента;
-  \item \textbf{Форвардер} --- проксирует запросы для нелокальных зон на внешний сервер.
+  \item \textbf{Зона} — административная единица пространства имён;
+  \item \textbf{Авторитативный сервер} — хранит оригинальные записи зоны;
+  \item \textbf{Рекурсивный резолвер} — выполняет цепочку запросов от имени клиента;
+  \item \textbf{Форвардер} — проксирует запросы для нелокальных зон на внешний сервер.
 \end{itemize}
 
 \section{Типы ресурсных записей DNS}
 
 Основные типы записей, используемых в работе:
 \begin{itemize}
-  \item \textbf{SOA} (Start of Authority) --- первичный NS, e-mail администратора,
+  \item \textbf{SOA} (Start of Authority) — первичный NS, e-mail администратора,
         параметры обновления зоны;
-  \item \textbf{NS} (Name Server) --- авторитативный сервер зоны;
-  \item \textbf{A} --- адресная запись: имя хоста $\to$ IPv4;
-  \item \textbf{PTR} (Pointer) --- обратная запись: IP-адрес $\to$ имя хоста;
-  \item \textbf{CNAME} (Canonical Name) --- псевдоним;
-  \item \textbf{MX} (Mail Exchanger) --- почтовый сервер домена.
+  \item \textbf{NS} (Name Server) — авторитативный сервер зоны;
+  \item \textbf{A} — адресная запись: имя хоста $\to$ IPv4;
+  \item \textbf{PTR} (Pointer) — обратная запись: IP-адрес $\to$ имя хоста;
+  \item \textbf{CNAME} (Canonical Name) — псевдоним;
+  \item \textbf{MX} (Mail Exchanger) — почтовый сервер домена.
 \end{itemize}
 
 \section{Прямая и обратная зоны}
@@ -40,7 +40,7 @@
 
 \section{BIND9}
 
-\textbf{BIND9} (Berkeley Internet Name Domain) --- наиболее распространённое ПО
+\textbf{BIND9} (Berkeley Internet Name Domain) — наиболее распространённое ПО
 DNS-сервера. Устанавливается командой:
 \begin{lstlisting}
 apt install bind9 dnsutils
@@ -48,10 +48,10 @@ apt install bind9 dnsutils
 
 Конфигурационные файлы в \texttt{/etc/bind/}:
 \begin{itemize}
-  \item \texttt{named.conf} --- главный файл, подключает остальные;
-  \item \texttt{named.conf.options} --- форвардеры, \texttt{listen-on}, dnssec;
-  \item \texttt{named.conf.local} --- описание локальных зон;
-  \item файлы зон --- в \texttt{/var/lib/bind/} (BIND имеет права на запись,
+  \item \texttt{named.conf} — главный файл, подключает остальные;
+  \item \texttt{named.conf.options} — форвардеры, \texttt{listen-on}, dnssec;
+  \item \texttt{named.conf.local} — описание локальных зон;
+  \item файлы зон — в \texttt{/var/lib/bind/} (BIND имеет права на запись,
         необходимо для DDNS).
 \end{itemize}
 
@@ -66,7 +66,7 @@ options {
 };
 \end{lstlisting}
 
-\texttt{forwarders} --- DNS Google для внешних запросов; \texttt{listen-on} ---
+\texttt{forwarders} — DNS Google для внешних запросов; \texttt{listen-on} —
 принимать запросы только с localhost и LAN-интерфейса.
 
 \section{Динамическое обновление DNS (DDNS)}

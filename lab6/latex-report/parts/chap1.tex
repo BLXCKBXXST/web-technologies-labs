@@ -2,12 +2,12 @@
 
 \subsection{Seafile}
 
-Seafile~--- платформа облачного хранения файлов с открытым исходным кодом~\cite{seafile_docs}.
+Seafile~— платформа облачного хранения файлов с открытым исходным кодом~\cite{seafile_docs}.
 Архитектура включает три компонента:
 \begin{itemize}
-  \item \textbf{seafile-server} (ccnet + seafile) --- хранение данных и блочная синхронизация;
-  \item \textbf{seahub} --- веб-интерфейс на Django;
-  \item \textbf{MariaDB/MySQL} --- база данных для метаданных~\cite{mariadb_docs}.
+  \item \textbf{seafile-server} (ccnet + seafile) — хранение данных и блочная синхронизация;
+  \item \textbf{seahub} — веб-интерфейс на Django;
+  \item \textbf{MariaDB/MySQL} — база данных для метаданных~\cite{mariadb_docs}.
 \end{itemize}
 
 Для продакшн-развёртывания рекомендуется выносить seahub за обратный прокси-сервер
@@ -18,12 +18,12 @@ Seafile~--- платформа облачного хранения файлов 
 
 Nginx~\cite{nginx_docs} принимает входящие соединения на порту~80 и перенаправляет их
 через директиву \texttt{proxy\_pass} на seahub. Ключевые заголовки:
-\texttt{Host}, \texttt{X-Real-IP}, \texttt{X-Forwarded-For}~--- передают оригинальный
+\texttt{Host}, \texttt{X-Real-IP}, \texttt{X-Forwarded-For}~— передают оригинальный
 адрес клиента в приложение.
 
 \subsection{MariaDB}
 
-MariaDB~--- форк MySQL с открытым кодом, полностью совместимый на уровне протокола~\cite{mariadb_docs}.
+MariaDB~— форк MySQL с открытым кодом, полностью совместимый на уровне протокола~\cite{mariadb_docs}.
 Seafile автоматически создаёт три базы данных: \texttt{ccnet-db},
 \texttt{seafile-db}, \texttt{seahub-db} при первом запуске скрипта
 \texttt{setup-seafile-mysql.sh}.

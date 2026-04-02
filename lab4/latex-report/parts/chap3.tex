@@ -13,7 +13,7 @@ nano /etc/sysctl.conf
 net.ipv4.ip_forward=1
 \end{lstlisting}
 
-% --- Скриншот: файл sysctl.conf с разкомментированной строкой ip_forward ---
+% — Скриншот: файл sysctl.conf с разкомментированной строкой ip_forward —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/08_sysctl_ipforward}
@@ -26,14 +26,14 @@ net.ipv4.ip_forward=1
 
 Для сохранения правил \texttt{iptables} между перезагрузками устанавливаем
 пакет \texttt{iptables-persistent}. При установке система дважды запрашивает
-подтверждение сохранения текущих правил~--- соглашаемся:
+подтверждение сохранения текущих правил~— соглашаемся:
 
 \begin{lstlisting}
 apt-get update
 apt install iptables-persistent
 \end{lstlisting}
 
-% --- Скриншот: диалог сохранения правил во время установки iptables-persistent ---
+% — Скриншот: диалог сохранения правил во время установки iptables-persistent —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/09_iptables_persistent_dialog}
@@ -70,7 +70,7 @@ iptables-save > /etc/iptables/rules.v4
 reboot
 \end{lstlisting}
 
-% --- Скриншот: вывод iptables -L -n -v или iptables -t nat -L ---
+% — Скриншот: вывод iptables -L -n -v или iptables -t nat -L —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/10_iptables_rules}
@@ -100,7 +100,7 @@ nano /etc/default/isc-dhcp-server
 INTERFACESv4="enp0s8"
 \end{lstlisting}
 
-% --- Скриншот: файл /etc/default/isc-dhcp-server с указанным INTERFACESv4 ---
+% — Скриншот: файл /etc/default/isc-dhcp-server с указанным INTERFACESv4 —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/11_dhcp_interfaces}
@@ -117,7 +117,7 @@ echo "" > /etc/dhcp/dhcpd.conf
 nano /etc/dhcp/dhcpd.conf
 \end{lstlisting}
 
-% --- Скриншот: содержимое файла dhcpd.conf в nano ---
+% — Скриншот: содержимое файла dhcpd.conf в nano —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/12_dhcpd_conf}
@@ -150,7 +150,7 @@ service isc-dhcp-server start
 service isc-dhcp-server status
 \end{lstlisting}
 
-% --- Скриншот: вывод service isc-dhcp-server status (статус active running) ---
+% — Скриншот: вывод service isc-dhcp-server status (статус active running) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/13_dhcp_status}
@@ -159,7 +159,7 @@ service isc-dhcp-server status
 \end{figure}
 
 В статусе должна присутствовать строка
-\texttt{Active: active (running)}, а в логах~--- указание на прослушивание
+\texttt{Active: active (running)}, а в логах~— указание на прослушивание
 интерфейса \texttt{enp0s8} с сетью \texttt{192.168.\cfgLabStudentN.0/24}.
 
 \section{Резервирование IP-адреса по MAC}
@@ -175,8 +175,8 @@ host testhost {
 }
 \end{lstlisting}
 
-Где \texttt{hardware ethernet}~--- MAC-адрес сетевой карты клиента,
-a \texttt{fixed-address}~--- IP-адрес, который будет выдаваться
+Где \texttt{hardware ethernet}~— MAC-адрес сетевой карты клиента,
+a \texttt{fixed-address}~— IP-адрес, который будет выдаваться
 исключительно данному устройству.
 
 \section{Проверка выдачи адреса клиенту}
@@ -191,7 +191,7 @@ a \texttt{fixed-address}~--- IP-адрес, который будет выдав
 nano /var/lib/dhcp/dhcpd.leases
 \end{lstlisting}
 
-% --- Скриншот: Desktop1 получил IP от DHCP (настройки сети графического интерфейса или ip a) ---
+% — Скриншот: Desktop1 получил IP от DHCP (настройки сети графического интерфейса или ip a) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.75\textwidth]{img/14_desktop_dhcp_ip}
@@ -206,7 +206,7 @@ ping 192.168.N.1
 ping ya.ru
 \end{lstlisting}
 
-% --- Скриншот: ping ya.ru с Desktop1 (Интернет работает) ---
+% — Скриншот: ping ya.ru с Desktop1 (Интернет работает) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/15_ping_yaru_desktop}
@@ -226,7 +226,7 @@ service isc-dhcp-server status
 tail -50 /var/log/syslog
 \end{lstlisting}
 
-% --- Скриншот: вывод tail -50 /var/log/syslog с примером ошибки (semicolon expected) ---
+% — Скриншот: вывод tail -50 /var/log/syslog с примером ошибки (semicolon expected) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/16_syslog_error}
@@ -234,6 +234,6 @@ tail -50 /var/log/syslog
   \label{fig:syslog-error}
 \end{figure}
 
-Файл \texttt{/var/log/syslog} позволяет определить причину ошибки~---
+Файл \texttt{/var/log/syslog} позволяет определить причину ошибки~—
 например, пропущенную точку с запятой после \texttt{authoritative}
 в конфигурационном файле DHCP-сервера.

@@ -3,18 +3,18 @@
 
 \section{Конфигурация виртуального стенда}
 
-Виртуальная машина \texttt{gateway} --- Ubuntu~20.04.5~LTS (VirtualBox),
+Виртуальная машина \texttt{gateway} — Ubuntu~20.04.5~LTS (VirtualBox),
 два сетевых адаптера:
 \begin{itemize}
-  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{NAT}: выход в интернет,
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) — тип \textit{NAT}: выход в интернет,
         IP \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
-  \item \textbf{Адаптер~2} (\texttt{enp0s8}) --- тип \textit{Internal Network}:
+  \item \textbf{Адаптер~2} (\texttt{enp0s8}) — тип \textit{Internal Network}:
         LAN-сегмент, IP \texttt{192.168.\cfgLabStudentN.1/24}.
 \end{itemize}
 
-Виртуальная машина \texttt{Desktop} --- Ubuntu~20.04.5~Desktop:
+Виртуальная машина \texttt{Desktop} — Ubuntu~20.04.5~Desktop:
 \begin{itemize}
-  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{Internal Network},
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) — тип \textit{Internal Network},
         IP получает по DHCP от gateway.
 \end{itemize}
 
@@ -22,11 +22,11 @@
 маршрутизация (\texttt{ip\_forward} + iptables MASQUERADE) и DHCP-сервер
 \texttt{isc-dhcp-server} (лаб.~работа~4).
 
-% --- Скриншот: настройки ВМ gateway в VirtualBox (вкладки Система, Сеть) ---
+% — Скриншот: настройки ВМ gateway в VirtualBox (вкладки Система, Сеть) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/01_vbox_gateway_settings}
-  \caption{Настройки ВМ gateway --- адаптеры в VirtualBox}
+  \caption{Настройки ВМ gateway — адаптеры в VirtualBox}
   \label{fig:vbox_gateway}
 \end{figure}
 
@@ -45,7 +45,7 @@ nano /etc/hosts
 127.0.1.1  SERVERHOSTNAME
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/hosts с добавленной строкой ---
+% — Скриншот: nano /etc/hosts с добавленной строкой —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/02_etc_hosts}
@@ -68,11 +68,11 @@ nano /etc/iptables/rules.v4
 -A PREROUTING -i enp0s8 -p udp -m udp --dport 53 -j DNAT --to-destination 8.8.8.8:53
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/iptables/rules.v4 (строки DNAT удалены) ---
+% — Скриншот: nano /etc/iptables/rules.v4 (строки DNAT удалены) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/03_iptables_rules}
-  \caption{Файл \texttt{rules.v4} --- правила DNAT DNS удалены}
+  \caption{Файл \texttt{rules.v4} — правила DNAT DNS удалены}
   \label{fig:iptables}
 \end{figure}
 
@@ -88,7 +88,7 @@ apt-get update
 apt install bind9 dnsutils
 \end{lstlisting}
 
-% --- Скриншот: вывод apt install bind9 dnsutils (завершение установки) ---
+% — Скриншот: вывод apt install bind9 dnsutils (завершение установки) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/04_bind9_install}

@@ -22,11 +22,11 @@ options {
 \texttt{listen-on} ограничивает интерфейсы, на которых сервер принимает запросы:
 localhost и LAN-адрес \texttt{192.168.\cfgLabStudentN.1}.
 
-% --- Скриншот: nano /etc/bind/named.conf.options с заполненным содержимым ---
+% — Скриншот: nano /etc/bind/named.conf.options с заполненным содержимым —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/05_named_conf_options}
-  \caption{Файл \texttt{named.conf.options} --- форвардер и listen-on}
+  \caption{Файл \texttt{named.conf.options} — форвардер и listen-on}
   \label{fig:named_options}
 \end{figure}
 
@@ -59,11 +59,11 @@ zone "N.168.192.in-addr.arpa" IN {
 Файлы зон размещаются в \texttt{/var/lib/bind/}: BIND имеет туда права на запись,
 что необходимо для DDNS-журналирования (\texttt{.jnl}-файлы).
 
-% --- Скриншот: nano /etc/bind/named.conf.local с описанием зон ---
+% — Скриншот: nano /etc/bind/named.conf.local с описанием зон —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/06_named_conf_local}
-  \caption{Файл \texttt{named.conf.local} --- описание прямой и обратной зон}
+  \caption{Файл \texttt{named.conf.local} — описание прямой и обратной зон}
   \label{fig:named_local}
 \end{figure}
 
@@ -88,7 +88,7 @@ localhost       IN A 127.0.0.1
 SERVERHOSTNAME  IN A 192.168.N.1
 \end{lstlisting}
 
-% --- Скриншот: nano /var/lib/bind/forward.db ---
+% — Скриншот: nano /var/lib/bind/forward.db —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/07_forward_db}
@@ -116,7 +116,7 @@ N.168.192.in-addr.arpa. IN SOA STUDENT.GROUP.local. STUDENT.GROUP.local. (
 1   IN PTR SERVERHOSTNAME.STUDENT.GROUP.local.
 \end{lstlisting}
 
-% --- Скриншот: nano /var/lib/bind/reverse.db ---
+% — Скриншот: nano /var/lib/bind/reverse.db —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/08_reverse_db}
@@ -133,7 +133,7 @@ named-checkzone N.168.192.in-addr.arpa /var/lib/bind/reverse.db
 systemctl restart bind9
 \end{lstlisting}
 
-% --- Скриншот: вывод named-checkconf и named-checkzone (нет ошибок) ---
+% — Скриншот: вывод named-checkconf и named-checkzone (нет ошибок) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/09_named_checkconf}
@@ -168,11 +168,11 @@ network:
 netplan apply
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/netplan/00-installer-config.yaml с nameservers ---
+% — Скриншот: nano /etc/netplan/00-installer-config.yaml с nameservers —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/10_netplan_gateway}
-  \caption{Файл \texttt{netplan} gateway --- DNS указан на localhost}
+  \caption{Файл \texttt{netplan} gateway — DNS указан на localhost}
   \label{fig:netplan_gw}
 \end{figure}
 
@@ -183,7 +183,7 @@ nslookup SERVERHOSTNAME
 nslookup 192.168.N.1
 \end{lstlisting}
 
-% --- Скриншот: вывод nslookup SERVERHOSTNAME (успешное разрешение) ---
+% — Скриншот: вывод nslookup SERVERHOSTNAME (успешное разрешение) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/11_nslookup_forward}
@@ -191,7 +191,7 @@ nslookup 192.168.N.1
   \label{fig:nslookup_fwd}
 \end{figure}
 
-% --- Скриншот: вывод nslookup 192.168.N.1 (обратное разрешение) ---
+% — Скриншот: вывод nslookup 192.168.N.1 (обратное разрешение) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/12_nslookup_reverse}
@@ -244,11 +244,11 @@ subnet 192.168.N.0 netmask 255.255.255.0 {
 }
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/dhcp/dhcpd.conf (блок ddns + zone) ---
+% — Скриншот: nano /etc/dhcp/dhcpd.conf (блок ddns + zone) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/13_dhcpd_conf_ddns}
-  \caption{Файл \texttt{dhcpd.conf} --- секция DDNS}
+  \caption{Файл \texttt{dhcpd.conf} — секция DDNS}
   \label{fig:dhcpd_ddns}
 \end{figure}
 
@@ -260,11 +260,11 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 \end{lstlisting}
 
-% --- Скриншот: service isc-dhcp-server status (active running) ---
+% — Скриншот: service isc-dhcp-server status (active running) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/14_dhcp_status}
-  \caption{Статус сервиса \texttt{isc-dhcp-server} --- active (running)}
+  \caption{Статус сервиса \texttt{isc-dhcp-server} — active (running)}
   \label{fig:dhcp_status}
 \end{figure}
 
@@ -278,7 +278,7 @@ nslookup DESKTOPNAME01
 tail -40 /var/log/syslog
 \end{lstlisting}
 
-% --- Скриншот: вывод nslookup DESKTOPNAME01 (IP получен от DNS) ---
+% — Скриншот: вывод nslookup DESKTOPNAME01 (IP получен от DNS) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/15_nslookup_desktop}
@@ -286,11 +286,11 @@ tail -40 /var/log/syslog
   \label{fig:nslookup_desktop}
 \end{figure}
 
-% --- Скриншот: tail /var/log/syslog (записи DDNS update succeeded) ---
+% — Скриншот: tail /var/log/syslog (записи DDNS update succeeded) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/16_syslog_ddns}
-  \caption{Лог \texttt{syslog} --- успешное DDNS-обновление}
+  \caption{Лог \texttt{syslog} — успешное DDNS-обновление}
   \label{fig:syslog_ddns}
 \end{figure}
 
