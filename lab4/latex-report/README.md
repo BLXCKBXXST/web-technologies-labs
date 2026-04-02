@@ -17,13 +17,14 @@
 ```
 latex-report/
 ├── main.tex
-├── config.tex          ← ФИО, группа, тема, N сети
+├── config.tex
 ├── refs.bib
+├── img/
 └── parts/
-    ├── title.tex       ← титульник
-    ├── intro.tex       ← введение
-    ├── chap1.tex       ← теория (из методички)
-    ├── chap2.tex       ← стенд и подготовка
-    ├── chap3.tex       ← настройка DHCP + NAT
-    └── conclusion.tex  ← заключение
+    ├── title.tex
+    ├── intro.tex
+    ├── chap1.tex
+    ├── chap2.tex
+    ├── chap3.tex
+    └── conclusion.tex
 ```
