@@ -1,24 +1,35 @@
-\section*{Введение}
-\addcontentsline{toc}{section}{Введение}
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
 
-Современные организации активно используют облачные файловые хранилища для совместной
-работы с документами. Seafile~--- открытая (open-source) платформа для хранения и
-синхронизации файлов, которую можно развернуть на собственном сервере~\cite{seafile_docs}.
+\textbf{Seafile} --- открытая платформа облачного хранения файлов с поддержкой
+синхронизации, общего доступа и командной работы. В отличие от публичных облачных
+сервисов, Seafile разворачивается на собственном сервере организации, что обеспечивает
+полный контроль над данными.
 
-Целью данной практической работы является установка и настройка сервера Seafile~\cfgSeafileVersion{}
-на базе Ubuntu~22.04 в качестве виртуальной машины \texttt{seafile}
-внутри локальной сети \texttt{192.168.\cfgLabStudentN.0/24}.
+Цель работы --- установить и настроить сервер Seafile в локальной сети
+на базе инфраструктуры, созданной в лабораторных работах~4 и~5.
 
-В рамках работы решаются следующие задачи:
+Задачи:
+\begin{enumerate}
+  \item Подготовить новую виртуальную машину \texttt{seafile} (Ubuntu~22.04),
+        назначить статический IP и зарегистрировать её в DNS-домене.
+  \item Установить зависимости: Python~3, pip-пакеты, MariaDB.
+  \item Загрузить и развернуть дистрибутив Seafile~9, настроить базы данных.
+  \item Настроить обратный прокси Nginx для веб-доступа.
+  \item Настроить автозапуск сервисов Seafile и Seahub.
+  \item Установить клиент Seafile на Desktop и проверить синхронизацию.
+\end{enumerate}
+
+\textbf{Стенд:}
 \begin{itemize}
-  \item настройка статического IP-адреса (\texttt{\cfgSeafileIP}) через Netplan;
-  \item регистрация ВМ в домене \texttt{\cfgStudentDomain} (DNS-записи);
-  \item установка MariaDB и необходимых Python-зависимостей;
-  \item установка и инициализация сервера Seafile;
-  \item настройка обратного прокси Nginx~\cite{nginx_docs};
-  \item настройка автозапуска служб через systemd;
-  \item установка клиента Seafile на Desktop и синхронизация файлов.
+  \item ВМ \texttt{gateway} --- Ubuntu~20.04.5~LTS, DNS+DHCP+NAT
+        (\texttt{192.168.\cfgLabStudentN.1/24}).
+  \item ВМ \texttt{seafile} --- Ubuntu~22.04~LTS (VirtualBox),
+        один адаптер \texttt{enp0s3}~(Internal),
+        статический IP \texttt{192.168.\cfgLabStudentN.4/24}.
+  \item ВМ \texttt{Desktop} --- Ubuntu~20.04.5~Desktop,
+        IP получает по DHCP.
 \end{itemize}
 
-Стенд: виртуальная машина \texttt{seafile} (Ubuntu~22.04, VirtualBox,
-адаптер <<Внутренняя сеть>>), клиентская ВМ \texttt{Desktop1} (Ubuntu Desktop).
+\endinput

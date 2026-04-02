@@ -1,70 +1,131 @@
-\section{Установка и настройка Seafile}
+\chapter{Установка и настройка Seafile}
+\label{ch:practice}
 
-\subsection{Системные зависимости}
+\section{Установка зависимостей}
+
+\subsection{Python и системные пакеты}
 
 \begin{lstlisting}
-sudo su
 apt-get update
 apt install python3 python3-setuptools python3-pip libmysqlclient-dev
 \end{lstlisting}
 
+Установка Python-пакетов через pip:
 \begin{lstlisting}
 pip3 install --timeout=3600 django==3.2.* Pillow pylibmc captcha jinja2 \
   sqlalchemy==1.4.3 django-pylibmc django-simple-captcha python3-ldap \
   mysqlclient pycryptodome==3.12.0 cffi==1.14.0
 \end{lstlisting}
 
-\subsection{Установка MariaDB}
+% --- Скриншот: завершение pip3 install ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/05_apt_install_deps}
+  \caption{Установка Python-зависимостей Seafile}
+  \label{fig:deps}
+\end{figure}
+
+\subsection{MariaDB}
 
 \begin{lstlisting}
 apt install mariadb-server
+\end{lstlisting}
+
+Устанавливаем пароль root MariaDB:
+\begin{lstlisting}
 mysqladmin -u root password
+\end{lstlisting}
+
+Входим в оболочку MySQL и сбрасываем привилегии:
+\begin{lstlisting}
 mysql
-  flush privileges;
-  \q;
+flush privileges;
+\q;
+\end{lstlisting}
+
+Разрешаем автозапуск:
+\begin{lstlisting}
 systemctl enable mariadb
 \end{lstlisting}
 
-\subsection{Загрузка и установка Seafile}
+% --- Скриншот: завершение установки MariaDB ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/06_mariadb_install}
+  \caption{Установка MariaDB и сброс привилегий}
+  \label{fig:mariadb}
+\end{figure}
 
+\section{Загрузка и установка Seafile}
+
+Создаём рабочую директорию:
 \begin{lstlisting}
-mkdir /opt/seafile && cd /opt/seafile
-wget https://s3.eu-central-1.amazonaws.com/download.seadrive.org/\
-seafile-server_9.0.9_x86-64.tar.gz
-tar -xzf seafile-server_9.0.9_x86-64.tar.gz
-chown -R N_USER:N_USER /opt/seafile/
+mkdir /opt/seafile
+cd /opt/seafile
 \end{lstlisting}
 
-Запускаем мастер-установщик:
+Скачиваем дистрибутив:
+\begin{lstlisting}
+wget https://s3.eu-central-1.amazonaws.com/download.seadrive.org/\
+seafile-server_9.0.9_x86-64.tar.gz
+\end{lstlisting}
 
+Распаковываем:
+\begin{lstlisting}
+tar -xzf seafile-server_9.0.9_x86-64.tar.gz
+\end{lstlisting}
+
+Назначаем владельца (вместо \texttt{STUDENT} --- ваш логин):
+\begin{lstlisting}
+chown -R STUDENT:STUDENT /opt/seafile/
+\end{lstlisting}
+
+Запускаем скрипт установки:
 \begin{lstlisting}
 cd ./seafile-server-9.0.9/
 ./setup-seafile-mysql.sh
-  # Имя сервера:  seafile
-  # IP сервера:   192.168.N.4
-  # Порт:         8082 (по умолчанию)
-  # MySQL host:   localhost
-  # MySQL port:   3306
-  # MySQL root pw: <ваш пароль>
-  # Создать новые БД: [1]
 \end{lstlisting}
 
-Скрипт создал базы данных \texttt{ccnet-db}, \texttt{seafile-db}, \texttt{seahub-db}.
+При настройке вводим:
+\begin{itemize}
+  \item Название сервера: \texttt{seafile};
+  \item IP сервера: \texttt{192.168.\cfgLabStudentN.4};
+  \item Порт: \texttt{8082} (по умолчанию);
+  \item Выбираем \texttt{[1] Create new databases};
+  \item Хост MySQL: \texttt{localhost} (по умолчанию);
+  \item Порт MySQL: \texttt{3306} (по умолчанию);
+  \item Пароль root MySQL --- указанный при установке.
+\end{itemize}
 
-\subsection{Настройка Nginx}
+% --- Скриншот: вывод setup-seafile-mysql.sh (завершение) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/07_setup_seafile_sh}
+  \caption{Успешное завершение скрипта \texttt{setup-seafile-mysql.sh}}
+  \label{fig:setup_seafile}
+\end{figure}
 
+\section{Настройка Nginx}
+
+Устанавливаем Nginx:
 \begin{lstlisting}
 apt install nginx -y
+\end{lstlisting}
+
+Создаём конфигурационный файл:
+\begin{lstlisting}
 touch /etc/nginx/sites-available/seafile.conf
 ln -s /etc/nginx/sites-available/seafile.conf \
-       /etc/nginx/sites-enabled/seafile.conf
+      /etc/nginx/sites-enabled/seafile.conf
 rm /etc/nginx/sites-enabled/default
 \end{lstlisting}
 
+Редактируем файл конфигурации:
 \begin{lstlisting}
 nano /etc/nginx/sites-enabled/seafile.conf
 \end{lstlisting}
 
+Содержимое (N --- номер варианта):
 \begin{lstlisting}
 server {
     listen 192.168.N.4:80;
@@ -80,27 +141,54 @@ server {
 }
 \end{lstlisting}
 
+Перезапускаем Nginx:
 \begin{lstlisting}
 service nginx restart
 \end{lstlisting}
 
-Nginx принимает запросы на \texttt{\cfgSeafileIP:80} и
-передаёт их seahub (\texttt{127.0.0.1:8000})~\cite{nginx_docs}.
+% --- Скриншот: nano /etc/nginx/sites-enabled/seafile.conf ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/08_nginx_conf}
+  \caption{Конфигурация Nginx для обратного проксирования Seahub}
+  \label{fig:nginx_conf}
+\end{figure}
 
-\subsection{Первый запуск Seafile}
+\section{Первый запуск Seafile и Seahub}
 
 \begin{lstlisting}
 /opt/seafile/seafile-server-9.0.9/seafile.sh start
 /opt/seafile/seafile-server-9.0.9/seahub.sh start
-# Создать аккаунт администратора: admin@STUDENT.GROUP.local
 \end{lstlisting}
 
-\subsection{Автозапуск через systemd}
+При первом запуске \texttt{seahub.sh} предлагает создать учётную
+запись администратора. Вводим e-mail в формате
+\texttt{admin@STUDENT.GROUP.local} и пароль.
 
+% --- Скриншот: вывод seafile.sh start + seahub.sh start ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_seafile_start}
+  \caption{Первый запуск сервисов Seafile и Seahub}
+  \label{fig:seafile_start}
+\end{figure}
+
+% --- Скриншот: ввод e-mail/пароля администратора ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/10_seahub_admin_create}
+  \caption{Создание учётной записи администратора Seahub}
+  \label{fig:admin_create}
+\end{figure}
+
+\section{Настройка автозапуска}
+
+Создаём systemd-unit для Seafile:
 \begin{lstlisting}
 nano /etc/systemd/system/seafile.service
 \end{lstlisting}
 
+Содержимое файла:
 \begin{lstlisting}
 [Unit]
 Description=Seafile
@@ -116,13 +204,49 @@ ExecStop=/opt/seafile/seafile-server-9.0.9/seafile.sh stop
 WantedBy=multi-user.target
 \end{lstlisting}
 
+Активируем автозапуск и проверяем статус:
 \begin{lstlisting}
 systemctl enable seafile
 systemctl enable seahub
+systemctl status seafile
 \end{lstlisting}
 
-\subsection{Установка клиента Seafile на Desktop}
+% --- Скриншот: systemctl status seafile (active/running) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/11_seafile_service}
+  \caption{Статус сервиса \texttt{seafile} --- active (running)}
+  \label{fig:seafile_service}
+\end{figure}
 
+\section{Проверка через веб-консоль}
+
+На ВМ Desktop открываем браузер и переходим по адресу:
+\begin{lstlisting}
+http://seafile
+\end{lstlisting}
+
+Входим с учётной записью администратора \texttt{admin@STUDENT.GROUP.local}.
+
+% --- Скриншот: страница входа Seafile в браузере ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/12_seafile_web_login}
+  \caption{Веб-интерфейс Seafile --- страница входа}
+  \label{fig:seafile_login}
+\end{figure}
+
+% --- Скриншот: главная страница библиотек ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/13_seafile_web_library}
+  \caption{Веб-интерфейс Seafile --- библиотека с загруженным файлом}
+  \label{fig:seafile_library}
+\end{figure}
+
+\section{Установка клиента Seafile на Desktop}
+
+Выполняем на ВМ Desktop:
 \begin{lstlisting}
 sudo su
 add-apt-repository ppa:seafile/seafile-client
@@ -130,6 +254,25 @@ apt-get update
 apt-get install seafile-gui
 \end{lstlisting}
 
-В графическом клиенте подключились к серверу \texttt{http://\cfgSeafileIP},
-синхронизировали тестовую библиотеку. Файлы появились на сервере и на Desktop
-одновременно --- синхронизация работает корректно.
+% --- Скриншот: apt-get install seafile-gui ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/14_seafile_client_install}
+  \caption{Установка клиента \texttt{seafile-gui} на Desktop}
+  \label{fig:seafile_client_install}
+\end{figure}
+
+\subsection{Синхронизация библиотеки}
+
+Запускаем клиент, вводим адрес сервера \texttt{http://192.168.\cfgLabStudentN.4},
+е-mail и пароль администратора, выбираем библиотеку и локальную папку для синхронизации.
+
+% --- Скриншот: клиент Seafile с синхронизированной библиотекой ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/15_seafile_client_sync}
+  \caption{Клиент Seafile на Desktop --- синхронизированная библиотека}
+  \label{fig:seafile_sync}
+\end{figure}
+
+\endinput
