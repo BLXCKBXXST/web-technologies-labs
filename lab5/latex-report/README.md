@@ -33,5 +33,3 @@ latex-report/
     ├── chap3.tex
     └── conclusion.tex
 ```
-
-> ⚠️ Шрифты `times*.ttf` нужно добавить вручную в папку `fonts/` — скопируй из `lab4/latex-report/fonts/`.
