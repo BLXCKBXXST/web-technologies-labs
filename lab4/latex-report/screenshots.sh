@@ -89,19 +89,26 @@ read -rp "  ✔ Сделай скриншот и нажми Enter..."
 step "08" "Файл sysctl.conf (включён ip_forward)" \
     "nano /etc/sysctl.conf"
 
-# 09 — dpkg-reconfigure вызовет диалог
+# 09 — диалог появляется ПРИ УСТАНОВКЕ apt install iptables-persistent
+# Если пакет уже установлен, dpkg-reconfigure воспроизведёт диалог повторно
 echo ""
 echo "========================================"
 echo "  [Скриншот 09] Диалог iptables-persistent"
 echo "  Файл: img/09_iptables_persistent_dialog.png"
-echo "  • Команда вызовет диалог подтверждения —"
-echo "    сделай скриншот на нём."
+echo ""
+echo "  ВАЖНО: диалог появляется во время:"
+echo "    apt install iptables-persistent"
+echo "  Если пакет уже стоит — воспроизведи диалог командой:"
+echo "    dpkg-reconfigure iptables-persistent"
+echo ""
+echo "  Нажать «Да» (Yes) в обоих запросах —"
+echo "  сделай скриншот именно на этом диалоге."
 echo "========================================"
-read -rp "  → Нажми Enter чтобы выполнить команду..."
+read -rp "  → Нажми Enter чтобы запустить воспроизведение диалога..."
 echo ""
 dpkg-reconfigure iptables-persistent
 echo ""
-read -rp "  ✔ Сделай скриншот и нажми Enter..."
+read -rp "  ✔ Сделай скриншот диалога и нажми Enter..."
 
 # 10
 step "10" "Правила NAT (iptables -t nat -L)" \
@@ -139,7 +146,7 @@ echo "========================================"
 read -rp "  ✔ Сделай скриншот и нажми Enter..."
 
 # 16
-step "16" "Пример ошибки в syslog" \
+step "16" "Пример ошибки в syslog (tail -50)" \
     "tail -50 /var/log/syslog"
 
 # Итог
