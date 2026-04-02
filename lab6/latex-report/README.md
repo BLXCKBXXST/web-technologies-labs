@@ -1,44 +1,38 @@
-# Lab 6 — LaTeX Report (Seafile)
+# Lab 6 — LaTeX Report (Seafile Cloud Storage)
 
-## ⬇️ Скачать папку архивом
+## Скачать
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab6/latex-report)**
 
----
+## Импорт в Overleaf
 
-## Структура проекта
+1. Скачай архив по ссылке выше
+2. Overleaf → **New Project → Upload Project** → выбери zip
+3. Главный файл: `main.tex`, компилятор: **XeLaTeX**
+4. Свои данные — редактируй только `config.tex`
+5. Скриншоты клади в папку `img/` (имена: `01_...`, `02_...`)
+
+## Структура
 
 ```
 latex-report/
-├── main.tex           ← точка входа
-├── config.tex         ← ВСЕ входные данные: ФИО, тема, N и т.д.
-├── refs.bib           ← библиография (Seafile, Nginx, MariaDB, netplan)
-├── README.md
+├── main.tex
+├── config.tex
+├── refs.bib
+├── fonts/
+│   ├── times.ttf
+│   ├── timesbd.ttf
+│   ├── timesi.ttf
+│   └── timesbi.ttf
+├── img/
+├── screenshots/
+│   ├── README.md
+│   └── screenshots.sh
 └── parts/
     ├── title.tex
     ├── intro.tex
-    ├── chap1.tex      ← теория: Seafile, Nginx, MariaDB, systemd
-    ├── chap2.tex      ← подготовка ВМ: netplan, hostname, DNS
-    ├── chap3.tex      ← установка: зависимости → MariaDB → Seafile → Nginx → autostart → клиент
+    ├── chap1.tex
+    ├── chap2.tex
+    ├── chap3.tex
     └── conclusion.tex
 ```
-
-## Быстрое изменение данных — только `config.tex`
-
-| Команда | Что задаёт |
-|---|---|
-| `\cfgStudentFIO` / `\cfgStudentShort` | ФИО студента |
-| `\cfgGroup` | Группа |
-| `\cfgTeacherShort` / `\cfgTeacherRank` | Преподаватель |
-| `\cfgLabStudentN` | **N** — подставляется в IP-адреса по всему тексту |
-| `\cfgStudentLogin` | Логин пользователя в Ubuntu |
-| `\cfgStudentDomain` | `STUDENT.GROUP.local` (например `ivanov.ia131.local`) |
-| `\cfgSeafileVersion` | Версия Seafile |
-| `\cfgYear` / `\cfgCity` | Год и город |
-
-## Компиляция в Overleaf
-
-1. Загрузи **все файлы** (включая папку `parts/`)
-2. Главный файл: **`main.tex`**
-3. Компилятор: **pdfLaTeX**
-4. Нажми **Recompile**

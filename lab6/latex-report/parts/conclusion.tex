@@ -1,27 +1,40 @@
-\section*{Заключение}
-\addcontentsline{toc}{section}{Заключение}
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+\label{ch:conclusion}
 
-В ходе выполнения практической работы~\cfgLabNumber{} была развёрнута и настроена
-платформа облачного файлового хранилища Seafile~\cfgSeafileVersion{}
-на виртуальной машине \texttt{seafile} (Ubuntu~22.04).
+В ходе выполнения лабораторной работы~\cfgLabNumber{} было развёрнуто и
+настроено облачное файловое хранилище \textbf{Seafile} на виртуальной машине
+под управлением Ubuntu~22.04~LTS.
 
 Выполненные задачи:
 \begin{itemize}
-  \item статический IP \texttt{\cfgSeafileIP/24} настроен через Netplan;
-  \item прямая DNS-запись \texttt{seafile~IN~A~\cfgSeafileIP} добавлена
-    в зону \texttt{\cfgStudentDomain};
-  \item установлены MariaDB~\cite{mariadb_docs} и Python-зависимости;
-  \item Seafile инициализирован через скрипт \texttt{setup-seafile-mysql.sh},
-    созданы три базы данных;
-  \item Nginx настроен как обратный прокси: принимает запросы на
-    \texttt{\cfgSeafileIP:80}, передаёт seahub на
-    \texttt{127.0.0.1:8000}~\cite{nginx_docs};
-  \item службы \texttt{seafile} и \texttt{seahub} зарегистрированы
-    в systemd и добавлены в автозапуск;
-  \item клиент Seafile установлен на Desktop, синхронизация библиотек
-    проверена и работает.
+  \item создана ВМ \texttt{seafile} с Ubuntu~22.04, назначен статический
+        IP \texttt{192.168.\cfgLabStudentN.4/24};
+  \item хост зарегистрирован в DNS-зоне через запись~A на сервере \texttt{gateway};
+  \item установлены Python~3, системные зависимости и pip-пакеты
+        (Django, Pillow, mysqlclient, pycryptodome~и~др.);
+  \item развёрнута и настроена \textbf{MariaDB}: установлен пароль root,
+        автозапуск активирован;
+  \item загружен дистрибутив \texttt{seafile-server\_9.0.9},
+        выполнен скрипт \texttt{setup-seafile-mysql.sh},
+        созданы три базы данных (ccnet-db, seafile-db, seahub-db);
+  \item настроен обратный прокси \textbf{Nginx}: запросы на
+        \texttt{192.168.\cfgLabStudentN.4:80} проксируются в Seahub
+        (\texttt{127.0.0.1:8000});
+  \item создан \texttt{seafile.service} для автозапуска через \texttt{systemd};
+  \item через веб-консоль создан аккаунт администратора и пользователь;
+  \item на ВМ Desktop установлен клиент \texttt{seafile-gui},
+        произведена синхронизация библиотеки с сервером.
 \end{itemize}
 
+<<<<<<< HEAD
 Полученные навыки~— развёртывание web-приложения с базой данных,
 настройка обратного прокси и управление системными сервисами~—
 являются базовыми компетенциями системного администратора.
+=======
+Полученные навыки --- развёртывание корпоративного облачного хранилища,
+работа с MariaDB, настройка Nginx как обратного прокси и управление
+systemd-сервисами --- применяются при построении корпоративной IT-инфраструктуры.
+
+\endinput
+>>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
