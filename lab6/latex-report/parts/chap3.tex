@@ -17,7 +17,7 @@ pip3 install --timeout=3600 django==3.2.* Pillow pylibmc captcha jinja2 \
   mysqlclient pycryptodome==3.12.0 cffi==1.14.0
 \end{lstlisting}
 
-% --- Скриншот: завершение pip3 install ---
+% — Скриншот: завершение pip3 install —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/05_apt_install_deps}
@@ -48,7 +48,7 @@ flush privileges;
 systemctl enable mariadb
 \end{lstlisting}
 
-% --- Скриншот: завершение установки MariaDB ---
+% — Скриншот: завершение установки MariaDB —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/06_mariadb_install}
@@ -75,7 +75,7 @@ seafile-server_9.0.9_x86-64.tar.gz
 tar -xzf seafile-server_9.0.9_x86-64.tar.gz
 \end{lstlisting}
 
-Назначаем владельца (вместо \texttt{STUDENT} --- ваш логин):
+Назначаем владельца (вместо \texttt{STUDENT} — ваш логин):
 \begin{lstlisting}
 chown -R STUDENT:STUDENT /opt/seafile/
 \end{lstlisting}
@@ -94,10 +94,10 @@ cd ./seafile-server-9.0.9/
   \item Выбираем \texttt{[1] Create new databases};
   \item Хост MySQL: \texttt{localhost} (по умолчанию);
   \item Порт MySQL: \texttt{3306} (по умолчанию);
-  \item Пароль root MySQL --- указанный при установке.
+  \item Пароль root MySQL — указанный при установке.
 \end{itemize}
 
-% --- Скриншот: вывод setup-seafile-mysql.sh (завершение) ---
+% — Скриншот: вывод setup-seafile-mysql.sh (завершение) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/07_setup_seafile_sh}
@@ -125,7 +125,7 @@ rm /etc/nginx/sites-enabled/default
 nano /etc/nginx/sites-enabled/seafile.conf
 \end{lstlisting}
 
-Содержимое (N --- номер варианта):
+Содержимое (N — номер варианта):
 \begin{lstlisting}
 server {
     listen 192.168.N.4:80;
@@ -146,7 +146,7 @@ server {
 service nginx restart
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/nginx/sites-enabled/seafile.conf ---
+% — Скриншот: nano /etc/nginx/sites-enabled/seafile.conf —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/08_nginx_conf}
@@ -165,7 +165,7 @@ service nginx restart
 запись администратора. Вводим e-mail в формате
 \texttt{admin@STUDENT.GROUP.local} и пароль.
 
-% --- Скриншот: вывод seafile.sh start + seahub.sh start ---
+% — Скриншот: вывод seafile.sh start + seahub.sh start —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/09_seafile_start}
@@ -173,7 +173,7 @@ service nginx restart
   \label{fig:seafile_start}
 \end{figure}
 
-% --- Скриншот: ввод e-mail/пароля администратора ---
+% — Скриншот: ввод e-mail/пароля администратора —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/10_seahub_admin_create}
@@ -211,11 +211,11 @@ systemctl enable seahub
 systemctl status seafile
 \end{lstlisting}
 
-% --- Скриншот: systemctl status seafile (active/running) ---
+% — Скриншот: systemctl status seafile (active/running) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/11_seafile_service}
-  \caption{Статус сервиса \texttt{seafile} --- active (running)}
+  \caption{Статус сервиса \texttt{seafile} — active (running)}
   \label{fig:seafile_service}
 \end{figure}
 
@@ -228,19 +228,19 @@ http://seafile
 
 Входим с учётной записью администратора \texttt{admin@STUDENT.GROUP.local}.
 
-% --- Скриншот: страница входа Seafile в браузере ---
+% — Скриншот: страница входа Seafile в браузере —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/12_seafile_web_login}
-  \caption{Веб-интерфейс Seafile --- страница входа}
+  \caption{Веб-интерфейс Seafile — страница входа}
   \label{fig:seafile_login}
 \end{figure}
 
-% --- Скриншот: главная страница библиотек ---
+% — Скриншот: главная страница библиотек —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/13_seafile_web_library}
-  \caption{Веб-интерфейс Seafile --- библиотека с загруженным файлом}
+  \caption{Веб-интерфейс Seafile — библиотека с загруженным файлом}
   \label{fig:seafile_library}
 \end{figure}
 
@@ -259,7 +259,7 @@ apt-get install seafile-gui
 синхронизировали тестовую библиотеку. Файлы появились на сервере и на Desktop
 одновременно — синхронизация работает корректно.
 =======
-% --- Скриншот: apt-get install seafile-gui ---
+% — Скриншот: apt-get install seafile-gui —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/14_seafile_client_install}
@@ -272,11 +272,11 @@ apt-get install seafile-gui
 Запускаем клиент, вводим адрес сервера \texttt{http://192.168.\cfgLabStudentN.4},
 е-mail и пароль администратора, выбираем библиотеку и локальную папку для синхронизации.
 
-% --- Скриншот: клиент Seafile с синхронизированной библиотекой ---
+% — Скриншот: клиент Seafile с синхронизированной библиотекой —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/15_seafile_client_sync}
-  \caption{Клиент Seafile на Desktop --- синхронизированная библиотека}
+  \caption{Клиент Seafile на Desktop — синхронизированная библиотека}
   \label{fig:seafile_sync}
 \end{figure}
 

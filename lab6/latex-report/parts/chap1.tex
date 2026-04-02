@@ -11,24 +11,24 @@ Seafile~— платформа облачного хранения файлов 
   \item \textbf{seahub} — веб-интерфейс на Django;
   \item \textbf{MariaDB/MySQL} — база данных для метаданных~\cite{mariadb_docs}.
 =======
-\textbf{Облачное хранилище} (cloud storage) --- модель хранения данных, при которой
+\textbf{Облачное хранилище} (cloud storage) — модель хранения данных, при которой
 файлы размещаются на удалённых серверах и доступны через сеть. Ключевые преимущества:
 централизованное управление, синхронизация между устройствами, совместный доступ.
 
-\textbf{Seafile} --- открытое ПО с открытым исходным кодом (лицензия AGPLv3 / Apache~2.0).
+\textbf{Seafile} — открытое ПО с открытым исходным кодом (лицензия AGPLv3 / Apache~2.0).
 Основные компоненты:
 \begin{itemize}
-  \item \textbf{Seafile Server} --- демон хранения и синхронизации файлов, работает
+  \item \textbf{Seafile Server} — демон хранения и синхронизации файлов, работает
         на порту~\texttt{8082};
-  \item \textbf{Seahub} --- веб-приложение на Django, GUI и REST~API, порт~\texttt{8000};
-  \item \textbf{Seafile Client} --- настольный клиент (Windows / macOS / Linux) и
+  \item \textbf{Seahub} — веб-приложение на Django, GUI и REST~API, порт~\texttt{8000};
+  \item \textbf{Seafile Client} — настольный клиент (Windows / macOS / Linux) и
         мобильные приложения для синхронизации.
 >>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
 \end{itemize}
 
 \section{Стек технологий}
 
-\textbf{MariaDB} --- реляционная СУБД, совместимая с MySQL, используется как бэкенд
+\textbf{MariaDB} — реляционная СУБД, совместимая с MySQL, используется как бэкенд
 для трёх баз данных Seafile: \texttt{ccnet-db}, \texttt{seafile-db}, \texttt{seahub-db}.
 
 <<<<<<< HEAD
@@ -37,7 +37,7 @@ Nginx~\cite{nginx_docs} принимает входящие соединения
 \texttt{Host}, \texttt{X-Real-IP}, \texttt{X-Forwarded-For}~— передают оригинальный
 адрес клиента в приложение.
 =======
-\textbf{Nginx} --- высокопроизводительный веб-сервер и обратный прокси.
+\textbf{Nginx} — высокопроизводительный веб-сервер и обратный прокси.
 В данной работе Nginx принимает HTTP-запросы на порту~\texttt{80}
 и проксирует их на \texttt{127.0.0.1:8000} (Seahub):
 \begin{lstlisting}
@@ -49,7 +49,7 @@ location / {
 \end{lstlisting}
 >>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
 
-\textbf{Python~3 / pip} --- платформа для выполнения Seahub. Необходимые
+\textbf{Python~3 / pip} — платформа для выполнения Seahub. Необходимые
 Python-пакеты устанавливаются командой \texttt{pip3 install}:
 \texttt{django}, \texttt{Pillow}, \texttt{mysqlclient}, \texttt{sqlalchemy},
 \texttt{pycryptodome} и др.

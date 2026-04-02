@@ -3,19 +3,19 @@
 
 \section{Конфигурация виртуального стенда}
 
-Виртуальная машина \texttt{seafile} --- Ubuntu~22.04~LTS (VirtualBox),
+Виртуальная машина \texttt{seafile} — Ubuntu~22.04~LTS (VirtualBox),
 один сетевой адаптер:
 \begin{itemize}
-  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{Internal Network
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) — тип \textit{Internal Network
         (intnet)}: LAN-сегмент, статический IP \texttt{192.168.\cfgLabStudentN.4/24},
         шлюз \texttt{192.168.\cfgLabStudentN.1} (gateway), DNS \texttt{192.168.\cfgLabStudentN.1}.
 \end{itemize}
 
-% --- Скриншот: настройки ВМ seafile в VirtualBox (Сеть) ---
+% — Скриншот: настройки ВМ seafile в VirtualBox (Сеть) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/01_vbox_seafile_settings}
-  \caption{Настройки ВМ seafile --- адаптер Internal Network в VirtualBox}
+  \caption{Настройки ВМ seafile — адаптер Internal Network в VirtualBox}
   \label{fig:vbox_seafile}
 \end{figure}
 
@@ -57,15 +57,15 @@ ping gateway
 ping ya.ru
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/netplan/00-installer-config.yaml ---
+% — Скриншот: nano /etc/netplan/00-installer-config.yaml —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/02_netplan_seafile}
-  \caption{Файл \texttt{netplan} ВМ seafile --- статический IP}
+  \caption{Файл \texttt{netplan} ВМ seafile — статический IP}
   \label{fig:netplan_seafile}
 \end{figure}
 
-% --- Скриншот: ping gateway и ping ya.ru ---
+% — Скриншот: ping gateway и ping ya.ru —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/03_ping_gateway}
@@ -114,7 +114,7 @@ systemctl restart bind9
 nslookup seafile
 \end{lstlisting}
 
-% --- Скриншот: nslookup seafile ---
+% — Скриншот: nslookup seafile —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/04_nslookup_seafile}
