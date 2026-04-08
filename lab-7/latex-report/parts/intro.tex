@@ -1,0 +1,40 @@
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
+
+\textbf{Электронная почта} остаётся одним из ключевых инструментов деловой
+коммуникации. Для корпоративных сетей необходим собственный почтовый сервер,
+обеспечивающий конфиденциальность переписки, гибкое управление учётными записями
+и независимость от внешних провайдеров.
+
+Цель работы --- развернуть почтовый сервер на базе \textbf{iRedMail}
+на виртуальной машине \texttt{mail} в локальной сети, созданной
+в лабораторных работах~4 и~5.
+
+Задачи:
+\begin{enumerate}
+  \item Подготовить виртуальную машину \texttt{mail}: назначить статический IP,
+        настроить FQDN и DNS-записи.
+  \item Установить iRedMail с бэкендом \textbf{OpenLDAP} и веб-сервером
+        \textbf{Nginx}.
+  \item Настроить почтовый домен \texttt{yazikov.iks531.local}.
+  \item Создать почтовых пользователей через панель администратора \textbf{iRedAdmin}.
+  \item Проверить отправку и получение писем через веб-клиент \textbf{Roundcubemail}.
+\end{enumerate}
+
+\textbf{Стенд:}
+\begin{itemize}
+  \item ВМ \texttt{gateway} --- Ubuntu~22.04~LTS (VirtualBox),
+        два адаптера: \texttt{enp0s3}~(WAN/NAT, \texttt{10.0.2.15/24})
+        и \texttt{enp0s8}~(LAN~Internal, \texttt{192.168.\cfgLabStudentN.1/24});
+        роль --- шлюз, DNS-сервер (BIND9), DHCP-сервер.
+  \item ВМ \texttt{mail} --- Ubuntu~22.04~LTS, один адаптер
+        \texttt{enp0s3}~(Internal Network),
+        IP \texttt{192.168.\cfgLabStudentN.5/24};
+        роль --- почтовый сервер iRedMail.
+  \item ВМ \texttt{Desktop} --- Ubuntu~22.04~Desktop, один адаптер
+        (Internal Network), IP получает по DHCP;
+        роль --- клиент для тестирования веб-почты.
+\end{itemize}
+
+\endinput

@@ -1,0 +1,159 @@
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
+
+\section{Конфигурация виртуального стенда}
+
+Виртуальная машина \texttt{gateway} --- Ubuntu~22.04~LTS (VirtualBox),
+два сетевых адаптера:
+\begin{itemize}
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{NAT}:
+        выход в интернет, IP \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
+  \item \textbf{Адаптер~2} (\texttt{enp0s8}) --- тип \textit{Internal Network
+        intnet}: LAN-сегмент, IP \texttt{192.168.\cfgLabStudentN.1/24}.
+\end{itemize}
+
+Конфигурация выполнена в лаб.~работах~4 и~5: маршрутизация, DHCP, DNS (BIND9).
+
+\vspace{6pt}
+Виртуальная машина \texttt{mail} --- Ubuntu~22.04~LTS:
+\begin{itemize}
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{Internal Network
+        intnet}, IP \texttt{192.168.\cfgLabStudentN.5/24},
+        шлюз \texttt{192.168.\cfgLabStudentN.1},
+        DNS \texttt{192.168.\cfgLabStudentN.1}.
+\end{itemize}
+
+Объём RAM --- не менее 2~ГБ; объём диска --- не менее 20~ГБ (iRedMail
+требует место под почтовые ящики \texttt{/var/vmail}).
+
+% --- Скриншот: настройки ВМ mail в VirtualBox (вкладка Сеть) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/01_vbox_mail_settings}
+  \caption{Настройки ВМ \texttt{mail} --- адаптер в VirtualBox}
+  \label{fig:vbox_mail}
+\end{figure}
+
+\section{Настройка статического IP (mail)}
+
+На ВМ \texttt{mail} редактируем файл netplan:
+\begin{lstlisting}
+nano /etc/netplan/01-netcfg.yaml
+\end{lstlisting}
+
+Содержимое:
+\begin{lstlisting}
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses: [192.168.N.5/24]
+      gateway4: 192.168.N.1
+      nameservers:
+        addresses: [192.168.N.1]
+        search: [yazikov.iks531.local]
+\end{lstlisting}
+
+Применяем конфигурацию:
+\begin{lstlisting}
+netplan apply
+\end{lstlisting}
+
+% --- Скриншот: nano /etc/netplan/01-netcfg.yaml ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/02_netplan_mail}
+  \caption{Файл \texttt{netplan} ВМ \texttt{mail} --- статический IP}
+  \label{fig:netplan_mail}
+\end{figure}
+
+\section{Назначение FQDN хосту mail}
+
+Для корректной работы iRedMail хост должен иметь полное доменное имя.
+Выполняем команды:
+\begin{lstlisting}
+hostnamectl set-hostname mail.yazikov.iks531.local
+\end{lstlisting}
+
+Обновляем \texttt{/etc/hosts}:
+\begin{lstlisting}
+nano /etc/hosts
+\end{lstlisting}
+
+Содержимое:
+\begin{lstlisting}
+127.0.0.1  mail.yazikov.iks531.local mail localhost
+192.168.N.5  mail.yazikov.iks531.local mail
+\end{lstlisting}
+
+Проверка:
+\begin{lstlisting}
+hostname -f
+\end{lstlisting}
+Должен вернуть \texttt{mail.yazikov.iks531.local}.
+
+% --- Скриншот: hostname -f и cat /etc/hosts ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/03_hostname_fqdn}
+  \caption{FQDN ВМ \texttt{mail} --- вывод \texttt{hostname -f}}
+  \label{fig:hostname_fqdn}
+\end{figure}
+
+\section{Добавление DNS-записи для mail на gateway}
+
+Переходим на ВМ \texttt{gateway}. Добавляем A-запись и PTR-запись
+запуском подготовленного скрипта:
+\begin{lstlisting}
+sudo bash gateway_add_mail_dns.sh
+\end{lstlisting}
+
+Либо вручную --- редактируем прямую зону:
+\begin{lstlisting}
+nano /var/lib/bind/forward.db
+\end{lstlisting}
+
+Добавляем строку:
+\begin{lstlisting}
+mail    IN      A       192.168.N.5
+\end{lstlisting}
+
+Перезапускаем BIND9:
+\begin{lstlisting}
+systemctl restart bind9
+\end{lstlisting}
+
+Проверяем разрешение имени с ВМ \texttt{mail}:
+\begin{lstlisting}
+nslookup mail
+nslookup 192.168.N.5
+\end{lstlisting}
+
+% --- Скриншот: вывод nslookup mail (успешное разрешение) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/04_nslookup_mail}
+  \caption{DNS-разрешение имени \texttt{mail} с ВМ \texttt{mail}}
+  \label{fig:nslookup_mail}
+\end{figure}
+
+\section{Проверка доступа в интернет}
+
+Перед установкой iRedMail необходимо убедиться, что ВМ \texttt{mail}
+имеет выход в интернет для скачивания пакетов:
+\begin{lstlisting}
+ping -c3 ya.ru
+apt-get update
+\end{lstlisting}
+
+% --- Скриншот: ping ya.ru с ВМ mail ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/05_ping_internet}
+  \caption{Проверка доступа в интернет с ВМ \texttt{mail}}
+  \label{fig:ping_inet}
+\end{figure}
+
+\endinput

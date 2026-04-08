@@ -1,0 +1,287 @@
+\chapter{Установка и настройка iRedMail}
+\label{ch:practice}
+
+\section{Скачивание и распаковка iRedMail}
+
+На ВМ \texttt{mail} скачиваем архив iRedMail версии 1.6.2:
+\begin{lstlisting}
+wget https://github.com/iredmail/iRedMail/archive/refs/tags/1.6.2.tar.gz
+\end{lstlisting}
+
+Распаковываем:
+\begin{lstlisting}
+tar xvf 1.6.2.tar.gz
+cd iRedMail-1.6.2
+\end{lstlisting}
+
+% --- Скриншот: завершение wget (100% downloaded) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/06_wget_iredmail}
+  \caption{Скачивание архива iRedMail}
+  \label{fig:wget_iredmail}
+\end{figure}
+
+\section{Скачивание пакетов iRedMail}
+
+Перед запуском установщика скачиваем зависимости:
+\begin{lstlisting}
+cd ./pkgs/
+chmod +x get_all.sh
+./get_all.sh
+\end{lstlisting}
+
+% --- Скриншот: завершение get_all.sh ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/07_get_all_done}
+  \caption{Завершение скачивания пакетов \texttt{pkgs/get\_all.sh}}
+  \label{fig:get_all}
+\end{figure}
+
+\section{Запуск интерактивного установщика}
+
+Возвращаемся в корневой каталог iRedMail и запускаем установщик:
+\begin{lstlisting}
+cd ..
+chmod +x iRedMail.sh
+./iRedMail.sh
+\end{lstlisting}
+
+Установщик задаёт ряд вопросов. Ответы для данного варианта:
+
+\subsection{Путь хранения почтовых ящиков}
+
+Оставляем значение по умолчанию:
+\begin{lstlisting}
+/var/vmail
+\end{lstlisting}
+
+% --- Скриншот: экран Default mail storage path ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/08_install_storage}
+  \caption{Установщик iRedMail --- путь хранения почты}
+  \label{fig:install_storage}
+\end{figure}
+
+\subsection{Выбор веб-сервера}
+
+Выбираем \textbf{Nginx}:
+
+% --- Скриншот: экран выбора веб-сервера (Nginx выделен) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_install_webserver}
+  \caption{Установщик iRedMail --- выбор веб-сервера Nginx}
+  \label{fig:install_web}
+\end{figure}
+
+\subsection{Выбор бэкенда хранения учётных записей}
+
+Выбираем \textbf{OpenLDAP}:
+
+% --- Скриншот: экран выбора бэкенда (OpenLDAP выделен) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/10_install_backend}
+  \caption{Установщик iRedMail --- выбор бэкенда OpenLDAP}
+  \label{fig:install_backend}
+\end{figure}
+
+\subsection{LDAP suffix (root DN)}
+
+Указываем суффикс дерева каталога:
+\begin{lstlisting}
+dc=yazikov,dc=iks531,dc=local
+\end{lstlisting}
+
+% --- Скриншот: экран LDAP suffix с введённым значением ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/11_install_ldap_suffix}
+  \caption{Установщик iRedMail --- LDAP suffix}
+  \label{fig:install_ldap}
+\end{figure}
+
+\subsection{Первый почтовый домен}
+
+Указываем домен. Важно: он \textbf{не должен} совпадать с FQDN хоста.
+\begin{lstlisting}
+yazikov.iks531.local
+\end{lstlisting}
+
+% --- Скриншот: экран ввода первого почтового домена ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/12_install_mail_domain}
+  \caption{Установщик iRedMail --- первый почтовый домен}
+  \label{fig:install_domain}
+\end{figure}
+
+\subsection{Опциональные компоненты}
+
+Выбираем: \textbf{Roundcubemail}, \textbf{netdata}, \textbf{iRedAdmin},
+\textbf{Fail2ban}. SOGo оставляем невыбранным.
+
+% --- Скриншот: экран Optional components ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/13_install_components}
+  \caption{Установщик iRedMail --- выбор компонентов}
+  \label{fig:install_components}
+\end{figure}
+
+\subsection{Подтверждение и завершение}
+
+Подтверждаем установку (\texttt{y}) и разрешаем настройку firewall (\texttt{y}).
+Установка занимает 10--20 минут в зависимости от скорости интернета.
+По завершении установщик запрашивает перезагрузку --- соглашаемся.
+
+% --- Скриншот: финальный экран установщика (Installation Completed) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/14_install_done}
+  \caption{iRedMail --- установка завершена успешно}
+  \label{fig:install_done}
+\end{figure}
+
+\section{Проверка сервисов после перезагрузки}
+
+После перезагрузки ВМ \texttt{mail} проверяем статус ключевых сервисов:
+\begin{lstlisting}
+systemctl status postfix
+systemctl status dovecot
+systemctl status nginx
+systemctl status slapd
+\end{lstlisting}
+
+% --- Скриншот: systemctl status postfix (active running) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/15_services_status}
+  \caption{Статус сервисов после установки iRedMail}
+  \label{fig:svc_status}
+\end{figure}
+
+\section{Вход в панель iRedAdmin}
+
+С ВМ \texttt{Desktop} открываем браузер Firefox и переходим по адресу:
+\begin{lstlisting}
+https://mail.yazikov.iks531.local/iredadmin
+\end{lstlisting}
+
+Браузер выдаёт предупреждение о самоподписанном сертификате ---
+нажимаем \textit{Advanced} → \textit{Accept the Risk and Continue}.
+
+Входим:
+\begin{itemize}
+  \item Логин: \texttt{postmaster@yazikov.iks531.local}
+  \item Пароль: указанный при установке
+\end{itemize}
+
+% --- Скриншот: форма входа iRedAdmin в браузере ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/16_iredadmin_login}
+  \caption{Панель iRedAdmin --- форма входа}
+  \label{fig:iredadmin_login}
+\end{figure}
+
+\section{Создание почтового пользователя}
+
+В iRedAdmin переходим: \textit{Users} → \textit{Add user}.
+Заполняем форму:
+\begin{itemize}
+  \item Email: \texttt{user1@yazikov.iks531.local}
+  \item Пароль: задаём произвольный
+\end{itemize}
+Нажимаем \textit{Add}.
+
+% --- Скриншот: форма создания пользователя в iRedAdmin ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/17_iredadmin_add_user}
+  \caption{iRedAdmin --- создание нового пользователя}
+  \label{fig:add_user}
+\end{figure}
+
+% --- Скриншот: список пользователей с созданным user1 ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/18_iredadmin_user_list}
+  \caption{iRedAdmin --- список пользователей домена}
+  \label{fig:user_list}
+\end{figure}
+
+\section{Отправка тестового письма через Roundcube}
+
+Переходим в веб-почту:
+\begin{lstlisting}
+https://mail.yazikov.iks531.local/mail
+\end{lstlisting}
+
+Входим как \texttt{postmaster@yazikov.iks531.local}.
+
+% --- Скриншот: интерфейс Roundcubemail после входа ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/19_roundcube_inbox}
+  \caption{Roundcubemail --- входящие письма}
+  \label{fig:roundcube_inbox}
+\end{figure}
+
+Нажимаем \textit{Compose}, заполняем:
+\begin{itemize}
+  \item To: \texttt{user1@yazikov.iks531.local}
+  \item Subject: \texttt{Тест ЛР-7}
+  \item Тело письма: любой текст
+\end{itemize}
+Отправляем.
+
+% --- Скриншот: окно создания письма в Roundcube ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/20_roundcube_compose}
+  \caption{Roundcubemail --- окно создания письма}
+  \label{fig:roundcube_compose}
+\end{figure}
+
+\section{Получение письма}
+
+Выходим из аккаунта \texttt{postmaster} и входим как
+\texttt{user1@yazikov.iks531.local}.
+Открываем Inbox --- видим пришедшее письмо.
+
+% --- Скриншот: Inbox user1 с полученным письмом ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/21_roundcube_received}
+  \caption{Roundcubemail --- полученное письмо в Inbox \texttt{user1}}
+  \label{fig:roundcube_received}
+\end{figure}
+
+% --- Скриншот: открытое письмо (тема и содержимое) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/22_roundcube_open_letter}
+  \caption{Roundcubemail --- открытое письмо}
+  \label{fig:roundcube_open}
+\end{figure}
+
+\section{Просмотр почтового лога}
+
+Для проверки прохождения письма через Postfix смотрим лог на ВМ \texttt{mail}:
+\begin{lstlisting}
+tail -30 /var/log/mail.log
+\end{lstlisting}
+
+% --- Скриншот: tail /var/log/mail.log (статус=sent) ---
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/23_mail_log}
+  \caption{Лог Postfix --- успешная доставка письма (\texttt{status=sent})}
+  \label{fig:mail_log}
+\end{figure}
+
+\endinput
