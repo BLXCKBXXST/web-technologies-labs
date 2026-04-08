@@ -23,9 +23,10 @@
 | Файл | ВМ | Описание |
 |---|---|---|
 | `config.sh` | — | Единый конфиг варианта (N, STUDENT, DOMAIN, IP…) |
-| `gateway_lab7_dns.sh` | `gateway` | Добавляет A/PTR/MX-записи для mail в BIND9 |
-| `mail_lab7_prepare.sh` | `mail` | Hostname, статический IP, загрузка iRedMail |
-| `mail_lab7_post.sh` | `mail` | Проверка сервисов после установки + подсказки |
+| `gateway_lab7_dns.sh` | `gateway` | Добавляет A/MX/PTR-записи для mail в BIND9, reload |
+| `mail_lab7_prepare.sh` | `mail` | Hostname, /etc/hosts, netplan, resolv.conf, apt upgrade, загрузка iRedMail |
+| `mail_lab7_post.sh` | `mail` | Проверка сервисов и портов после reboot + подсказки URL |
+| `desktop_lab7_hints.sh` | `desktop1` | DNS/ping/порт-проверки с Desktop + инструкция по iRedAdmin и Roundcube |
 | `README.md` | — | Этот файл |
 
 ---
@@ -46,11 +47,12 @@ cd linux-admin-labs/lab-7
 sudo bash gateway_lab7_dns.sh
 ```
 
-Скрипт добавит:
+Скрипт добавляет:
 - A-запись `mail → 192.168.29.5` в прямую зону
 - MX-запись `@ → mail.yazikov.iks531.local`
 - PTR-запись `5 → mail.yazikov.iks531.local` в обратную зону
-- Перезагрузит BIND9 и проверит разрешение
+- Автоматически обновляет Serial
+- Выполняет `named-checkzone` + `reload bind9` + проверку резолвинга
 
 ---
 
@@ -63,13 +65,15 @@ cd linux-admin-labs/lab-7
 sudo bash mail_lab7_prepare.sh
 ```
 
-Скрипт выполнит:
+Скрипт выполняет:
 - Установку hostname: `mail.yazikov.iks531.local`
 - Прописывание `/etc/hosts`
 - Настройку статического IP `192.168.29.5` через netplan
-- `apt-get update`
-- Загрузку и распаковку iRedMail 1.6.2
-- Запуск `get_all.sh` для загрузки зависимостей
+- Отключение `systemd-resolved` + статический `/etc/resolv.conf`
+- Проверку связи с gateway и DNS
+- `apt-get update && upgrade`
+- Скачивание и распаковку iRedMail 1.6.2, запуск `get_all.sh`
+- Вывод подсказок для интерактивного установщика
 
 ---
 
@@ -81,7 +85,7 @@ chmod +x iRedMail.sh
 ./iRedMail.sh
 ```
 
-В мастере установки выбери:
+В мастере установки выбирай:
 
 | Шаг | Значение |
 |---|---|
@@ -89,9 +93,9 @@ chmod +x iRedMail.sh
 | Web server | **Nginx** |
 | Database backend | **OpenLDAP** |
 | LDAP suffix | `dc=yazikov,dc=iks531,dc=local` |
-| Пароль admin DB | любой надёжный |
+| Пароль LDAP rootdn | надёжный (без `$`, `#`, `@`) |
 | Mail domain | `yazikov.iks531.local` |
-| Пароль postmaster | любой надёжный |
+| Пароль postmaster | надёжный |
 | Roundcubemail, iRedAdmin, Fail2ban | **Yes** |
 | Остальные вопросы | **Yes** |
 
@@ -99,28 +103,31 @@ chmod +x iRedMail.sh
 
 ---
 
-### 4. На ВМ `mail` — проверка после установки
+### 4. На ВМ `mail` — проверка после перезагрузки
 
 ```bash
 cd linux-admin-labs/lab-7
 sudo bash mail_lab7_post.sh
 ```
 
-Скрипт проверяет запуск `postfix`, `dovecot`, `nginx`, `slapd` и открытые порты.
+Скрипт проверяет запуск `postfix`, `dovecot`, `nginx`, `slapd`, открытые порты и MX-запись.
 
 ---
 
-### 5. На ВМ `desktop1` — создать пользователя и отправить письмо
+### 5. На ВМ `desktop1` — проверка доступа и отправка письма
 
-1. Открыть браузер
-2. Перейти на панель iRedAdmin:  
-   `https://mail.yazikov.iks531.local/iredadmin`  
+```bash
+cd linux-admin-labs/lab-7
+sudo bash desktop_lab7_hints.sh
+```
+
+Скрипт проверит DNS, ping, порт 443 и выведет инструкцию:
+1. Открыть iRedAdmin: `https://mail.yazikov.iks531.local/iredadmin`  
    Логин: `postmaster@yazikov.iks531.local`
-3. Создать пользователя: **iRedAdmin → Users → Add User**  
+2. Создать пользователя: **iRedAdmin → Users → Add User**  
    Email: `user1@yazikov.iks531.local`
-4. Открыть веб-почту:  
-   `https://mail.yazikov.iks531.local/mail`
-5. Войти и отправить письмо (себе или другому пользователю).
+3. Открыть Roundcube: `https://mail.yazikov.iks531.local/mail`
+4. Войти и отправить письмо — проверить доставку во входящих.
 
 ---
 
@@ -132,7 +139,8 @@ sudo bash mail_lab7_post.sh
 | `ping gateway` не работает с mail-ВМ | Неверный интерфейс в netplan или ВМ не в intnet | Проверь `ip a`; убедись, что ВМ в Internal Network |
 | `iRedMail.sh` падает с ошибкой зависимостей | `get_all.sh` не завершился | Повтори `mail_lab7_prepare.sh` или запусти `get_all.sh` вручную |
 | `postfix` не запущен после reboot | Конфликт с Sendmail | `systemctl disable sendmail; systemctl start postfix` |
-| Браузер: «Certificate Error» | Самоподписанный сертификат iRedMail | Добавь исключение в браузере (Advanced → Accept Risk) |
-| Письмо не доставляется | Неверный LDAP suffix или почтовый домен | Проверь `/etc/postfix/main.cf`: поля `mydomain` и `myhostname` |
+| Браузер: «Certificate Error» | Самоподписанный сертификат iRedMail | Advanced → Accept the Risk (нормально для лабы) |
+| Письмо не доставляется | Неверный LDAP suffix или mail domain | Проверь `/etc/postfix/main.cf`: `mydomain` и `myhostname` |
 | iRedAdmin недоступен | nginx или php-fpm не запущен | `systemctl status nginx php*-fpm` |
 | PTR-запись не разрешается | Опечатка в обратной зоне | `named-checkzone 29.168.192.in-addr.arpa /var/lib/bind/reverse.db` |
+| `/etc/resolv.conf` сбрасывается | systemd-resolved не отключён | Запусти шаг 4 из `mail_lab7_prepare.sh` вручную |

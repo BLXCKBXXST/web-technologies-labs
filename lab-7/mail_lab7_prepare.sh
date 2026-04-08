@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================
 #  Практическая работа №7 — Электронная почта
-#  Подготовка mail-ВМ: сеть, hostname, /etc/hosts, загрузка iRedMail
+#  Подготовка mail-ВМ: hostname, /etc/hosts, netplan,
+#  resolv.conf, apt upgrade, загрузка iRedMail
 #
 #  Запускать: sudo bash mail_lab7_prepare.sh
 #  ВМ: mail (192.168.N.5)
@@ -30,9 +31,15 @@ fi
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 1: установка hostname ---"
-
 echo "[ИНФО] Старый hostname: $(hostname)"
 hostnamectl set-hostname "${MAIL_FQDN}"
+echo "[OK] hostname = $(hostname -f)"
+
+# ------------------------------------------------------------------
+# ШАГ 2. /etc/hosts
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 2: обновление /etc/hosts ---"
 
 BAK_HOSTS="/etc/hosts.bak_lab7"
 [[ -f /etc/hosts ]] && cp /etc/hosts "${BAK_HOSTS}" && echo "[РЕЗЕРВ] /etc/hosts → ${BAK_HOSTS}"
@@ -42,16 +49,24 @@ cat >/etc/hosts <<EOF
 ${MAIL_IP}  ${MAIL_FQDN} ${MAIL_HOSTNAME}
 EOF
 
-echo "[OK] hostname = $(hostname -f)"
+echo "[OK] /etc/hosts:"
+cat /etc/hosts
 
 # ------------------------------------------------------------------
-# ШАГ 2. Статический IP (netplan)
+# ШАГ 3. Статический IP (netplan)
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: настройка статического IP ---"
+echo "--- Шаг 3: настройка статического IP (netplan) ---"
 
+# Резерв основного и дефолтного installer-файла
 BAK_NET="${NETPLAN_FILE}.bak_lab7"
 [[ -f "${NETPLAN_FILE}" ]] && cp "${NETPLAN_FILE}" "${BAK_NET}" && echo "[РЕЗЕРВ] ${NETPLAN_FILE} → ${BAK_NET}"
+
+DEFAULT_NP="/etc/netplan/00-installer-config.yaml"
+if [[ -f "${DEFAULT_NP}" ]]; then
+  cp "${DEFAULT_NP}" "${DEFAULT_NP}.bak_lab7"
+  echo "[РЕЗЕРВ] ${DEFAULT_NP} → ${DEFAULT_NP}.bak_lab7"
+fi
 
 mkdir -p "$(dirname "${NETPLAN_FILE}")"
 cat >"${NETPLAN_FILE}" <<EOF
@@ -70,13 +85,37 @@ EOF
 
 netplan apply
 sleep 2
-echo "[OK] netplan применён"
+echo "[OK] netplan применён. IP на ${NET_IF}:"
+ip -4 addr show "${NET_IF}" | grep inet || true
 
 # ------------------------------------------------------------------
-# ШАГ 3. Проверка сети
+# ШАГ 4. Отключение systemd-resolved → статический resolv.conf
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 3: проверка сети ---"
+echo "--- Шаг 4: статический resolv.conf ---"
+
+if systemctl is-active systemd-resolved >/dev/null 2>&1 || \
+   systemctl is-enabled systemd-resolved >/dev/null 2>&1; then
+  echo "[ИНФО] Отключаю systemd-resolved..."
+  systemctl disable --now systemd-resolved || true
+else
+  echo "[ИНФО] systemd-resolved уже не активен."
+fi
+
+chattr -i /etc/resolv.conf 2>/dev/null || true
+rm -f /etc/resolv.conf
+cat >/etc/resolv.conf <<EOF
+nameserver ${GW_IP}
+search ${DOMAIN}
+EOF
+chattr +i /etc/resolv.conf
+echo "[OK] /etc/resolv.conf закреплён (immutable)."
+
+# ------------------------------------------------------------------
+# ШАГ 5. Проверка сети
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 5: проверка сети ---"
 
 if ping -c2 -W2 "${GW_IP}" >/dev/null 2>&1; then
   echo "[OK] ping до gateway (${GW_IP}) — успешно"
@@ -94,36 +133,43 @@ else
 fi
 
 # ------------------------------------------------------------------
-# ШАГ 4. Обновление пакетов
+# ШАГ 6. Обновление пакетов
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 4: обновление списка пакетов ---"
+echo "--- Шаг 6: обновление пакетов ---"
 
 apt-get update -q
-echo "[OK] apt-get update завершён"
+apt-get upgrade -y
+echo "[OK] apt-get update && upgrade завершён"
 
 # ------------------------------------------------------------------
-# ШАГ 5. Загрузка iRedMail
+# ШАГ 7. Загрузка iRedMail
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 5: загрузка iRedMail ${IREDMAIL_VER} ---"
+echo "--- Шаг 7: загрузка iRedMail ${IREDMAIL_VER} ---"
 
 cd /root
 
-if [[ -d "${IREDMAIL_DIR}" ]]; then
-  echo "[ИНФО] Директория ${IREDMAIL_DIR} уже существует. Пропускаю загрузку."
+if [[ -f "${IREDMAIL_ARCHIVE}" ]]; then
+  echo "[ИНФО] Архив уже скачан: ${IREDMAIL_ARCHIVE}"
 else
   echo "[ИНФО] Скачиваю ${IREDMAIL_URL}..."
   wget -q --show-progress "${IREDMAIL_URL}" -O "${IREDMAIL_ARCHIVE}"
-  tar xvf "${IREDMAIL_ARCHIVE}"
+  echo "[OK] Скачан: ${IREDMAIL_ARCHIVE}"
+fi
+
+if [[ -d "${IREDMAIL_DIR}" ]]; then
+  echo "[ИНФО] Каталог ${IREDMAIL_DIR} уже существует — пропускаю распаковку."
+else
+  tar xf "${IREDMAIL_ARCHIVE}"
   echo "[OK] iRedMail распакован в ${IREDMAIL_DIR}"
 fi
 
 # ------------------------------------------------------------------
-# ШАГ 6. Загрузка зависимостей iRedMail
+# ШАГ 8. Загрузка зависимостей (pkgs/get_all.sh)
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 6: загрузка пакетов iRedMail (get_all.sh) ---"
+echo "--- Шаг 8: загрузка пакетов iRedMail (get_all.sh) ---"
 
 cd "${IREDMAIL_DIR}/pkgs"
 chmod +x get_all.sh
@@ -131,28 +177,32 @@ chmod +x get_all.sh
 echo "[OK] Пакеты iRedMail загружены"
 
 # ------------------------------------------------------------------
-# ПОДСКАЗКА: интерактивная установка
+# ПОДСКАЗКА: интерактивная установка iRedMail
 # ------------------------------------------------------------------
 echo
 echo "================================================================"
-echo " [СЛЕДУЮЩИЙ ШАГ] Запустите установщик iRedMail:"
+echo " [СЛЕДУЮЩИЙ ШАГ] Запуск установщика iRedMail"
 echo
 echo "   cd ${IREDMAIL_DIR}"
 echo "   chmod +x iRedMail.sh"
 echo "   ./iRedMail.sh"
 echo
-echo " В установщике выбери:"
-echo "   1) Mail storage path     : /var/vmail (по умолчанию)"
-echo "   2) Веб-сервер            : Nginx"
-echo "   3) База данных           : OpenLDAP"
-echo "   4) LDAP suffix           : dc=${STUDENT},dc=${GROUP},dc=local"
-echo "   5) Пароль admin БД       : <придумай надёжный пароль>"
-echo "   6) Почтовый домен        : ${MAIL_DOMAIN}"
-echo "      (НЕ совпадает с FQDN: ${MAIL_FQDN})"
-echo "   7) Пароль postmaster     : <придумай надёжный пароль>"
-echo "   8) Доп. компоненты       : Roundcubemail, iRedAdmin, Fail2ban — YES"
-echo "   9) Остальные вопросы     : YES"
-echo "  10) Перезагрузи сервер    : reboot"
+echo " Отвечай на вопросы установщика ТАК:"
 echo
-echo " После перезагрузки: sudo bash mail_lab7_post.sh"
+echo "   1. Mail storage path     → /var/vmail (Enter)"
+echo "   2. Web server             → Nginx"
+echo "   3. Database backend       → OpenLDAP"
+echo "   4. LDAP suffix            → dc=${STUDENT},dc=${GROUP},dc=local"
+echo "   5. Пароль LDAP rootdn     → придумай надёжный (без $ # @)"
+echo "   6. Mail domain            → ${MAIL_DOMAIN}"
+echo "      (НЕ совпадает с FQDN: ${MAIL_FQDN})"
+echo "   7. Пароль postmaster      → придумай надёжный"
+echo "   8. Компоненты             → Roundcubemail, iRedAdmin, Fail2ban — YES"
+echo "   9. Confirm Installation   → y"
+echo "  10. Firewall               → y"
+echo
+echo " После установки — ПЕРЕЗАГРУЗИ: reboot"
+echo " Затем запусти: sudo bash mail_lab7_post.sh"
 echo "================================================================"
+echo
+read -r -p "Скрипт завершён. Нажми Enter для выхода..."
