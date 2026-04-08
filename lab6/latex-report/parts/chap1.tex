@@ -3,14 +3,6 @@
 
 \section{Облачное хранилище и Seafile}
 
-<<<<<<< HEAD
-Seafile~— платформа облачного хранения файлов с открытым исходным кодом~\cite{seafile_docs}.
-Архитектура включает три компонента:
-\begin{itemize}
-  \item \textbf{seafile-server} (ccnet + seafile) — хранение данных и блочная синхронизация;
-  \item \textbf{seahub} — веб-интерфейс на Django;
-  \item \textbf{MariaDB/MySQL} — база данных для метаданных~\cite{mariadb_docs}.
-=======
 \textbf{Облачное хранилище} (cloud storage) — модель хранения данных, при которой
 файлы размещаются на удалённых серверах и доступны через сеть. Ключевые преимущества:
 централизованное управление, синхронизация между устройствами, совместный доступ.
@@ -23,7 +15,6 @@ Seafile~— платформа облачного хранения файлов 
   \item \textbf{Seahub} — веб-приложение на Django, GUI и REST~API, порт~\texttt{8000};
   \item \textbf{Seafile Client} — настольный клиент (Windows / macOS / Linux) и
         мобильные приложения для синхронизации.
->>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
 \end{itemize}
 
 \section{Стек технологий}
@@ -31,12 +22,6 @@ Seafile~— платформа облачного хранения файлов 
 \textbf{MariaDB} — реляционная СУБД, совместимая с MySQL, используется как бэкенд
 для трёх баз данных Seafile: \texttt{ccnet-db}, \texttt{seafile-db}, \texttt{seahub-db}.
 
-<<<<<<< HEAD
-Nginx~\cite{nginx_docs} принимает входящие соединения на порту~80 и перенаправляет их
-через директиву \texttt{proxy\_pass} на seahub. Ключевые заголовки:
-\texttt{Host}, \texttt{X-Real-IP}, \texttt{X-Forwarded-For}~— передают оригинальный
-адрес клиента в приложение.
-=======
 \textbf{Nginx} — высокопроизводительный веб-сервер и обратный прокси.
 В данной работе Nginx принимает HTTP-запросы на порту~\texttt{80}
 и проксирует их на \texttt{127.0.0.1:8000} (Seahub):
@@ -47,21 +32,13 @@ location / {
     proxy_set_header X-Real-IP $remote_addr;
 }
 \end{lstlisting}
->>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
 
 \textbf{Python~3 / pip} — платформа для выполнения Seahub. Необходимые
 Python-пакеты устанавливаются командой \texttt{pip3 install}:
 \texttt{django}, \texttt{Pillow}, \texttt{mysqlclient}, \texttt{sqlalchemy},
 \texttt{pycryptodome} и др.
 
-<<<<<<< HEAD
-MariaDB~— форк MySQL с открытым кодом, полностью совместимый на уровне протокола~\cite{mariadb_docs}.
-Seafile автоматически создаёт три базы данных: \texttt{ccnet-db},
-\texttt{seafile-db}, \texttt{seahub-db} при первом запуске скрипта
-\texttt{setup-seafile-mysql.sh}.
-=======
 \section{Схема взаимодействия компонентов}
->>>>>>> afa3aa95c03e2cb4d554c2974bade07ff2a85179
 
 После полной настройки клиентская машина Desktop обращается к серверу по имени
 \texttt{seafile} (разрешается через BIND9 на gateway). Nginx принимает соединение
