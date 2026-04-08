@@ -2,28 +2,29 @@
 \addcontentsline{toc}{chapter}{Заключение}
 \label{ch:conclusion}
 
-В ходе выполнения лабораторной работы~\cfgLabNumber{} был развёрнут и настроен
-почтовый сервер \textbf{iRedMail} на виртуальной машине \texttt{mail}
-под управлением Ubuntu~22.04~LTS.
+В ходе выполнения лабораторной работы~\cfgLabNumber{} был развёрнут
+и настроен почтовый сервер \textbf{iRedMail~1.6.2} на виртуальной
+машине \texttt{mail} (Ubuntu~22.04~Server, IP~\texttt{192.168.\cfgLabStudentN.5})
+в рамках уже существующей инфраструктуры учебного стенда.
 
-Выполненные задачи:
-\begin{itemize}
-  \item подготовлена виртуальная машина \texttt{mail}: назначен статический
-        IP \texttt{192.168.\cfgLabStudentN.5/24}, настроен FQDN
-        \texttt{mail.yazikov.iks531.local};
-  \item добавлены A- и PTR-записи для \texttt{mail} в DNS-сервер BIND9
-        (ВМ \texttt{gateway});
-  \item выполнена установка iRedMail~1.6.2 с бэкендом \textbf{OpenLDAP}
-        и веб-сервером \textbf{Nginx};
-  \item настроен почтовый домен \texttt{yazikov.iks531.local};
-  \item создан почтовый пользователь \texttt{user1@yazikov.iks531.local}
-        через панель \textbf{iRedAdmin};
-  \item проверена отправка и получение писем через \textbf{Roundcubemail};
-  \item подтверждена доставка письма через лог \texttt{/var/log/mail.log}.
-\end{itemize}
+В процессе работы были выполнены следующие задачи:
+\begin{enumerate}
+  \item Создана и настроена виртуальная машина \texttt{mail} со статическим
+        IP-адресом и корректным FQDN-именем
+        \texttt{mail.yazikov.iks531.local}.
+  \item В DNS-зону шлюза \texttt{gateway} добавлена A-запись для
+        нового почтового сервера.
+  \item Загружен и запущен интерактивный установщик iRedMail;
+        выбраны Nginx в качестве веб-сервера и OpenLDAP
+        для хранения учётных записей.
+  \item После завершения установки проверена работа сервисов
+        \texttt{postfix}, \texttt{dovecot} и \texttt{nginx}.
+  \item Через браузер Desktop подтверждена доступность веб-интерфейсов
+        \texttt{iRedAdmin} и \texttt{Roundcube}.
+\end{enumerate}
 
-Полученные навыки --- развёртывание и базовое администрирование iRedMail,
-работа с OpenLDAP, Postfix, Dovecot, управление пользователями через iRedAdmin ---
-соответствуют компетенциям администратора корпоративной почтовой инфраструктуры.
+Таким образом, в учебной сети организован полноценный почтовый сервер
+с поддержкой SMTP, IMAP, антиспам-фильтрацией и удобным
+веб-интерфейсом для пользователей и администратора.
 
 \endinput

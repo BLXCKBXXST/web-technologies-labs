@@ -1,79 +1,67 @@
-\chapter{Теоретические сведения}
+\chapter{Теоретическая часть}
 \label{ch:theory}
 
-\section{Электронная почта. Протоколы и архитектура}
+\section{Электронная почта и протоколы}
 
-\textbf{Электронная почта} (e-mail) --- система обмена текстовыми и мультимедийными
-сообщениями через компьютерные сети. Взаимодействие компонентов строится
-на трёх ключевых протоколах:
+Электронная почта~--- система обмена сообщениями в компьютерных сетях.
+Передача сообщений между серверами осуществляется по протоколу
+\textbf{SMTP} (\textit{Simple Mail Transfer Protocol}, порт~25/587),
+а получение клиентом~--- по протоколам \textbf{POP3} (порт~110/995)
+или \textbf{IMAP} (порт~143/993). Шифрование канала обеспечивается
+посредством \textbf{TLS/SSL}.
+
+Для подтверждения подлинности отправителя используются дополнительные механизмы:
 \begin{itemize}
-  \item \textbf{SMTP} (Simple Mail Transfer Protocol, RFC~5321) ---
-        протокол отправки и пересылки сообщений; порт 25 (сервер--сервер),
-        587 (клиент--сервер с аутентификацией);
-  \item \textbf{IMAP} (Internet Message Access Protocol, RFC~3501) ---
-        протокол доступа к почте с хранением сообщений на сервере;
-        порт 143 (STARTTLS), 993 (SSL/TLS);
-  \item \textbf{POP3} (Post Office Protocol~3, RFC~1939) ---
-        протокол скачивания писем на клиент; порт 110, 995 (SSL).
+  \item \textbf{SPF} (\textit{Sender Policy Framework}) --- записи в DNS,
+        перечисляющие серверы, которым разрешено отправлять почту от имени домена;
+  \item \textbf{DKIM} (\textit{DomainKeys Identified Mail}) --- цифровая подпись
+        письма ключом, открытая часть которого публикуется в DNS;
+  \item \textbf{DMARC} --- политика обработки сообщений, не прошедших SPF/DKIM.
 \end{itemize}
 
-Архитектура почтовой системы включает:
+\section{Что такое iRedMail}
+
+\textbf{iRedMail}~--- пакет сценариев автоматической установки и настройки
+полноценного почтового сервера на операционных системах семейства Linux и BSD.
+В одну инсталляцию входят:
 \begin{itemize}
-  \item \textbf{MTA} (Mail Transfer Agent) --- агент пересылки; пример: \textit{Postfix};
-  \item \textbf{MDA} (Mail Delivery Agent) --- агент доставки в почтовый ящик;
-        пример: \textit{Dovecot};
-  \item \textbf{MUA} (Mail User Agent) --- клиент пользователя;
-        пример: \textit{Roundcubemail}, Thunderbird.
+  \item \textbf{Postfix}~--- агент передачи почты (MTA), принимает и
+        доставляет сообщения;
+  \item \textbf{Dovecot}~--- сервер доступа к почтовым ящикам по IMAP/POP3;
+  \item \textbf{OpenLDAP} (или MariaDB/PostgreSQL)~--- хранилище пользователей
+        и доменов;
+  \item \textbf{Amavisd-new} + \textbf{SpamAssassin} + \textbf{ClamAV}~---
+        фильтрация спама и антивирусная проверка;
+  \item \textbf{Nginx}~--- веб-сервер для панели администратора
+        (\texttt{/iredadmin}) и веб-клиента почты (\texttt{/mail});
+  \item \textbf{Roundcube}~--- веб-интерфейс для работы с почтой.
 \end{itemize}
 
-\section{iRedMail}
+\section{Требования к системе}
 
-\textbf{iRedMail} --- открытое решение для быстрого развёртывания
-полнофункционального почтового сервера. Одним скриптом устанавливаются
-и настраиваются следующие компоненты:
+Минимальные системные требования iRedMail~1.6.2 для Ubuntu~22.04:
 \begin{itemize}
-  \item \textbf{Postfix} --- MTA (отправка и приём почты);
-  \item \textbf{Dovecot} --- IMAP/POP3-сервер и MDA;
-  \item \textbf{OpenLDAP} или \textbf{MariaDB}/\textbf{PostgreSQL} ---
-        хранилище учётных записей;
-  \item \textbf{Roundcubemail} --- веб-интерфейс почты;
-  \item \textbf{iRedAdmin} --- панель администрирования;
-  \item \textbf{Amavisd-new}, \textbf{SpamAssassin}, \textbf{ClamAV} ---
-        антиспам и антивирус;
-  \item \textbf{Fail2ban} --- защита от брутфорса;
-  \item \textbf{Nginx} или Apache --- веб-сервер.
+  \item ОЗУ: не менее \textbf{2~ГБ} (рекомендуется 4~ГБ);
+  \item Диск: не менее \textbf{10~ГБ} свободного пространства;
+  \item Чистая установка ОС без ранее установленных MTA
+        (\texttt{sendmail}, \texttt{exim} и~т.~п.);
+  \item Корректно настроенное \textbf{FQDN-имя} хоста (\texttt{mail.STUDENT.GROUP.local});
+  \item Запись \texttt{mail~IN~A} в DNS прямой зоны.
 \end{itemize}
 
-Версия, использованная в работе: \textbf{1.6.2}.
+\section{Архитектура стенда}
 
-\section{OpenLDAP как бэкенд}
+В данной работе почтовый сервер \texttt{mail} размещается в изолированной
+внутренней сети \texttt{192.168.\cfgLabStudentN.0/24}.
+Шлюз \texttt{gateway} (\texttt{192.168.\cfgLabStudentN.1}) обеспечивает:
+\begin{enumerate}
+  \item выход машин внутренней сети в интернет (NAT + MASQUERADE);
+  \item разрешение имён (DNS~BIND9) для домена
+        \texttt{yazikov.iks531.local};
+  \item выдачу IP-адресов клиентам по DHCP.
+\end{enumerate}
 
-\textbf{LDAP} (Lightweight Directory Access Protocol) --- протокол доступа
-к каталогам. iRedMail использует OpenLDAP для хранения учётных записей
-пользователей и доменов. Суффикс (root DN) дерева каталога определяется
-по имени почтового домена, например:
-\begin{lstlisting}
-dc=yazikov,dc=iks531,dc=local
-\end{lstlisting}
-
-\section{Требования к хосту}
-
-iRedMail предъявляет строгие требования к имени хоста:
-\begin{itemize}
-  \item FQDN должен разрешаться в IP-адрес сервера (A-запись в DNS);
-  \item FQDN \textbf{не должен} совпадать с именем почтового домена:
-        если домен \texttt{yazikov.iks531.local}, то FQDN должен быть
-        \texttt{mail.yazikov.iks531.local};
-  \item \texttt{/etc/hosts} должен содержать строку с IP и FQDN;
-  \item \texttt{hostname -f} должен возвращать полное доменное имя.
-\end{itemize}
-
-\section{SSL/TLS-сертификат}
-
-iRedMail автоматически генерирует \textbf{самоподписанный SSL-сертификат}
-для шифрования SMTP, IMAP и HTTPS-трафика. Браузер при первом открытии
-выдаст предупреждение о недоверенном сертификате --- это ожидаемо
-для учебного стенда. Для принятия необходимо нажать
-\textit{Advanced} → \textit{Accept the Risk and Continue}.
+Машина \texttt{mail} получает статический IP \texttt{192.168.\cfgLabStudentN.5}
+и добавляется в DNS-зону шлюза вручную.
 
 \endinput

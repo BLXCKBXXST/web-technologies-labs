@@ -1,4 +1,4 @@
-# Скриншоты для лабораторной работы №7
+# Скриншоты — Лабораторная работа №7 (iRedMail)
 
 ## Запуск скрипта
 
@@ -6,82 +6,65 @@
 sudo bash screenshots/screenshots.sh
 ```
 
-Скрипт запускается на **ВМ `mail`** (Ubuntu Server). Ряд шагов выполняется
-на ВМ `gateway` (DNS) и ВМ `Desktop` (браузер) — скрипт сигнализирует об этом.
+> Скрипт запускается **на ВМ `mail`** (кроме шагов, явно помеченных как `[gateway]`).  
+> Перед запуском убедитесь, что лабораторная работа выполнена целиком.
 
 ---
 
-## Механика работы
+## Как работает скрипт
 
 Каждый шаг выглядит так:
 
 ```
 ========================================
-  [Скриншот NN] Описание
+  [Скриншот NN] Описание действия
 ========================================
   Файл: img/NN_название.png
 
   → Нажми Enter чтобы выполнить команду...
-
 <вывод команды>
-
   ✔ Сделай скриншот и нажми Enter для продолжения...
 ```
 
-Для шагов в VirtualBox GUI и браузере скрипт выводит инструкции и ждёт подтверждения.
+Для **ручных шагов** (VirtualBox GUI, браузер) команда не выполняется —
+скрипт объясняет, что именно нужно показать, и ждёт нажатия Enter.
 
 ---
 
 ## Таблица скриншотов
 
-| № | Файл | Где снимать | Что показать |
-|---|------|-------------|---------------|
-| 01 | `01_vbox_mail_settings.png` | Хост (VirtualBox GUI) | Настройки ВМ mail → Сеть, Адаптер 1: Внутренняя сеть intnet |
-| 02 | `02_netplan_mail.png` | ВМ mail | Файл `/etc/netplan/01-netcfg.yaml` с статическим IP |
-| 03 | `03_hostname_fqdn.png` | ВМ mail | Вывод `hostname -f` = `mail.yazikov.iks531.local` и `cat /etc/hosts` |
-| 04 | `04_nslookup_mail.png` | ВМ mail | Вывод `nslookup mail` (успешное разрешение DNS) |
-| 05 | `05_ping_internet.png` | ВМ mail | `ping -c3 ya.ru` — пакеты проходят |
-| 06 | `06_wget_iredmail.png` | ВМ mail | Завершение `wget` архива iRedMail (100%) |
-| 07 | `07_get_all_done.png` | ВМ mail | Завершение `pkgs/get_all.sh` |
-| 08 | `08_install_storage.png` | ВМ mail | Экран установщика: Default mail storage path |
-| 09 | `09_install_webserver.png` | ВМ mail | Экран установщика: выбор Nginx |
-| 10 | `10_install_backend.png` | ВМ mail | Экран установщика: выбор OpenLDAP |
-| 11 | `11_install_ldap_suffix.png` | ВМ mail | Экран установщика: LDAP suffix `dc=yazikov,dc=iks531,dc=local` |
-| 12 | `12_install_mail_domain.png` | ВМ mail | Экран установщика: первый домен `yazikov.iks531.local` |
-| 13 | `13_install_components.png` | ВМ mail | Экран установщика: выбор компонентов (Roundcube, iRedAdmin и др.) |
-| 14 | `14_install_done.png` | ВМ mail | Финальный экран установщика: Installation completed |
-| 15 | `15_services_status.png` | ВМ mail | `systemctl status postfix` (active running) |
-| 16 | `16_iredadmin_login.png` | Desktop (Firefox) | Форма входа iRedAdmin: `https://mail.yazikov.iks531.local/iredadmin` |
-| 17 | `17_iredadmin_add_user.png` | Desktop (Firefox) | Форма создания пользователя `user1@yazikov.iks531.local` |
-| 18 | `18_iredadmin_user_list.png` | Desktop (Firefox) | Список пользователей: postmaster + user1 |
-| 19 | `19_roundcube_inbox.png` | Desktop (Firefox) | Roundcube Inbox postmaster (вход: `https://mail.yazikov.iks531.local/mail`) |
-| 20 | `20_roundcube_compose.png` | Desktop (Firefox) | Форма Compose: To: `user1@yazikov.iks531.local`, Subject: Тест ЛР-7 |
-| 21 | `21_roundcube_received.png` | Desktop (Firefox) | Inbox user1 с пришедшим письмом |
-| 22 | `22_roundcube_open_letter.png` | Desktop (Firefox) | Открытое письмо — тема и текст |
-| 23 | `23_mail_log.png` | ВМ mail | `tail -30 /var/log/mail.log` — строка `status=sent` |
+| № | Файл | ВМ | Что показать |
+|---|------|----|--------------|
+| 01 | `01_vbox_mail_network.png` | host | VirtualBox → mail → Настройка → Сеть (вкладка Адаптер 1, Internal Network) |
+| 02 | `02_mail_ip_a.png` | mail | Вывод `ip a` — адрес 192.168.29.5 на enp0s3 |
+| 03 | `03_mail_ping_nslookup.png` | mail | `ping -c 4 192.168.29.1` и `nslookup gateway` |
+| 04 | `04_mail_etc_hosts.png` | mail | Файл `/etc/hosts` с FQDN `mail.yazikov.iks531.local` |
+| 05 | `05_dns_mail_record.png` | gateway | `nslookup mail.yazikov.iks531.local` после добавления A-записи |
+| 06 | `06_iredmail_download.png` | mail | Завершение распаковки архива `iRedMail-1.6.2` |
+| 07 | `07_getall_done.png` | mail | Завершение `./get_all.sh` |
+| 08 | `08_installer_nginx.png` | mail | Экран установщика — выбор Nginx |
+| 09 | `09_installer_openldap.png` | mail | Экран установщика — выбор OpenLDAP, ввод суффикса |
+| 10 | `10_installer_done.png` | mail | Финальный экран установщика (установка завершена) |
+| 11 | `11_postfix_status.png` | mail | `systemctl status postfix` — active (running) |
+| 12 | `12_dovecot_status.png` | mail | `systemctl status dovecot` — active (running) |
+| 13 | `13_iredadmin_login.png` | Desktop | Браузер: страница входа `https://mail.../iredadmin` |
+| 14 | `14_iredadmin_dashboard.png` | Desktop | Дашборд iRedAdmin после успешного входа |
+| 15 | `15_roundcube_login.png` | Desktop | Браузер: страница входа `https://mail.../mail` |
 
 ---
 
 ## Предупреждения
 
-> ⚠️ **Зависимость от лаб.5:** на ВМ `gateway` должен работать BIND9
-> и быть добавлена A-запись `mail → 192.168.29.5`.
-> Выполни `sudo bash gateway_add_mail_dns.sh` перед скриншотами.
-
-> ⚠️ **Скриншоты 08–13 (установщик):** сделай их в процессе реального запуска
-> `./iRedMail.sh`. Повторно пройти установщик не получится без переустановки ВМ.
-
-> ⚠️ **SSL-сертификат:** браузер покажет предупреждение — это ожидаемо.
-> Нажми Advanced → Accept the Risk.
+- **Шаги 01, 08–10, 13–15** — ручные (GUI/браузер), выполняются без команды.
+- **Шаг 05** выполняется на **gateway**, а не на mail.
+- Шаги 08–10 отображаются **внутри терминала установщика** iRedMail —
+  скриншоты нужно делать именно в этот момент.
+- Для шагов 13–15 нужен запущенный браузер на ВМ **Desktop**.
 
 ---
 
 ## Перенос скриншотов на хост
 
 ```bash
-# С ВМ mail на хост
-scp img/*.png user@<HOST_IP>:/path/to/lab-7/latex-report/img/
-
-# Или через общую папку VirtualBox
-# Настрой Shared Folders в VirtualBox → скопируй PNG в смонтированную папку
+scp img/*.png user@<IP_хоста>:/path/to/lab-7/latex-report/img/
 ```
