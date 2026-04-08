@@ -15,31 +15,35 @@ GROUP="iks531"
 # Домен (собирается автоматически из STUDENT и GROUP)
 DOMAIN="${STUDENT}.${GROUP}.local"
 
-# Имя почтового сервера
+# Имя хоста mail-сервера
 MAIL_HOSTNAME="mail"
-
-# FQDN почтового сервера
 MAIL_FQDN="${MAIL_HOSTNAME}.${DOMAIN}"
 
-# IP почтового сервера (в локальной сети)
+# IP-адрес mail-сервера (192.168.N.5)
 MAIL_IP="192.168.${N}.5"
-MAIL_CIDR="${MAIL_IP}/24"
 
-# Шлюз и DNS (сервер gateway из лаб.4/5)
+# Имя хоста сервера-шлюза / DNS
+GW_HOSTNAME="gateway"
 GW_IP="192.168.${N}.1"
 
-# Сетевой интерфейс почтового сервера
+# Интерфейс mail-машины (один — Internal Network)
 NET_IF="enp0s3"
 
-# Файл netplan
+# Файл netplan на mail-машине
 NETPLAN_FILE="/etc/netplan/01-netcfg.yaml"
 
-# Пользователь-администратор почты (postmaster)
-MAIL_ADMIN="postmaster@${DOMAIN}"
-
-# Имя DNS-записи A, которую надо добавить в gateway forward.db
+# Пути к файлам зон bind (на gateway)
 FORWARD_DB="/var/lib/bind/forward.db"
+REVERSE_DB="/var/lib/bind/reverse.db"
 
-# URL репозитория iRedMail
+# Версия iRedMail
 IREDMAIL_VER="1.6.2"
-IREDMAIL_URL="https://github.com/iredmail/iRedMail/archive/refs/tags/${IREDMAIL_VER}.tar.gz"
+IREDMAIL_DIR="/root/iRedMail-${IREDMAIL_VER}"
+IREDMAIL_ARCHIVE="${IREDMAIL_VER}.tar.gz"
+IREDMAIL_URL="https://github.com/iredmail/iRedMail/archive/refs/tags/${IREDMAIL_ARCHIVE}"
+
+# Почтовый домен для iRedMail (НЕ должен совпадать с FQDN сервера)
+MAIL_DOMAIN="${STUDENT}.${GROUP}.local"
+
+# postmaster-пользователь
+POSTMASTER="postmaster@${MAIL_DOMAIN}"
