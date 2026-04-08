@@ -12,7 +12,7 @@ wget https://github.com/iredmail/iRedMail/archive/refs/tags/1.6.2.tar.gz
 tar xvf 1.6.2.tar.gz
 \end{lstlisting}
 
-% --- Скриншот: завершение распаковки архива iRedMail ---
+% — Скриншот: завершение распаковки архива iRedMail —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/06_iredmail_download}
@@ -32,7 +32,7 @@ chmod +x get_all.sh
 ./get_all.sh
 \end{lstlisting}
 
-% --- Скриншот: завершение ./get_all.sh ---
+% — Скриншот: завершение ./get_all.sh —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/07_getall_done}
@@ -59,11 +59,11 @@ chmod +x iRedMail.sh
 Установщик предлагает выбрать веб-сервер: \textbf{Nginx} или Apache.
 Выбираем \textbf{Nginx}.
 
-% --- Скриншот: экран выбора веб-сервера (Nginx выделен) ---
+% — Скриншот: экран выбора веб-сервера (Nginx выделен) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/08_installer_nginx}
-  \caption{Установщик iRedMail --- выбор Nginx в качестве веб-сервера}
+  \caption{Установщик iRedMail — выбор Nginx в качестве веб-сервера}
   \label{fig:installer_nginx}
 \end{figure}
 
@@ -77,11 +77,11 @@ chmod +x iRedMail.sh
 dc=yazikov,dc=iks531,dc=local
 \end{lstlisting}
 
-% --- Скриншот: экран выбора OpenLDAP и ввода суффикса ---
+% — Скриншот: экран выбора OpenLDAP и ввода суффикса —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/09_installer_openldap}
-  \caption{Установщик iRedMail --- выбор OpenLDAP и ввод суффикса домена}
+  \caption{Установщик iRedMail — выбор OpenLDAP и ввод суффикса домена}
   \label{fig:installer_ldap}
 \end{figure}
 
@@ -94,11 +94,11 @@ dc=yazikov,dc=iks531,dc=local
 Установщик сообщает учётные данные администратора:
 \texttt{postmaster@yazikov.iks531.local}.
 
-% --- Скриншот: финальный экран установщика (установка завершена) ---
+% — Скриншот: финальный экран установщика (установка завершена) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/10_installer_done}
-  \caption{Завершение установки iRedMail --- все компоненты настроены}
+  \caption{Завершение установки iRedMail — все компоненты настроены}
   \label{fig:installer_done}
 \end{figure}
 
@@ -119,19 +119,19 @@ systemctl status nginx
 
 Все три сервиса должны находиться в состоянии \texttt{active (running)}.
 
-% --- Скриншот: systemctl status postfix (active running) ---
+% — Скриншот: systemctl status postfix (active running) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/11_postfix_status}
-  \caption{Статус \texttt{postfix} --- active (running)}
+  \caption{Статус \texttt{postfix} — active (running)}
   \label{fig:postfix_status}
 \end{figure}
 
-% --- Скриншот: systemctl status dovecot (active running) ---
+% — Скриншот: systemctl status dovecot (active running) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/12_dovecot_status}
-  \caption{Статус \texttt{dovecot} --- active (running)}
+  \caption{Статус \texttt{dovecot} — active (running)}
   \label{fig:dovecot_status}
 \end{figure}
 
@@ -149,7 +149,7 @@ https://mail.yazikov.iks531.local/iredadmin
 \textit{Логин:} \texttt{postmaster@yazikov.iks531.local},
 \textit{Пароль:} указанный при установке.
 
-% --- Скриншот: браузер Desktop, страница авторизации iRedAdmin ---
+% — Скриншот: браузер Desktop, страница авторизации iRedAdmin —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/13_iredadmin_login}
@@ -157,11 +157,11 @@ https://mail.yazikov.iks531.local/iredadmin
   \label{fig:iredadmin_login}
 \end{figure}
 
-% --- Скриншот: дашборд iRedAdmin после входа ---
+% — Скриншот: дашборд iRedAdmin после входа —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/14_iredadmin_dashboard}
-  \caption{Главная панель \texttt{iRedAdmin} --- домен и пользователи}
+  \caption{Главная панель \texttt{iRedAdmin} — домен и пользователи}
   \label{fig:iredadmin_dash}
 \end{figure}
 
@@ -173,7 +173,7 @@ https://mail.yazikov.iks531.local/iredadmin
 https://mail.yazikov.iks531.local/mail
 \end{lstlisting}
 
-% --- Скриншот: страница авторизации Roundcube ---
+% — Скриншот: страница авторизации Roundcube —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/15_roundcube_login}

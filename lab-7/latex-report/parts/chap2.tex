@@ -3,12 +3,12 @@
 
 \section{Конфигурация виртуального стенда}
 
-Виртуальная машина \texttt{gateway}~--- Ubuntu~20.04.5~LTS (VirtualBox),
+Виртуальная машина \texttt{gateway}~— Ubuntu~20.04.5~LTS (VirtualBox),
 два сетевых адаптера:
 \begin{itemize}
-  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{NAT}:
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) — тип \textit{NAT}:
         IP \texttt{10.0.2.15/24}, шлюз \texttt{10.0.2.2};
-  \item \textbf{Адаптер~2} (\texttt{enp0s8}) --- тип \textit{Internal Network}:
+  \item \textbf{Адаптер~2} (\texttt{enp0s8}) — тип \textit{Internal Network}:
         IP \texttt{192.168.\cfgLabStudentN.1/24}.
 \end{itemize}
 
@@ -16,13 +16,13 @@
 DNS-сервер BIND9, DHCP-сервер \texttt{isc-dhcp-server},
 маршрутизация с iptables MASQUERADE.
 
-Виртуальная машина \texttt{mail}~--- Ubuntu~22.04~LTS~Server:
+Виртуальная машина \texttt{mail}~— Ubuntu~22.04~LTS~Server:
 \begin{itemize}
-  \item \textbf{Адаптер~1} (\texttt{enp0s3}) --- тип \textit{Internal Network},
+  \item \textbf{Адаптер~1} (\texttt{enp0s3}) — тип \textit{Internal Network},
         статический IP \texttt{192.168.\cfgLabStudentN.5/24}.
 \end{itemize}
 
-% --- Скриншот: настройки ВМ mail в VirtualBox (вкладка Сеть) ---
+% — Скриншот: настройки ВМ mail в VirtualBox (вкладка Сеть) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/01_vbox_mail_network}
@@ -57,7 +57,7 @@ netplan apply
 ip a
 \end{lstlisting}
 
-% --- Скриншот: вывод ip a на mail (192.168.N.5 на enp0s3) ---
+% — Скриншот: вывод ip a на mail (192.168.N.5 на enp0s3) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/02_mail_ip_a}
@@ -74,7 +74,7 @@ ping -c 4 192.168.N.1
 nslookup gateway.yazikov.iks531.local
 \end{lstlisting}
 
-% --- Скриншот: ping до gateway и nslookup ---
+% — Скриншот: ping до gateway и nslookup —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/03_mail_ping_nslookup}
@@ -99,7 +99,7 @@ nano /etc/hosts
 192.168.N.5  mail.yazikov.iks531.local  mail
 \end{lstlisting}
 
-% --- Скриншот: nano /etc/hosts с прописанным FQDN ---
+% — Скриншот: nano /etc/hosts с прописанным FQDN —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/04_mail_etc_hosts}
@@ -126,7 +126,7 @@ systemctl restart bind9
 nslookup mail.yazikov.iks531.local
 \end{lstlisting}
 
-% --- Скриншот: nslookup mail.yazikov.iks531.local (успешно) ---
+% — Скриншот: nslookup mail.yazikov.iks531.local (успешно) —
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/05_dns_mail_record}

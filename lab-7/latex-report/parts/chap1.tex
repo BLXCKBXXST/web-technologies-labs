@@ -3,38 +3,38 @@
 
 \section{Электронная почта и протоколы}
 
-Электронная почта~--- система обмена сообщениями в компьютерных сетях.
+Электронная почта~— система обмена сообщениями в компьютерных сетях.
 Передача сообщений между серверами осуществляется по протоколу
 \textbf{SMTP} (\textit{Simple Mail Transfer Protocol}, порт~25/587),
-а получение клиентом~--- по протоколам \textbf{POP3} (порт~110/995)
+а получение клиентом~— по протоколам \textbf{POP3} (порт~110/995)
 или \textbf{IMAP} (порт~143/993). Шифрование канала обеспечивается
 посредством \textbf{TLS/SSL}.
 
 Для подтверждения подлинности отправителя используются дополнительные механизмы:
 \begin{itemize}
-  \item \textbf{SPF} (\textit{Sender Policy Framework}) --- записи в DNS,
+  \item \textbf{SPF} (\textit{Sender Policy Framework}) — записи в DNS,
         перечисляющие серверы, которым разрешено отправлять почту от имени домена;
-  \item \textbf{DKIM} (\textit{DomainKeys Identified Mail}) --- цифровая подпись
+  \item \textbf{DKIM} (\textit{DomainKeys Identified Mail}) — цифровая подпись
         письма ключом, открытая часть которого публикуется в DNS;
-  \item \textbf{DMARC} --- политика обработки сообщений, не прошедших SPF/DKIM.
+  \item \textbf{DMARC} — политика обработки сообщений, не прошедших SPF/DKIM.
 \end{itemize}
 
 \section{Что такое iRedMail}
 
-\textbf{iRedMail}~--- пакет сценариев автоматической установки и настройки
+\textbf{iRedMail}~— пакет сценариев автоматической установки и настройки
 полноценного почтового сервера на операционных системах семейства Linux и BSD.
 В одну инсталляцию входят:
 \begin{itemize}
-  \item \textbf{Postfix}~--- агент передачи почты (MTA), принимает и
+  \item \textbf{Postfix}~— агент передачи почты (MTA), принимает и
         доставляет сообщения;
-  \item \textbf{Dovecot}~--- сервер доступа к почтовым ящикам по IMAP/POP3;
-  \item \textbf{OpenLDAP} (или MariaDB/PostgreSQL)~--- хранилище пользователей
+  \item \textbf{Dovecot}~— сервер доступа к почтовым ящикам по IMAP/POP3;
+  \item \textbf{OpenLDAP} (или MariaDB/PostgreSQL)~— хранилище пользователей
         и доменов;
-  \item \textbf{Amavisd-new} + \textbf{SpamAssassin} + \textbf{ClamAV}~---
+  \item \textbf{Amavisd-new} + \textbf{SpamAssassin} + \textbf{ClamAV}~—
         фильтрация спама и антивирусная проверка;
-  \item \textbf{Nginx}~--- веб-сервер для панели администратора
+  \item \textbf{Nginx}~— веб-сервер для панели администратора
         (\texttt{/iredadmin}) и веб-клиента почты (\texttt{/mail});
-  \item \textbf{Roundcube}~--- веб-интерфейс для работы с почтой.
+  \item \textbf{Roundcube}~— веб-интерфейс для работы с почтой.
 \end{itemize}
 
 \section{Требования к системе}

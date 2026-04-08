@@ -8,7 +8,7 @@
 не зависеть от сторонних провайдеров и обеспечивать соответствие
 внутренней политике безопасности.
 
-Цель работы~--- установить и настроить почтовый сервер \textbf{iRedMail}
+Цель работы~— установить и настроить почтовый сервер \textbf{iRedMail}
 на отдельной виртуальной машине внутренней сети,
 интегрировав его с уже работающей инфраструктурой (шлюз, DNS, DHCP).
 
@@ -24,11 +24,11 @@
 
 \textbf{Стенд:}
 \begin{itemize}
-  \item ВМ \texttt{gateway} --- Ubuntu~20.04.5~LTS (VirtualBox),
+  \item ВМ \texttt{gateway} — Ubuntu~20.04.5~LTS (VirtualBox),
         адаптеры \texttt{enp0s3}~(NAT, \texttt{10.0.2.15/24})
         и \texttt{enp0s8}~(Internal, \texttt{192.168.\cfgLabStudentN.1/24});
         уже настроены DHCP, DNS~(BIND9), маршрутизация.
-  \item ВМ \texttt{mail} --- Ubuntu~22.04~LTS~Server,
+  \item ВМ \texttt{mail} — Ubuntu~22.04~LTS~Server,
         один адаптер \texttt{enp0s3}~(Internal),
         статический IP \texttt{192.168.\cfgLabStudentN.5/24}.
 \end{itemize}
