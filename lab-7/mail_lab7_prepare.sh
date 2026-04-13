@@ -215,33 +215,35 @@ echo "[OK] pkgs.sha256 обновлён"
 
 # ------------------------------------------------------------------
 # ШАГ 8. Загрузка остальных зависимостей (pkgs/get_all.sh)
-# CHECK_NEW_IREDMAIL=NO отключает серверную проверку версии
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 8: загрузка пакетов iRedMail (get_all.sh) ---"
 
 cd "${IREDMAIL_DIR}/pkgs"
 chmod +x get_all.sh
+
+# ------------------------------------------------------------------
+# ШАГ 9. Патч get_all.sh — убрать exit 255 из проверки версии
+# Сервер iredmail.org возвращает UPDATE_AVAILABLE для версии 1.6.8,
+# но это учебная среда — просто отключаем принудительный выход.
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 9: патч get_all.sh (отключение exit 255) ---"
+
+GET_ALL="${IREDMAIL_DIR}/pkgs/get_all.sh"
+if grep -q '^        exit 255' "${GET_ALL}" 2>/dev/null; then
+  sed -i 's/^        exit 255/#        exit 255/' "${GET_ALL}"
+  echo "[OK] exit 255 закомментирован в get_all.sh"
+elif grep -q 'exit 255' "${GET_ALL}" 2>/dev/null; then
+  sed -i '/exit 255/s/^/#/' "${GET_ALL}"
+  echo "[OK] exit 255 закомментирован в get_all.sh"
+else
+  echo "[ИНФО] exit 255 не найден — пропускаю"
+fi
+
 export CHECK_NEW_IREDMAIL=NO
 ./get_all.sh
 echo "[OK] Пакеты iRedMail загружены"
-
-# ------------------------------------------------------------------
-# ШАГ 9. Патч iRedMail.sh — отключить проверку актуальности версии
-# ------------------------------------------------------------------
-echo
-echo "--- Шаг 9: отключение проверки версии в iRedMail.sh ---"
-
-IREDMAIL_MAIN="${IREDMAIL_DIR}/iRedMail.sh"
-if grep -q '^check_new_iredmail' "${IREDMAIL_MAIN}" 2>/dev/null; then
-  sed -i 's/^check_new_iredmail/#check_new_iredmail/' "${IREDMAIL_MAIN}"
-  echo "[OK] Строка check_new_iredmail закомментирована"
-elif grep -q 'check_new_iredmail' "${IREDMAIL_MAIN}" 2>/dev/null; then
-  sed -i 's/check_new_iredmail/#check_new_iredmail/' "${IREDMAIL_MAIN}"
-  echo "[OK] check_new_iredmail закомментирована"
-else
-  echo "[ИНФО] check_new_iredmail не найдена — пропускаю"
-fi
 
 # ------------------------------------------------------------------
 # ПОДСКАЗКА: интерактивная установка iRedMail
