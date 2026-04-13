@@ -168,12 +168,15 @@ fi
 
 # ------------------------------------------------------------------
 # ШАГ 8. Загрузка зависимостей (pkgs/get_all.sh)
+# CHECK_NEW_IREDMAIL=NO отключает проверку версии на сервере iRedMail
+# без этой переменной get_all.sh блокирует любую версию кроме последней
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 8: загрузка пакетов iRedMail (get_all.sh) ---"
 
 cd "${IREDMAIL_DIR}/pkgs"
 chmod +x get_all.sh
+export CHECK_NEW_IREDMAIL=NO
 ./get_all.sh
 echo "[OK] Пакеты iRedMail загружены"
 
