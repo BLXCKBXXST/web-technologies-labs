@@ -4,10 +4,10 @@
 # =============================================================
 
 # Номер студента в журнале
-N="29"
+N="1"
 
 # Фамилия транслитом
-STUDENT="yazikov"
+STUDENT="boychenko"
 
 # Номер группы
 GROUP="iks531"
@@ -36,8 +36,15 @@ NETPLAN_FILE="/etc/netplan/01-netcfg.yaml"
 FORWARD_DB="/var/lib/bind/forward.db"
 REVERSE_DB="/var/lib/bind/reverse.db"
 
+# Netplan-файл на gateway (для шага 0 в gateway_lab7_dns.sh)
+GW_NETPLAN_FILE="/etc/netplan/01-netcfg.yaml"
+
+# Внешний интерфейс gateway (для named.conf.options listen-on)
+NET_IF_INT="enp0s8"
+
 # Версия iRedMail
-IREDMAIL_VER="1.6.2"
+# 1.6.8 — последняя версия с поддержкой Ubuntu 20.04 (focal)
+IREDMAIL_VER="1.6.8"
 IREDMAIL_DIR="/root/iRedMail-${IREDMAIL_VER}"
 IREDMAIL_ARCHIVE="${IREDMAIL_VER}.tar.gz"
 IREDMAIL_URL="https://github.com/iredmail/iRedMail/archive/refs/tags/${IREDMAIL_ARCHIVE}"

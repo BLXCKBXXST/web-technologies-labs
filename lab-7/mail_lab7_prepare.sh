@@ -58,7 +58,6 @@ cat /etc/hosts
 echo
 echo "--- Шаг 3: настройка статического IP (netplan) ---"
 
-# Резерв основного и дефолтного installer-файла
 BAK_NET="${NETPLAN_FILE}.bak_lab7"
 [[ -f "${NETPLAN_FILE}" ]] && cp "${NETPLAN_FILE}" "${BAK_NET}" && echo "[РЕЗЕРВ] ${NETPLAN_FILE} → ${BAK_NET}"
 
@@ -124,10 +123,12 @@ else
   exit 1
 fi
 
-if host "${MAIL_FQDN}" "${GW_IP}" >/dev/null 2>&1; then
-  echo "[OK] DNS разрешает ${MAIL_FQDN}"
+# Используем dig вместо host: домены .local блокируются mDNS в Ubuntu 20.04
+RESOLVED=$(dig @"${GW_IP}" "${MAIL_FQDN}" A +short 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
+if [[ "${RESOLVED}" == "${MAIL_IP}" ]]; then
+  echo "[OK] DNS разрешает ${MAIL_FQDN} → ${RESOLVED}"
 else
-  echo "[ОШИБКА] DNS не может разрешить ${MAIL_FQDN}." >&2
+  echo "[ОШИБКА] DNS не может разрешить ${MAIL_FQDN} (получено: '${RESOLVED}')." >&2
   echo "[ИНФО]   Убедись, что на gateway уже запущен gateway_lab7_dns.sh" >&2
   exit 1
 fi
