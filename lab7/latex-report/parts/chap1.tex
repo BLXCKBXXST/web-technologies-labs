@@ -1,0 +1,67 @@
+\chapter{Теоретическая часть}
+\label{ch:theory}
+
+\section{Электронная почта и протоколы}
+
+Электронная почта~— система обмена сообщениями в компьютерных сетях.
+Передача сообщений между серверами осуществляется по протоколу
+\textbf{SMTP} (\textit{Simple Mail Transfer Protocol}, порт~25/587),
+а получение клиентом~— по протоколам \textbf{POP3} (порт~110/995)
+или \textbf{IMAP} (порт~143/993). Шифрование канала обеспечивается
+посредством \textbf{TLS/SSL}.
+
+Для подтверждения подлинности отправителя используются дополнительные механизмы:
+\begin{itemize}
+  \item \textbf{SPF} (\textit{Sender Policy Framework}) — записи в DNS,
+        перечисляющие серверы, которым разрешено отправлять почту от имени домена;
+  \item \textbf{DKIM} (\textit{DomainKeys Identified Mail}) — цифровая подпись
+        письма ключом, открытая часть которого публикуется в DNS;
+  \item \textbf{DMARC} — политика обработки сообщений, не прошедших SPF/DKIM.
+\end{itemize}
+
+\section{Что такое iRedMail}
+
+\textbf{iRedMail}~— пакет сценариев автоматической установки и настройки
+полноценного почтового сервера на операционных системах семейства Linux и BSD.
+В одну инсталляцию входят:
+\begin{itemize}
+  \item \textbf{Postfix}~— агент передачи почты (MTA), принимает и
+        доставляет сообщения;
+  \item \textbf{Dovecot}~— сервер доступа к почтовым ящикам по IMAP/POP3;
+  \item \textbf{OpenLDAP} (или MariaDB/PostgreSQL)~— хранилище пользователей
+        и доменов;
+  \item \textbf{Amavisd-new} + \textbf{SpamAssassin} + \textbf{ClamAV}~—
+        фильтрация спама и антивирусная проверка;
+  \item \textbf{Nginx}~— веб-сервер для панели администратора
+        (\texttt{/iredadmin}) и веб-клиента почты (\texttt{/mail});
+  \item \textbf{Roundcube}~— веб-интерфейс для работы с почтой.
+\end{itemize}
+
+\section{Требования к системе}
+
+Минимальные системные требования iRedMail~1.6.2 для Ubuntu~22.04:
+\begin{itemize}
+  \item ОЗУ: не менее \textbf{2~ГБ} (рекомендуется 4~ГБ);
+  \item Диск: не менее \textbf{10~ГБ} свободного пространства;
+  \item Чистая установка ОС без ранее установленных MTA
+        (\texttt{sendmail}, \texttt{exim} и~т.~п.);
+  \item Корректно настроенное \textbf{FQDN-имя} хоста (\texttt{mail.STUDENT.GROUP.local});
+  \item Запись \texttt{mail~IN~A} в DNS прямой зоны.
+\end{itemize}
+
+\section{Архитектура стенда}
+
+В данной работе почтовый сервер \texttt{mail} размещается в изолированной
+внутренней сети \texttt{192.168.\cfgLabStudentN.0/24}.
+Шлюз \texttt{gateway} (\texttt{192.168.\cfgLabStudentN.1}) обеспечивает:
+\begin{enumerate}
+  \item выход машин внутренней сети в интернет (NAT + MASQUERADE);
+  \item разрешение имён (DNS~BIND9) для домена
+        \texttt{yazikov.iks531.local};
+  \item выдачу IP-адресов клиентам по DHCP.
+\end{enumerate}
+
+Машина \texttt{mail} получает статический IP \texttt{192.168.\cfgLabStudentN.5}
+и добавляется в DNS-зону шлюза вручную.
+
+\endinput
