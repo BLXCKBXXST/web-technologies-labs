@@ -43,7 +43,6 @@ update_serial() {
 
 # ------------------------------------------------------------------
 # ШАГ 0. Проверка и фикс named.conf.options (listen-on)
-# bind9 должен слушать на 127.0.0.1, иначе проверка DNS в шаге 5 всегда падает
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 0: проверка listen-on в named.conf.options ---"
@@ -127,8 +126,7 @@ fi
 
 # ------------------------------------------------------------------
 # ШАГ 4. Стоп bind9 + удаление .jnl + старт
-# Журналы DDNS (.jnl) рассинхронизируются с zone-файлом при ручном редактировании.
-# bind9 не загружает зону: "journal out of sync with zone"
+# Журналы DDNS (.jnl) рассинхронизируются с zone-файлом при ручном редактировании
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 4: перезагрузка BIND9 (с очисткой .jnl) ---"
@@ -147,22 +145,28 @@ echo "[OK] bind9 запущен"
 
 # ------------------------------------------------------------------
 # ШАГ 5. Проверка записей
+# Используем dig вместо host:
+# на Ubuntu 20.04 команда host падает для доменов .local (конфликт mDNS)
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 5: проверка DNS ---"
 
-if host "${MAIL_FQDN}" 127.0.0.1 >/dev/null 2>&1; then
-  RESOLVED=$(host "${MAIL_FQDN}" 127.0.0.1 | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
-  if [[ "${RESOLVED}" == "${MAIL_IP}" ]]; then
-    echo "[OK] DNS: ${MAIL_FQDN} → ${RESOLVED}"
-  else
-    echo "[ОШИБКА] DNS вернул ${RESOLVED}, ожидался ${MAIL_IP}" >&2
-    exit 1
-  fi
+RESOLVED=$(dig @127.0.0.1 "${MAIL_FQDN}" A +short 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
+
+if [[ "${RESOLVED}" == "${MAIL_IP}" ]]; then
+  echo "[OK] DNS: ${MAIL_FQDN} → ${RESOLVED}"
 else
-  echo "[ОШИБКА] Не удалось разрешить ${MAIL_FQDN}" >&2
+  echo "[ОШИБКА] dig @127.0.0.1 ${MAIL_FQDN} вернул: '${RESOLVED}', ожидался: '${MAIL_IP}'" >&2
   exit 1
 fi
+
+# Проверка MX
+MX_RESULT=$(dig @127.0.0.1 "${DOMAIN}" MX +short 2>/dev/null)
+echo "[OK] MX: ${MX_RESULT}"
+
+# Проверка PTR
+PTR_RESULT=$(dig @127.0.0.1 -x "${MAIL_IP}" +short 2>/dev/null)
+echo "[OK] PTR: ${MAIL_IP} → ${PTR_RESULT}"
 
 echo
 echo "================================================================"
