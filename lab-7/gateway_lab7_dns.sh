@@ -30,7 +30,6 @@ fi
 # ------------------------------------------------------------------
 update_serial() {
   local zonefile="$1"
-  # Ищем первое число из 7+ цифр подряд (serial в SOA-блоке)
   local SERIAL_OLD
   SERIAL_OLD=$(grep -oP '[0-9]{7,}' "${zonefile}" | head -1)
   if [[ -n "${SERIAL_OLD}" ]]; then
@@ -106,8 +105,9 @@ named-checkzone "${DOMAIN}" "${FORWARD_DB}" && echo "[OK] прямая зона 
 REVERSE_ZONE="${N}.168.192.in-addr.arpa"
 named-checkzone "${REVERSE_ZONE}" "${REVERSE_DB}" && echo "[OK] обратная зона валидна"
 
-systemctl reload bind9
-sleep 2
+# restart надёжнее reload при первом добавлении зон
+ systemctl restart bind9
+sleep 5
 echo "[OK] bind9 перезагружен"
 
 # ------------------------------------------------------------------
