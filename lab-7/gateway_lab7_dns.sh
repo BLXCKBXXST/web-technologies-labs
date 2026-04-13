@@ -42,6 +42,40 @@ update_serial() {
 }
 
 # ------------------------------------------------------------------
+# ШАГ 0. Проверка и фикс named.conf.options (listen-on)
+# bind9 должен слушать на 127.0.0.1, иначе проверка DNS в шаге 5 всегда падает
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 0: проверка listen-on в named.conf.options ---"
+NAMED_OPTIONS="/etc/bind/named.conf.options"
+
+if ! grep -q '127\.0\.0\.1' "${NAMED_OPTIONS}"; then
+  echo "[ИНФО] 127.0.0.1 отсутствует в listen-on — добавляю..."
+  cp "${NAMED_OPTIONS}" "${NAMED_OPTIONS}.bak_lab7"
+  # Переписываем полностью по образцу из lab5
+  cat > "${NAMED_OPTIONS}" <<EOF
+options {
+    directory "/var/cache/bind";
+
+    forwarders {
+        8.8.8.8;
+    };
+
+    dnssec-validation auto;
+
+    auth-nxdomain no;
+    listen-on {
+        127.0.0.1;
+        ${GW_IP};
+    };
+};
+EOF
+  echo "[OK] named.conf.options переписан, listen-on: 127.0.0.1 + ${GW_IP}"
+else
+  echo "[OK] 127.0.0.1 уже есть в listen-on — пропускаю."
+fi
+
+# ------------------------------------------------------------------
 # ШАГ 1. Резервная копия зон BIND
 # ------------------------------------------------------------------
 echo
@@ -105,8 +139,7 @@ named-checkzone "${DOMAIN}" "${FORWARD_DB}" && echo "[OK] прямая зона 
 REVERSE_ZONE="${N}.168.192.in-addr.arpa"
 named-checkzone "${REVERSE_ZONE}" "${REVERSE_DB}" && echo "[OK] обратная зона валидна"
 
-# restart надёжнее reload при первом добавлении зон
- systemctl restart bind9
+systemctl restart bind9
 sleep 5
 echo "[OK] bind9 перезагружен"
 
