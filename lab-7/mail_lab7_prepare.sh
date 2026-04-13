@@ -227,6 +227,23 @@ export CHECK_NEW_IREDMAIL=NO
 echo "[OK] Пакеты iRedMail загружены"
 
 # ------------------------------------------------------------------
+# ШАГ 9. Патч iRedMail.sh — отключить проверку актуальности версии
+# ------------------------------------------------------------------
+echo
+echo "--- Шаг 9: отключение проверки версии в iRedMail.sh ---"
+
+IREDMAIL_MAIN="${IREDMAIL_DIR}/iRedMail.sh"
+if grep -q '^check_new_iredmail' "${IREDMAIL_MAIN}" 2>/dev/null; then
+  sed -i 's/^check_new_iredmail/#check_new_iredmail/' "${IREDMAIL_MAIN}"
+  echo "[OK] Строка check_new_iredmail закомментирована"
+elif grep -q 'check_new_iredmail' "${IREDMAIL_MAIN}" 2>/dev/null; then
+  sed -i 's/check_new_iredmail/#check_new_iredmail/' "${IREDMAIL_MAIN}"
+  echo "[OK] check_new_iredmail закомментирована"
+else
+  echo "[ИНФО] check_new_iredmail не найдена — пропускаю"
+fi
+
+# ------------------------------------------------------------------
 # ПОДСКАЗКА: интерактивная установка iRedMail
 # ------------------------------------------------------------------
 echo
