@@ -52,7 +52,6 @@ NAMED_OPTIONS="/etc/bind/named.conf.options"
 if ! grep -q '127\.0\.0\.1' "${NAMED_OPTIONS}"; then
   echo "[ИНФО] 127.0.0.1 отсутствует в listen-on — добавляю..."
   cp "${NAMED_OPTIONS}" "${NAMED_OPTIONS}.bak_lab7"
-  # Переписываем полностью по образцу из lab5
   cat > "${NAMED_OPTIONS}" <<EOF
 options {
     directory "/var/cache/bind";
@@ -102,10 +101,8 @@ if grep -q "^mail[[:space:]]" "${FORWARD_DB}"; then
   echo "[ИНФО] Запись 'mail' уже существует в прямой зоне. Пропускаю."
 else
   update_serial "${FORWARD_DB}"
-
   echo "mail    IN  A  ${MAIL_IP}" >> "${FORWARD_DB}"
   echo "[OK] A-запись mail → ${MAIL_IP} добавлена"
-
   if ! grep -q "^@.*MX" "${FORWARD_DB}"; then
     echo "@       IN  MX  10  mail.${DOMAIN}." >> "${FORWARD_DB}"
     echo "[OK] MX-запись добавлена"
@@ -129,19 +126,24 @@ else
 fi
 
 # ------------------------------------------------------------------
-# ШАГ 4. Перезагрузка BIND и проверка
+# ШАГ 4. Стоп bind9 + удаление .jnl + старт
+# Журналы DDNS (.jnl) рассинхронизируются с zone-файлом при ручном редактировании.
+# bind9 не загружает зону: "journal out of sync with zone"
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 4: перезагрузка BIND9 ---"
+echo "--- Шаг 4: перезагрузка BIND9 (с очисткой .jnl) ---"
 
 named-checkconf && echo "[OK] named-checkconf прошёл"
 named-checkzone "${DOMAIN}" "${FORWARD_DB}" && echo "[OK] прямая зона валидна"
 REVERSE_ZONE="${N}.168.192.in-addr.arpa"
 named-checkzone "${REVERSE_ZONE}" "${REVERSE_DB}" && echo "[OK] обратная зона валидна"
 
-systemctl restart bind9
+systemctl stop bind9
+rm -f "${FORWARD_DB}.jnl" "${REVERSE_DB}.jnl"
+echo "[OK] .jnl-журналы удалены"
+systemctl start bind9
 sleep 5
-echo "[OK] bind9 перезагружен"
+echo "[OK] bind9 запущен"
 
 # ------------------------------------------------------------------
 # ШАГ 5. Проверка записей
