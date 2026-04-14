@@ -29,7 +29,18 @@ fi
 echo
 echo "--- Шаг 1: статус сервисов ---"
 
-for svc in apache2 mariadb; do
+# Определяем имя сервиса БД (Ubuntu 20.04 может ставить MySQL вместо MariaDB)
+if systemctl list-units --type=service | grep -q 'mariadb.service'; then
+  DB_SERVICE="mariadb"
+elif systemctl list-units --type=service | grep -q 'mysql.service'; then
+  DB_SERVICE="mysql"
+elif dpkg -l mariadb-server &>/dev/null; then
+  DB_SERVICE="mariadb"
+else
+  DB_SERVICE="mysql"
+fi
+
+for svc in apache2 "${DB_SERVICE}"; do
   if systemctl is-active --quiet "${svc}"; then
     echo "[OK] ${svc} — запущен"
   else
@@ -60,13 +71,10 @@ echo "--- Шаг 3: проверка HTTP-ответа WordPress ---"
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://${WP_IP}/" 2>/dev/null || echo "000")
 if [[ "${HTTP_CODE}" == "200" || "${HTTP_CODE}" == "301" || "${HTTP_CODE}" == "302" ]]; then
   echo "[OK] HTTP-ответ от http://${WP_IP}/ — код ${HTTP_CODE}"
-elif [[ "${HTTP_CODE}" == "302" ]]; then
-  echo "[OK] Редирект (${HTTP_CODE}) — WordPress установлен"
 else
   echo "[ИНФО] HTTP-код: ${HTTP_CODE} — возможно WordPress ещё не установлен через браузер"
 fi
 
-# Проверка wp-login.php
 LOGIN_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://${WP_IP}/wp-login.php" 2>/dev/null || echo "000")
 if [[ "${LOGIN_CODE}" == "200" ]]; then
   echo "[OK] wp-login.php доступен (код 200)"
