@@ -148,13 +148,10 @@ echo "[OK] Apache2 перезапущен"
 
 # ------------------------------------------------------------------
 # ШАГ 8. Настройка БД для WordPress
-# Определяем что установлено: mariadb или mysql
-# (Ubuntu 20.04 tasksel может поставить MySQL 8.0 вместо MariaDB)
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 8: настройка БД WordPress ---"
 
-# Определяем сервис БД
 if systemctl list-units --type=service | grep -q 'mariadb.service'; then
   DB_SERVICE="mariadb"
 elif systemctl list-units --type=service | grep -q 'mysql.service'; then
@@ -164,7 +161,7 @@ elif dpkg -l mariadb-server &>/dev/null; then
 elif dpkg -l mysql-server &>/dev/null; then
   DB_SERVICE="mysql"
 else
-  echo "[ОШИБКА] Не найден ни mariadb, ни mysql. Установи вручную." >&2
+  echo "[ОШИБКА] Не найден ни mariadb, ни mysql." >&2
   exit 1
 fi
 echo "[ИНФО] Обнаружен сервис БД: ${DB_SERVICE}"
@@ -172,8 +169,6 @@ echo "[ИНФО] Обнаружен сервис БД: ${DB_SERVICE}"
 systemctl enable "${DB_SERVICE}"
 systemctl start  "${DB_SERVICE}"
 
-# Создаём БД и пользователя
-# MySQL 8.0 (Ubuntu 20.04): root по умолчанию auth_socket, поэтому sudo mysql
 if [[ "${DB_SERVICE}" == "mysql" ]]; then
   sudo mysql -u root <<SQL
 CREATE DATABASE IF NOT EXISTS ${DB_NAME} CHARACTER SET utf8 COLLATE utf8_bin;
@@ -182,7 +177,6 @@ GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'${DB_HOST}';
 FLUSH PRIVILEGES;
 SQL
 else
-  # MariaDB: сначала устанавливаем пароль root
   mysqladmin -u root password "${DB_PASSWORD}" 2>/dev/null || true
   mysql -u root -p"${DB_PASSWORD}" <<SQL
 CREATE DATABASE IF NOT EXISTS ${DB_NAME} CHARACTER SET utf8 COLLATE utf8_bin;
@@ -199,15 +193,24 @@ echo "[OK] БД '${DB_NAME}' и пользователь '${DB_USER}' созда
 echo
 echo "--- Шаг 9: загрузка WordPress ---"
 
-cd /tmp
-if [[ ! -f wordpress.tar.gz ]]; then
-  wget -q --show-progress https://ru.wordpress.org/latest-ruRU.tar.gz -O wordpress.tar.gz
-  echo "[OK] WordPress скачан"
-else
-  echo "[ИНФО] wordpress.tar.gz уже есть в /tmp"
+WP_ARCHIVE="/tmp/wordpress.tar.gz"
+
+# Удаляем архив если он есть, но битый
+if [[ -f "${WP_ARCHIVE}" ]]; then
+  if gzip -t "${WP_ARCHIVE}" 2>/dev/null; then
+    echo "[ИНФО] wordpress.tar.gz уже есть в /tmp и целый"
+  else
+    echo "[ИНФО] wordpress.tar.gz повреждён, удаляю и скачиваю заново"
+    rm -f "${WP_ARCHIVE}"
+  fi
 fi
 
-tar xzvf wordpress.tar.gz -C /tmp/ >/dev/null
+if [[ ! -f "${WP_ARCHIVE}" ]]; then
+  wget -q --show-progress https://ru.wordpress.org/latest-ruRU.tar.gz -O "${WP_ARCHIVE}"
+  echo "[OK] WordPress скачан"
+fi
+
+tar xzvf "${WP_ARCHIVE}" -C /tmp/ >/dev/null
 echo "[OK] WordPress распакован"
 
 cd /tmp/wordpress
