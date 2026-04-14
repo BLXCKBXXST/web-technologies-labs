@@ -1,0 +1,112 @@
+\chapter{Теоретические сведения}
+\label{ch:theory}
+
+\section{Стек LAMP}
+
+\textbf{LAMP} --- аббревиатура от Linux, Apache, MySQL/MariaDB, PHP.
+Это классический набор программного обеспечения для запуска динамических
+веб-приложений на серверах под управлением Linux.
+
+Компоненты стека:
+\begin{itemize}
+  \item \textbf{Linux} --- операционная система; в данной работе
+        используется Ubuntu~22.04~LTS;
+  \item \textbf{Apache2} --- HTTP-сервер; обрабатывает входящие
+        запросы и передаёт их PHP;
+  \item \textbf{MariaDB} --- реляционная СУБД, fork MySQL;
+        хранит данные WordPress (посты, пользователи, настройки);
+  \item \textbf{PHP} --- серверный скриптовый язык; WordPress
+        написан на PHP и требует версии не ниже~7.4.
+\end{itemize}
+
+Установить полный стек одной командой позволяет утилита
+\texttt{tasksel}:
+\begin{lstlisting}
+apt-get install -y tasksel
+tasksel install lamp-server
+\end{lstlisting}
+
+\section{Apache2}
+
+\textbf{Apache HTTP Server} (\texttt{apache2}) --- свободный
+кроссплатформенный веб-сервер. Конфигурация хранится в
+\texttt{/etc/apache2/}. Ключевые файлы и каталоги:
+\begin{itemize}
+  \item \texttt{apache2.conf} --- глобальные настройки;
+  \item \texttt{sites-available/} --- файлы виртуальных хостов;
+  \item \texttt{sites-enabled/} --- симлинки на активные хосты;
+  \item \texttt{mods-enabled/} --- подключённые модули.
+\end{itemize}
+
+Каждый \textbf{Virtual Host} описывает отдельный сайт. Пример минимальной
+конфигурации виртуального хоста для WordPress:
+\begin{lstlisting}
+<VirtualHost *:80>
+    ServerName 192.168.N.6
+    DocumentRoot /var/www/html
+    <Directory /var/www/html>
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+\end{lstlisting}
+
+Модуль \texttt{rewrite} необходим WordPress для работы
+<<красивых>> постоянных ссылок:
+\begin{lstlisting}
+a2enmod rewrite
+systemctl restart apache2
+\end{lstlisting}
+
+\section{MariaDB}
+
+\textbf{MariaDB} --- открытая СУБД, полностью совместимая с MySQL.
+После установки необходимо:
+\begin{enumerate}
+  \item Установить пароль root-пользователя:
+        \texttt{mysqladmin -u root password 'ПАРОЛЬ'}
+  \item Создать базу данных для WordPress:
+\begin{lstlisting}
+CREATE DATABASE wordpress CHARACTER SET utf8 COLLATE utf8_bin;
+\end{lstlisting}
+  \item Создать пользователя и выдать привилегии:
+\begin{lstlisting}
+CREATE USER 'author'@'localhost' IDENTIFIED BY 'Pssw0rd';
+GRANT ALL PRIVILEGES ON wordpress.* TO 'author'@'localhost';
+FLUSH PRIVILEGES;
+\end{lstlisting}
+\end{enumerate}
+
+\section{WordPress}
+
+\textbf{WordPress} --- CMS с открытым исходным кодом. Распространяется
+архивом \texttt{.tar.gz}. Основные шаги установки:
+\begin{enumerate}
+  \item Скачать архив с официального сайта:
+\begin{lstlisting}
+wget https://ru.wordpress.org/latest-ruRU.tar.gz
+tar xzvf latest-ruRU.tar.gz
+\end{lstlisting}
+  \item Скопировать пример конфигурационного файла:
+\begin{lstlisting}
+cp wp-config-sample.php wp-config.php
+\end{lstlisting}
+  \item Прописать параметры базы данных в \texttt{wp-config.php}:
+\begin{lstlisting}
+define('DB_NAME',     'wordpress');
+define('DB_USER',     'author');
+define('DB_PASSWORD', 'Pssw0rd');
+define('DB_HOST',     'localhost');
+\end{lstlisting}
+  \item Скопировать файлы в корень сайта Apache:
+\begin{lstlisting}
+rsync -aq wordpress/ /var/www/html/
+chown -R www-data:www-data /var/www/html
+\end{lstlisting}
+  \item Завершить установку интерактивно через браузер,
+        перейдя по адресу \texttt{http://IP-СЕРВЕРА/}.
+\end{enumerate}
+
+После завершения мастера установки WordPress создаёт необходимые
+таблицы в базе данных и становится доступным для входа.
+
+\endinput

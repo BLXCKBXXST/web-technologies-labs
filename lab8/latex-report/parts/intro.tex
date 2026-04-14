@@ -1,0 +1,43 @@
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
+
+\textbf{WordPress} — наиболее распространённая в мире система управления
+контентом (CMS), используемая для публикации сайтов, блогов и
+веб-приложений. Для её работы требуется стек \textbf{LAMP}: операционная
+система Linux, веб-сервер Apache, СУБД MariaDB и интерпретатор PHP.
+
+Цель работы --- развернуть и настроить WordPress на базе стека LAMP
+на отдельной виртуальной машине в локальной сети, добавить
+DNS-запись для нового сервера и убедиться в доступности сайта
+с клиентской машины.
+
+Задачи:
+\begin{enumerate}
+  \item Добавить DNS-запись \texttt{A} и \texttt{PTR} для ВМ
+        \texttt{wordpress} на сервере BIND9 (\texttt{gateway}).
+  \item Установить стек LAMP на ВМ \texttt{wordpress
+        (192.168.\cfgLabStudentN.6)}.
+  \item Создать базу данных и пользователя MariaDB для WordPress.
+  \item Скачать, настроить и развернуть WordPress в
+        \texttt{/var/www/html}.
+  \item Настроить Virtual Host Apache и выполнить интерактивную
+        установку WordPress через браузер.
+  \item Проверить работу сайта и создать тестовую запись.
+\end{enumerate}
+
+\textbf{Стенд:}
+\begin{itemize}
+  \item ВМ \texttt{gateway} --- Ubuntu~22.04~LTS (VirtualBox),
+        два адаптера: \texttt{enp0s3}~(WAN/NAT) и
+        \texttt{enp0s8}~(LAN~Internal,~\texttt{\cfgGwIP/24});
+        запущены BIND9 и isc-dhcp-server.
+  \item ВМ \texttt{wordpress} --- Ubuntu~22.04~LTS~Server, один адаптер
+        \texttt{enp0s3}~(Internal,~\texttt{\cfgWpIP/24});
+        стек LAMP, WordPress.
+  \item ВМ \texttt{desktop1} --- Ubuntu~22.04~Desktop, один адаптер
+        \texttt{enp0s3}~(Internal), IP по DHCP;
+        браузер Firefox для проверки.
+\end{itemize}
+
+\endinput
