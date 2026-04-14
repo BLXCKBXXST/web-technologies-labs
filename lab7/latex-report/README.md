@@ -2,7 +2,7 @@
 
 ## Скачать
 
-**[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab-7/latex-report)**
+**[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab7/latex-report)**
 
 ## Импорт в Overleaf
 
