@@ -112,13 +112,12 @@ echo "[OK] apt-get update && upgrade завершён"
 # ШАГ 6. Установка LAMP
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 6: установка LAMP (Apache2, MariaDB, PHP) ---"
+echo "--- Шаг 6: установка LAMP (Apache2, MySQL/MariaDB, PHP) ---"
 
 apt-get install -y tasksel
 DEBIAN_FRONTEND=noninteractive tasksel install lamp-server
 echo "[OK] LAMP установлен"
 
-# Установка дополнительных PHP-расширений для WordPress
 apt-get install -y php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
 echo "[OK] PHP-расширения установлены"
 
@@ -132,7 +131,6 @@ BAK_APACHE="/etc/apache2/apache2.conf.bak_lab8"
 cp /etc/apache2/apache2.conf "${BAK_APACHE}"
 echo "[РЕЗЕРВ] apache2.conf → ${BAK_APACHE}"
 
-# ServerName во избежание предупреждений
 if ! grep -q "^ServerName" /etc/apache2/apache2.conf; then
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
   echo "[OK] ServerName localhost добавлен в apache2.conf"
@@ -140,7 +138,6 @@ else
   echo "[OK] ServerName уже задан в apache2.conf"
 fi
 
-# Права на /var/www
 chown -R www-data:www-data /var/www
 chmod -R 755 /var/www
 echo "[OK] Права на /var/www выставлены"
@@ -150,23 +147,50 @@ systemctl restart apache2
 echo "[OK] Apache2 перезапущен"
 
 # ------------------------------------------------------------------
-# ШАГ 8. Настройка MariaDB и создание БД для WordPress
+# ШАГ 8. Настройка БД для WordPress
+# Определяем что установлено: mariadb или mysql
+# (Ubuntu 20.04 tasksel может поставить MySQL 8.0 вместо MariaDB)
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 8: настройка MariaDB и создание БД WordPress ---"
+echo "--- Шаг 8: настройка БД WordPress ---"
 
-systemctl enable mariadb
-systemctl start mariadb
+# Определяем сервис БД
+if systemctl list-units --type=service | grep -q 'mariadb.service'; then
+  DB_SERVICE="mariadb"
+elif systemctl list-units --type=service | grep -q 'mysql.service'; then
+  DB_SERVICE="mysql"
+elif dpkg -l mariadb-server &>/dev/null; then
+  DB_SERVICE="mariadb"
+elif dpkg -l mysql-server &>/dev/null; then
+  DB_SERVICE="mysql"
+else
+  echo "[ОШИБКА] Не найден ни mariadb, ни mysql. Установи вручную." >&2
+  exit 1
+fi
+echo "[ИНФО] Обнаружен сервис БД: ${DB_SERVICE}"
 
-# Устанавливаем пароль root и создаём БД
-mysqladmin -u root password "${DB_PASSWORD}" 2>/dev/null || true
+systemctl enable "${DB_SERVICE}"
+systemctl start  "${DB_SERVICE}"
 
-mysql -u root -p"${DB_PASSWORD}" <<SQL
+# Создаём БД и пользователя
+# MySQL 8.0 (Ubuntu 20.04): root по умолчанию auth_socket, поэтому sudo mysql
+if [[ "${DB_SERVICE}" == "mysql" ]]; then
+  sudo mysql -u root <<SQL
 CREATE DATABASE IF NOT EXISTS ${DB_NAME} CHARACTER SET utf8 COLLATE utf8_bin;
 CREATE USER IF NOT EXISTS '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'${DB_HOST}';
 FLUSH PRIVILEGES;
 SQL
+else
+  # MariaDB: сначала устанавливаем пароль root
+  mysqladmin -u root password "${DB_PASSWORD}" 2>/dev/null || true
+  mysql -u root -p"${DB_PASSWORD}" <<SQL
+CREATE DATABASE IF NOT EXISTS ${DB_NAME} CHARACTER SET utf8 COLLATE utf8_bin;
+CREATE USER IF NOT EXISTS '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'${DB_HOST}';
+FLUSH PRIVILEGES;
+SQL
+fi
 echo "[OK] БД '${DB_NAME}' и пользователь '${DB_USER}' созданы"
 
 # ------------------------------------------------------------------
@@ -186,7 +210,6 @@ fi
 tar xzvf wordpress.tar.gz -C /tmp/ >/dev/null
 echo "[OK] WordPress распакован"
 
-# Настройка wp-config.php
 cd /tmp/wordpress
 cp wp-config-sample.php wp-config.php
 
@@ -196,10 +219,8 @@ sed -i "s/password_here/${DB_PASSWORD}/" wp-config.php
 sed -i "s/localhost/${DB_HOST}/" wp-config.php
 echo "[OK] wp-config.php настроен"
 
-# Генерация уникальных ключей безопасности
 KEYS=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/ 2>/dev/null || true)
 if [[ -n "${KEYS}" ]]; then
-  # Удаляем старые placeholder-ключи и вставляем новые
   START_LINE=$(grep -n "AUTH_KEY" wp-config.php | head -1 | cut -d: -f1)
   END_LINE=$(grep -n "NONCE_SALT" wp-config.php | head -1 | cut -d: -f1)
   if [[ -n "${START_LINE}" && -n "${END_LINE}" ]]; then
@@ -208,7 +229,7 @@ if [[ -n "${KEYS}" ]]; then
   fi
   echo "[OK] Ключи безопасности WordPress обновлены"
 else
-  echo "[ИНФО] Нет доступа к api.wordpress.org — ключи безопасности не обновлены (нормально для локальной сети)"
+  echo "[ИНФО] Нет доступа к api.wordpress.org — ключи не обновлены (нормально)"
 fi
 
 # ------------------------------------------------------------------
@@ -217,10 +238,7 @@ fi
 echo
 echo "--- Шаг 10: развёртывание WordPress ---"
 
-# Удаляем дефолтный index.html
 rm -f /var/www/html/index.html
-
-# Копируем файлы WordPress
 rsync -aq /tmp/wordpress/ /var/www/html/
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
@@ -257,7 +275,7 @@ systemctl restart apache2
 echo "[OK] Virtual Host WordPress настроен и Apache перезапущен"
 
 # ------------------------------------------------------------------
-# ПОДСКАЗКА: интерактивная установка WordPress
+# ПОДСКАЗКА
 # ------------------------------------------------------------------
 echo
 echo "================================================================"
@@ -267,10 +285,9 @@ echo " На ВМ Desktop откройте браузер Firefox:"
 echo "   http://${WP_IP}"
 echo "   или http://${WP_FQDN}"
 echo
-echo " Выберите язык → нажмите 'Вперёд'"
 echo " Заполните форму установки:"
 echo "   Название сайта : ${DOMAIN}"
-echo "   Имя пользователя: admin (или любое)"
+echo "   Имя пользователя: admin"
 echo "   Пароль         : придумай надёжный"
 echo "   Email          : admin@${DOMAIN}"
 echo " Нажмите 'Установить WordPress'"
