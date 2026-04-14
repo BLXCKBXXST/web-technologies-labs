@@ -93,10 +93,10 @@ done
 # ШАГ 2. Прямая зона DNS — A и MX записи
 # ------------------------------------------------------------------
 echo
-echo "--- Шаг 2: прямая зона DNS — запись A для mail ---"
+echo "--- Шаг 2: прямая зона DNS — записи A и MX для mail ---"
 
+# --- A-запись ---
 if grep -q "^mail[[:space:]]" "${FORWARD_DB}"; then
-  # Запись есть — проверяем совпадает ли IP
   CURRENT_IP=$(grep "^mail[[:space:]]" "${FORWARD_DB}" | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
   if [[ "${CURRENT_IP}" == "${MAIL_IP}" ]]; then
     echo "[OK] A-запись mail → ${MAIL_IP} уже верная — пропускаю."
@@ -113,11 +113,22 @@ else
   echo "[OK] A-запись mail → ${MAIL_IP} добавлена"
 fi
 
-if ! grep -q "^@.*MX" "${FORWARD_DB}"; then
-  echo "@       IN  MX  10  mail.${DOMAIN}." >> "${FORWARD_DB}"
-  echo "[OK] MX-запись добавлена"
+# --- MX-запись ---
+EXPECTED_MX="mail.${DOMAIN}."
+if grep -q "^@.*MX" "${FORWARD_DB}"; then
+  CURRENT_MX=$(grep "^@.*MX" "${FORWARD_DB}" | awk '{print $NF}')
+  if [[ "${CURRENT_MX}" == "${EXPECTED_MX}" ]]; then
+    echo "[OK] MX-запись уже верная (${CURRENT_MX}) — пропускаю."
+  else
+    echo "[ИНФО] MX-запись существует с неверным значением (${CURRENT_MX}), заменяю на ${EXPECTED_MX}..."
+    sed -i "/^@.*MX/d" "${FORWARD_DB}"
+    update_serial "${FORWARD_DB}"
+    echo "@       IN  MX  10  ${EXPECTED_MX}" >> "${FORWARD_DB}"
+    echo "[OK] MX-запись обновлена: @ → ${EXPECTED_MX}"
+  fi
 else
-  echo "[OK] MX-запись уже есть — пропускаю."
+  echo "@       IN  MX  10  ${EXPECTED_MX}" >> "${FORWARD_DB}"
+  echo "[OK] MX-запись добавлена: @ → ${EXPECTED_MX}"
 fi
 
 # ------------------------------------------------------------------
@@ -129,7 +140,6 @@ echo "--- Шаг 3: обратная зона DNS — запись PTR ---"
 LAST_OCTET="${MAIL_IP##*.}"
 
 if grep -q "^${LAST_OCTET}[[:space:]]" "${REVERSE_DB}"; then
-  # Запись есть — проверяем совпадает ли FQDN
   CURRENT_PTR=$(grep "^${LAST_OCTET}[[:space:]]" "${REVERSE_DB}" | awk '{print $NF}')
   EXPECTED_PTR="${MAIL_FQDN}."
   if [[ "${CURRENT_PTR}" == "${EXPECTED_PTR}" ]]; then
@@ -172,7 +182,6 @@ echo
 echo "--- Шаг 5: проверка DNS ---"
 
 RESOLVED=$(dig @127.0.0.1 "${MAIL_FQDN}" A +short 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
-
 if [[ "${RESOLVED}" == "${MAIL_IP}" ]]; then
   echo "[OK] DNS: ${MAIL_FQDN} → ${RESOLVED}"
 else
