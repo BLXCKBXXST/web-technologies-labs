@@ -26,7 +26,6 @@ fi
 
 # ------------------------------------------------------------------
 # Вспомогательная функция: обновить Serial в файле зоны
-# Поддерживает серийники любой длины (8, 9, 10 цифр и т.д.)
 # ------------------------------------------------------------------
 update_serial() {
   local zonefile="$1"
@@ -97,15 +96,28 @@ echo
 echo "--- Шаг 2: прямая зона DNS — запись A для mail ---"
 
 if grep -q "^mail[[:space:]]" "${FORWARD_DB}"; then
-  echo "[ИНФО] Запись 'mail' уже существует в прямой зоне. Пропускаю."
+  # Запись есть — проверяем совпадает ли IP
+  CURRENT_IP=$(grep "^mail[[:space:]]" "${FORWARD_DB}" | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1)
+  if [[ "${CURRENT_IP}" == "${MAIL_IP}" ]]; then
+    echo "[OK] A-запись mail → ${MAIL_IP} уже верная — пропускаю."
+  else
+    echo "[ИНФО] A-запись mail существует с неверным IP (${CURRENT_IP}), заменяю на ${MAIL_IP}..."
+    sed -i "/^mail[[:space:]]/d" "${FORWARD_DB}"
+    update_serial "${FORWARD_DB}"
+    echo "mail    IN  A  ${MAIL_IP}" >> "${FORWARD_DB}"
+    echo "[OK] A-запись обновлена: mail → ${MAIL_IP}"
+  fi
 else
   update_serial "${FORWARD_DB}"
   echo "mail    IN  A  ${MAIL_IP}" >> "${FORWARD_DB}"
   echo "[OK] A-запись mail → ${MAIL_IP} добавлена"
-  if ! grep -q "^@.*MX" "${FORWARD_DB}"; then
-    echo "@       IN  MX  10  mail.${DOMAIN}." >> "${FORWARD_DB}"
-    echo "[OK] MX-запись добавлена"
-  fi
+fi
+
+if ! grep -q "^@.*MX" "${FORWARD_DB}"; then
+  echo "@       IN  MX  10  mail.${DOMAIN}." >> "${FORWARD_DB}"
+  echo "[OK] MX-запись добавлена"
+else
+  echo "[OK] MX-запись уже есть — пропускаю."
 fi
 
 # ------------------------------------------------------------------
@@ -117,7 +129,18 @@ echo "--- Шаг 3: обратная зона DNS — запись PTR ---"
 LAST_OCTET="${MAIL_IP##*.}"
 
 if grep -q "^${LAST_OCTET}[[:space:]]" "${REVERSE_DB}"; then
-  echo "[ИНФО] PTR-запись для .${LAST_OCTET} уже существует. Пропускаю."
+  # Запись есть — проверяем совпадает ли FQDN
+  CURRENT_PTR=$(grep "^${LAST_OCTET}[[:space:]]" "${REVERSE_DB}" | awk '{print $NF}')
+  EXPECTED_PTR="${MAIL_FQDN}."
+  if [[ "${CURRENT_PTR}" == "${EXPECTED_PTR}" ]]; then
+    echo "[OK] PTR-запись .${LAST_OCTET} уже верная — пропускаю."
+  else
+    echo "[ИНФО] PTR-запись .${LAST_OCTET} существует с неверным значением (${CURRENT_PTR}), заменяю..."
+    sed -i "/^${LAST_OCTET}[[:space:]]/d" "${REVERSE_DB}"
+    update_serial "${REVERSE_DB}"
+    echo "${LAST_OCTET}    IN  PTR  ${MAIL_FQDN}." >> "${REVERSE_DB}"
+    echo "[OK] PTR-запись обновлена: ${LAST_OCTET} → ${MAIL_FQDN}"
+  fi
 else
   update_serial "${REVERSE_DB}"
   echo "${LAST_OCTET}    IN  PTR  ${MAIL_FQDN}." >> "${REVERSE_DB}"
@@ -126,7 +149,6 @@ fi
 
 # ------------------------------------------------------------------
 # ШАГ 4. Стоп bind9 + удаление .jnl + старт
-# Журналы DDNS (.jnl) рассинхронизируются с zone-файлом при ручном редактировании
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 4: перезагрузка BIND9 (с очисткой .jnl) ---"
@@ -145,8 +167,6 @@ echo "[OK] bind9 запущен"
 
 # ------------------------------------------------------------------
 # ШАГ 5. Проверка записей
-# Используем dig вместо host:
-# на Ubuntu 20.04 команда host падает для доменов .local (конфликт mDNS)
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 5: проверка DNS ---"
@@ -160,11 +180,9 @@ else
   exit 1
 fi
 
-# Проверка MX
 MX_RESULT=$(dig @127.0.0.1 "${DOMAIN}" MX +short 2>/dev/null)
 echo "[OK] MX: ${MX_RESULT}"
 
-# Проверка PTR
 PTR_RESULT=$(dig @127.0.0.1 -x "${MAIL_IP}" +short 2>/dev/null)
 echo "[OK] PTR: ${MAIL_IP} → ${PTR_RESULT}"
 
