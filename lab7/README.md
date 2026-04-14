@@ -43,25 +43,25 @@
 ### 1. На ВМ `gateway` — добавить DNS-записи
 
 ```bash
-cd linux-admin-labs/lab-7
+cd linux-admin-labs/lab7
 sudo bash gateway_lab7_dns.sh
 ```
 
 Скрипт добавляет:
 - A-запись `mail → 192.168.29.5` в прямую зону
-- MX-запись `@ → mail.yazikov.iks531.local`
+- MX-запись `@ → mail.yazikov.iks531.local` (если MX уже есть с чужой фамилией — заменит автоматически)
 - PTR-запись `5 → mail.yazikov.iks531.local` в обратную зону
 - Автоматически обновляет Serial
-- Выполняет `named-checkzone` + `reload bind9` + проверку резолвинга
+- Выполняет `named-checkzone` + перезагрузку BIND9 + проверку резолвинга
 
 ---
 
 ### 2. На ВМ `mail` — подготовка системы
 
-Скопируй папку `lab-7` на ВМ mail (через shared folder или `scp`).
+Скопируй папку `lab7` на ВМ mail (через shared folder или `scp`).
 
 ```bash
-cd linux-admin-labs/lab-7
+cd linux-admin-labs/lab7
 sudo bash mail_lab7_prepare.sh
 ```
 
@@ -116,7 +116,7 @@ reboot
 ### 4. На ВМ `mail` — проверка после перезагрузки
 
 ```bash
-cd linux-admin-labs/lab-7
+cd linux-admin-labs/lab7
 sudo bash mail_lab7_post.sh
 ```
 
@@ -127,7 +127,7 @@ sudo bash mail_lab7_post.sh
 ### 5. На ВМ `desktop1` — проверка доступа и отправка письма
 
 ```bash
-cd linux-admin-labs/lab-7
+cd linux-admin-labs/lab7
 sudo bash desktop_lab7_hints.sh
 ```
 
@@ -164,12 +164,13 @@ sudo bash desktop_lab7_hints.sh
 |---|---|---|
 | `mail_lab7_prepare.sh` падает на DNS-проверке | DNS-записи не добавлены на gateway | Сначала запусти `gateway_lab7_dns.sh` на ВМ gateway |
 | `ping gateway` не работает с mail-ВМ | Неверный интерфейс в netplan или ВМ не в intnet | Проверь `ip a`; убедись, что ВМ в Internal Network |
+| MX-запись указывает на чужой домен (например `boychenko`) | Старая MX-запись от другого студента осталась в зоне | Запусти `gateway_lab7_dns.sh` — скрипт автоматически заменит MX на правильное значение |
 | `iRedMail.sh` падает с ошибкой зависимостей | `get_all.sh` не завершился | Повтори `mail_lab7_prepare.sh` или запусти `get_all.sh` вручную |
-| Установщик сообщает «Your version is out of date» | Скрипт проверяет версию онлайн | Это предупреждение, не ошибка — установка продолжится автоматически |
+| Установщик сообщает «Ваша версия устарела» | Скрипт проверяет версию онлайн | Это предупреждение, не ошибка — установка продолжится автоматически |
 | Установщик выходит с `Cancelled, Exit` | Файл `config` не был создан (прерван прошлый запуск) | `cd /root/iRedMail-*; bash iRedMail.sh` — пройди все вопросы до конца |
 | Сервисы не найдены после reboot (`Unit not found`) | Установка не завершилась до конца | Проверь `ls /etc/postfix`; если пусто — повтори установку |
 | `postfix` не запущен после reboot | Конфликт с Sendmail | `systemctl disable sendmail; systemctl start postfix` |
-| Браузер: «Certificate Error» | Самоподписанный сертификат iRedMail | Advanced → Accept the Risk (нормально для лабы) |
+| Браузер: «Ошибка сертификата» | Самоподписанный сертификат iRedMail | Advanced → Accept the Risk (нормально для лабы) |
 | Письмо не доставляется | Неверный LDAP suffix или mail domain | Проверь `/etc/postfix/main.cf`: `mydomain` и `myhostname` |
 | iRedAdmin недоступен | nginx или php-fpm не запущен | `systemctl status nginx php*-fpm` |
 | PTR-запись не разрешается | Опечатка в обратной зоне | `named-checkzone 29.168.192.in-addr.arpa /var/lib/bind/reverse.db` |
