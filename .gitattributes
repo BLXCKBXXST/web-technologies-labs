@@ -1,0 +1,10 @@
+# Force LF line endings for shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Text files — auto-detect
+*.md text auto
+*.txt text auto
+*.conf text auto
+*.yaml text auto
+*.yml text auto
