@@ -165,9 +165,6 @@ fi
 
 # ------------------------------------------------------------------
 # ШАГ 7.5: загрузка недоступных пакетов вручную
-#
-# mlmmjadmin-3.1.9 и netdata выдают 404 на dl.iredmail.org для версии 1.6.8.
-# Скачиваем их напрямую с GitHub/Netdata и пересчитываем sha256 в pkgs.sha256.
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 7.5: загрузка недоступных пакетов ---"
@@ -175,7 +172,6 @@ echo "--- Шаг 7.5: загрузка недоступных пакетов ---
 MISC_DIR="${IREDMAIL_DIR}/pkgs/misc"
 mkdir -p "${MISC_DIR}"
 
-# mlmmjadmin-3.1.9: берём с GitHub (iredmail/mlmmjadmin tag 3.1.9)
 MLMMJ_FILE="${MISC_DIR}/mlmmjadmin-3.1.9.tar.gz"
 if [[ ! -f "${MLMMJ_FILE}" ]]; then
   echo "[ИНФО] Скачиваю mlmmjadmin-3.1.9 с GitHub..."
@@ -187,7 +183,6 @@ else
   echo "[ИНФО] mlmmjadmin-3.1.9.tar.gz уже есть"
 fi
 
-# netdata-v1.44.1: берём с GitHub Releases
 NETDATA_FILE="${MISC_DIR}/netdata-v1.44.1.gz.run"
 if [[ ! -f "${NETDATA_FILE}" ]]; then
   echo "[ИНФО] Скачиваю netdata-v1.44.1 с GitHub..."
@@ -199,16 +194,13 @@ else
   echo "[ИНФО] netdata-v1.44.1.gz.run уже есть"
 fi
 
-# Пересчитываем sha256 для скачанных файлов и обновляем pkgs.sha256
 echo "[ИНФО] Обновляю pkgs.sha256..."
 SHA256_FILE="${IREDMAIL_DIR}/pkgs/pkgs.sha256"
 
 MLMMJ_SHA=$(sha256sum "${MLMMJ_FILE}" | awk '{print $1}')
 NETDATA_SHA=$(sha256sum "${NETDATA_FILE}" | awk '{print $1}')
 
-# Заменяем строку с mlmmjadmin
 sed -i "s|.*misc/mlmmjadmin-3.1.9.tar.gz.*|${MLMMJ_SHA}  misc/mlmmjadmin-3.1.9.tar.gz|" "${SHA256_FILE}"
-# Заменяем строку с netdata
 sed -i "s|.*misc/netdata-v1.44.1.gz.run.*|${NETDATA_SHA}  misc/netdata-v1.44.1.gz.run|" "${SHA256_FILE}"
 
 echo "[OK] pkgs.sha256 обновлён"
@@ -224,8 +216,6 @@ chmod +x get_all.sh
 
 # ------------------------------------------------------------------
 # ШАГ 9. Патч get_all.sh — убрать exit 255 из проверки версии
-# Сервер iredmail.org возвращает UPDATE_AVAILABLE для версии 1.6.8,
-# но это учебная среда — просто отключаем принудительный выход.
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 9: патч get_all.sh (отключение exit 255) ---"
@@ -270,8 +260,6 @@ echo "   8. Компоненты             → Roundcubemail, iRedAdmin, Fail2
 echo "   9. Confirm Installation   → y"
 echo "  10. Firewall               → y"
 echo
-echo " После установки — ПЕРЕЗАГРУЗИ: reboot"
+echo " После установки — ПЕРЕЗАГРУЗИСЬ: reboot"
 echo " Затем запусти: sudo bash mail_lab7_post.sh"
 echo "================================================================"
-echo
-read -r -p "Скрипт завершён. Нажми Enter для выхода..."
