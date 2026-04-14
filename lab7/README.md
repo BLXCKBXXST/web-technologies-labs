@@ -72,15 +72,18 @@ sudo bash mail_lab7_prepare.sh
 - Отключение `systemd-resolved` + статический `/etc/resolv.conf`
 - Проверку связи с gateway и DNS
 - `apt-get update && upgrade`
-- Скачивание и распаковку iRedMail 1.6.2, запуск `get_all.sh`
+- Скачивание и распаковку iRedMail, запуск `get_all.sh`
 - Вывод подсказок для интерактивного установщика
+
+> **Примечание:** скрипт скачивает актуальную версию iRedMail (на момент написания — 1.6.8).  
+> Путь `/root/iRedMail-1.6.8` может отличаться — уточни командой `ls /root/iRedMail-*`.
 
 ---
 
 ### 3. На ВМ `mail` — интерактивная установка iRedMail
 
 ```bash
-cd /root/iRedMail-1.6.2
+cd /root/iRedMail-1.6.8   # замени на актуальную версию
 chmod +x iRedMail.sh
 ./iRedMail.sh
 ```
@@ -99,7 +102,14 @@ chmod +x iRedMail.sh
 | Roundcubemail, iRedAdmin, Fail2ban | **Yes** |
 | Остальные вопросы | **Yes** |
 
-По завершении — **перезагрузить**: `reboot`
+> ⚠️ **Не прерывай установку** (`Ctrl+C`)! Если мастер выйдет с `Cancelled, Exit` —  
+> запусти `./iRedMail.sh` заново и пройди все вопросы до конца.
+
+По завершении установщик выведет сводку. **Обязательно выполни `reboot`** перед следующим шагом:
+
+```bash
+reboot
+```
 
 ---
 
@@ -131,6 +141,23 @@ sudo bash desktop_lab7_hints.sh
 
 ---
 
+## Файл паролей
+
+После успешной установки iRedMail сохраняет все пароли и URL в файл:
+
+```
+/root/iRedMail-*/iRedMail.tips
+```
+
+Там хранятся:
+- Пароль LDAP rootdn
+- Пароль postmaster
+- Ссылки на веб-интерфейсы iRedAdmin и Roundcube
+
+**Сохрани этот файл** — без него восстановить пароли будет сложно.
+
+---
+
 ## Траблшутинг
 
 | Симптом | Причина | Решение |
@@ -138,6 +165,9 @@ sudo bash desktop_lab7_hints.sh
 | `mail_lab7_prepare.sh` падает на DNS-проверке | DNS-записи не добавлены на gateway | Сначала запусти `gateway_lab7_dns.sh` на ВМ gateway |
 | `ping gateway` не работает с mail-ВМ | Неверный интерфейс в netplan или ВМ не в intnet | Проверь `ip a`; убедись, что ВМ в Internal Network |
 | `iRedMail.sh` падает с ошибкой зависимостей | `get_all.sh` не завершился | Повтори `mail_lab7_prepare.sh` или запусти `get_all.sh` вручную |
+| Установщик сообщает «Your version is out of date» | Скрипт проверяет версию онлайн | Это предупреждение, не ошибка — установка продолжится автоматически |
+| Установщик выходит с `Cancelled, Exit` | Файл `config` не был создан (прерван прошлый запуск) | `cd /root/iRedMail-*; bash iRedMail.sh` — пройди все вопросы до конца |
+| Сервисы не найдены после reboot (`Unit not found`) | Установка не завершилась до конца | Проверь `ls /etc/postfix`; если пусто — повтори установку |
 | `postfix` не запущен после reboot | Конфликт с Sendmail | `systemctl disable sendmail; systemctl start postfix` |
 | Браузер: «Certificate Error» | Самоподписанный сертификат iRedMail | Advanced → Accept the Risk (нормально для лабы) |
 | Письмо не доставляется | Неверный LDAP suffix или mail domain | Проверь `/etc/postfix/main.cf`: `mydomain` и `myhostname` |
