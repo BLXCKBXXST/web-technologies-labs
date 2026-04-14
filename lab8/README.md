@@ -1,6 +1,6 @@
 # Лабораторная работа №8 — WordPress
 
-**Тема:** Развёртывание WordPress на базе LAMP (Ubuntu 22.04)  
+**Тема:** Развёртывание WordPress на базе LAMP (Ubuntu Server 20.04)  
 **Вариант:** N=29 | Студент: yazikov | Группа: iks531  
 **Домен:** `yazikov.iks531.local`
 
@@ -10,9 +10,9 @@
 
 | ВМ | IP | ОС | Роль |
 |---|---|---|---|
-| `gateway` | 192.168.29.1 | Ubuntu Server 22.04 | Шлюз, DNS (BIND9), DHCP |
-| `wordpress` | 192.168.29.6 | Ubuntu Server 22.04 | Веб-сервер WordPress (LAMP) |
-| `desktop1` | 192.168.29.10+ | Ubuntu Desktop 22.04 | Клиент, браузер |
+| `gateway` | 192.168.29.1 | Ubuntu Server 20.04 | Шлюз, DNS (BIND9), DHCP |
+| `wordpress` | 192.168.29.6 | Ubuntu Server 20.04 | Веб-сервер WordPress (LAMP) |
+| `desktop1` | 192.168.29.10+ | Ubuntu Desktop 20.04 | Клиент, браузер |
 
 > ВМ `wordpress` — новый клон «золотого образа» с **одним** интерфейсом «Внутренняя сеть intnet».
 
@@ -35,7 +35,7 @@
 
 ### 0. Клонировать ВМ
 
-Создать новую ВМ `wordpress` из «золотого образа» Ubuntu 22.04.  
+Создать новую ВМ `wordpress` из «золотого образа» Ubuntu Server 20.04.  
 Сетевой интерфейс: **Internal Network** (`intnet`).
 
 ---
@@ -56,7 +56,7 @@ sudo bash gateway_lab8_dns.sh
 
 ### 2. На ВМ `wordpress` — подготовка и установка
 
-Скопируй папку `lab8` на ВМ wordpress (`scp` или shared folder).
+Скопируй папку `lab8` на ВМ wordpress (`scp` или `git clone`).
 
 ```bash
 cd linux-admin-labs/lab8
@@ -66,12 +66,13 @@ sudo bash wordpress_lab8_prepare.sh
 Скрипт выполняет:
 - Установку hostname: `wordpress.yazikov.iks531.local`
 - Настройку `/etc/hosts`
+- Отключение `systemd-resolved` и запись статического `/etc/resolv.conf`
 - Статический IP `192.168.29.6` через netplan
-- Проверку связи с gateway и DNS
+- Проверку связи с gateway, DNS и интернетом
 - `apt-get update && upgrade`
 - Установку LAMP (`tasksel lamp-server`) + PHP-расширения
 - Настройку Apache2 (ServerName, права, Virtual Host)
-- Создание БД и пользователя MariaDB
+- Создание БД и пользователя MySQL/MariaDB
 - Скачивание и настройку WordPress
 - Развёртывание WordPress в `/var/www/html`
 
@@ -106,7 +107,7 @@ http://192.168.29.6
 sudo bash wordpress_lab8_post.sh
 ```
 
-Скрипт проверяет: Apache2, MariaDB, порты 80/3306, HTTP-ответ, файлы WordPress, доступность БД.
+Скрипт проверяет: Apache2, MySQL/MariaDB, порты 80/3306, HTTP-ответ, файлы WordPress, доступность БД.
 
 ---
 
@@ -127,7 +128,7 @@ sudo bash desktop_lab8_check.sh
 
 ## Файл паролей
 
-Все пароли хранятся в `config.sh` — переменные `DB_PASSWORD`.  
+Все пароли хранятся в `config.sh` — переменная `DB_PASSWORD`.  
 Пароль администратора WordPress задаётся во время интерактивной установки через браузер.
 
 ---
@@ -138,8 +139,10 @@ sudo bash desktop_lab8_check.sh
 |---|---|---|
 | `ping gateway` не работает с wordpress-ВМ | Неверный интерфейс в netplan или ВМ не в intnet | Проверь `ip a`; убедись что ВМ в Internal Network |
 | DNS не разрешает `wordpress` | A-запись не добавлена на gateway | Запусти `gateway_lab8_dns.sh` на ВМ gateway |
+| `wget` не может скачать WordPress | `resolv.conf` указывает на `127.0.0.53` (`systemd-resolved`) | Скрипт отключает его автоматически |
+| `Failed to enable unit: mariadb.service does not exist` | Ubuntu 20.04 `tasksel` устанавливает MySQL 8.0 вместо MariaDB | Скрипт автодетекции: если MariaDB нет — использует MySQL |
+| `404 Not Found` при скачке WordPress | URL `ru.wordpress.org/latest-ruRU.tar.gz` устарел | Скрипт использует `wordpress.org/latest.tar.gz` |
 | Apache не запускается | Конфликт портов или ошибка конфига | `apache2ctl configtest`; `journalctl -u apache2 -n 20` |
-| `tasksel` не находит lamp-server | Не добавлен universe репозиторий | `add-apt-repository universe && apt-get update` |
 | HTTP-код 403 (Forbidden) | Неверные права на `/var/www/html` | `chown -R www-data:www-data /var/www/html` |
 | WordPress предлагает установку повторно | `wp-config.php` не настроен или БД пуста | Проверь `wp-config.php`; запусти `wordpress_lab8_prepare.sh` заново |
 | Ошибка подключения к БД при установке | Неверный пароль в `config.sh` | Поправь `DB_PASSWORD` в `config.sh` и пересоздай БД |
