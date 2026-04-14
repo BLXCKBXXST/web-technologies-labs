@@ -1,0 +1,93 @@
+\chapter{Теоретические сведения}
+\label{ch:theory}
+
+\section{Ansible — система управления конфигурациями}
+
+\textbf{Ansible} — свободная платформа автоматизации, разработанная компанией
+Red~Hat. Ключевые особенности:
+\begin{itemize}
+  \item \textbf{Agentless} — не требует установки агентов на управляемые узлы;
+        подключение осуществляется по \textbf{SSH};
+  \item \textbf{Idempotent} — повторный запуск задачи не изменяет уже корректно
+        настроенную систему;
+  \item \textbf{YAML-синтаксис} — плейбуки и роли описываются в формате,
+        удобном для чтения человеком;
+  \item \textbf{Модульность} — более 3000 встроенных модулей для управления
+        пакетами, сервисами, файлами, сетью и т.д.
+\end{itemize}
+
+\section{Архитектура Ansible}
+
+Основные компоненты:
+\begin{itemize}
+  \item \textbf{Control node} — машина, на которой установлен Ansible
+        и с которой запускаются плейбуки. В работе — \texttt{gateway}.
+  \item \textbf{Managed nodes} — узлы, которыми управляет Ansible.
+        Требуется только \texttt{python3} и доступ по SSH.
+  \item \textbf{Inventory} — файл (\texttt{/etc/ansible/hosts}),
+        перечисляющий управляемые узлы и группы.
+  \item \textbf{Playbook} — YAML-файл с набором задач (\textit{tasks}),
+        применяемых к группе хостов.
+  \item \textbf{Module} — атомарная единица работы Ansible
+        (\texttt{file}, \texttt{copy}, \texttt{set\_fact} и др.).
+\end{itemize}
+
+\section{SSH-аутентификация и ключи}
+
+Ansible подключается к managed nodes по SSH. Рекомендуемый способ — ключ
+\texttt{ed25519}. Алгоритм EdDSA (Edwards-curve Digital Signature Algorithm)
+предпочтительнее RSA по двум причинам:
+\begin{enumerate}
+  \item \textbf{Скорость} — операции подписи и верификации значительно быстрее;
+  \item \textbf{Безопасность} — устойчивость к атакам на реализацию
+        (нет зависимости от генератора случайных чисел при подписи).
+\end{enumerate}
+
+Генерация ключа:
+\begin{lstlisting}
+ssh-keygen -t ed25519 -a 100
+\end{lstlisting}
+
+Распространение публичного ключа на клиент:
+\begin{lstlisting}
+ssh-copy-id username@ip_or_hostname
+\end{lstlisting}
+
+\section{Inventory-файл}
+
+Файл \texttt{/etc/ansible/hosts} определяет, какими узлами управляет Ansible.
+Пример структуры:
+\begin{lstlisting}
+[clients]
+desktop1 ansible_host=192.168.29.10 ansible_user=username
+wordpress ansible_host=192.168.29.6  ansible_user=username
+\end{lstlisting}
+
+Здесь \texttt{clients} — имя группы; \texttt{ansible\_host} — IP или
+DNS-имя; \texttt{ansible\_user} — пользователь на управляемом узле.
+
+\section{Структура плейбука и модули gather\_facts}
+
+\textbf{Плейбук} начинается с заголовка \texttt{-~name} и содержит директивы
+\texttt{hosts} (группа из inventory), \texttt{gather\_facts}~(автосбор
+системных параметров) и список задач \texttt{tasks}.
+
+Директивы делегирования:
+\begin{itemize}
+  \item \texttt{delegate\_to: localhost} — задача выполняется
+        не на клиенте, а на control node;
+  \item \texttt{run\_once: true} — задача выполняется только один раз
+        (например, создание папки на сервере).
+\end{itemize}
+
+Переменные \texttt{ansible\_facts}, используемые в работе:
+\begin{itemize}
+  \item \texttt{ansible\_hostname} — имя хоста клиента;
+  \item \texttt{ansible\_default\_ipv4.address} — основной IP-адрес;
+  \item \texttt{ansible\_distribution}, \texttt{ansible\_distribution\_version}
+        — название и версия ОС;
+  \item \texttt{ansible\_mounts} — список примонтированных файловых систем
+        со статистикой (в том числе \texttt{size\_available} для~\texttt{/}).
+\end{itemize}
+
+\endinput

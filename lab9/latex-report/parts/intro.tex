@@ -1,0 +1,39 @@
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\label{ch:intro}
+
+\textbf{Ansible} — система автоматизации управления конфигурациями и оркестрации,
+работающая по принципу агентless: не требует установки агентов на управляемые узлы,
+взаимодействуя с ними исключительно через протокол SSH.
+
+Цель работы — развернуть Ansible на сервере \texttt{gateway}, настроить
+безагентное подключение к двум клиентским машинам и запустить playbook,
+собирающий данные мониторинга: IP-адрес, имя хоста, версию ОС и объём
+свободного дискового пространства.
+
+Задачи:
+\begin{enumerate}
+  \item Установить Ansible и его зависимости на \texttt{gateway}.
+  \item Подготовить клиентские ВМ (\texttt{desktop1}, \texttt{wordpress}):
+        установить \texttt{openssh-server} и \texttt{python3}.
+  \item Сгенерировать SSH-ключ \texttt{ed25519} и распространить его на клиентов.
+  \item Создать инвентарный файл \texttt{/etc/ansible/hosts} и конфигурацию
+        \texttt{ansible.cfg}.
+  \item Написать и запустить playbook \texttt{monitoring.yml},
+        сохраняющий данные в \texttt{/etc/ansible/monitoring/}.
+  \item Проверить результаты в файлах \texttt{*\_info.txt}.
+\end{enumerate}
+
+\textbf{Стенд:}
+\begin{itemize}
+  \item ВМ \texttt{gateway} — Ubuntu~20.04.5~LTS, два адаптера:
+        \texttt{enp0s3}~(NAT) и \texttt{enp0s8}~(Internal,
+        \texttt{192.168.\cfgLabStudentN.1/24});
+        роль: Ansible control node.
+  \item ВМ \texttt{desktop1} — Ubuntu~20.04.5~Desktop, адаптер Internal,
+        \texttt{192.168.\cfgLabStudentN.10}; роль: Ansible client~1.
+  \item ВМ \texttt{wordpress} — Ubuntu~20.04.5~Server, адаптер Internal,
+        \texttt{192.168.\cfgLabStudentN.6}; роль: Ansible client~2.
+\end{itemize}
+
+\endinput

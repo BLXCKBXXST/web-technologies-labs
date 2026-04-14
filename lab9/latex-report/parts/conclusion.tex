@@ -1,0 +1,32 @@
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+\label{ch:conclusion}
+
+В ходе лабораторной работы была развёрнута система автоматизации
+\textbf{Ansible} на базе уже настроенных виртуальных машин из
+лабораторных работ~5--8.
+
+Выполненные задачи:
+\begin{enumerate}
+  \item На клиентских ВМ \texttt{desktop1} и \texttt{wordpress} установлены
+        \texttt{openssh-server} и \texttt{python3} — обязательные зависимости
+        для работы Ansible managed~node.
+  \item На \texttt{gateway} установлен Ansible через \texttt{pip3},
+        сгенерирован SSH-ключ \texttt{ed25519} без пароля.
+  \item Публичный ключ распространён на оба клиента с помощью
+        \texttt{ssh-copy-id}, что обеспечило беспарольный доступ.
+  \item Созданы файлы \texttt{/etc/ansible/hosts} и \texttt{ansible.cfg};
+        связность подтверждена командой \texttt{ansible clients -m ping}.
+  \item Написан и запущен плейбук \texttt{monitoring.yml}, который собрал
+        с каждого клиента: имя хоста, IP-адрес, версию ОС
+        и объём свободного места на корневом разделе.
+  \item Результаты сохранены в файлах
+        \texttt{/etc/ansible/monitoring/*\_info.txt} на control~node.
+\end{enumerate}
+
+Использование \texttt{delegate\_to: localhost} позволило записывать
+данные непосредственно на управляющий сервер без дополнительных сетевых
+протоколов. Агентless-архитектура Ansible подтвердила своё преимущество:
+клиентские ВМ потребовали минимальной настройки.
+
+\endinput
