@@ -63,7 +63,7 @@ echo " 1. Открой браузер Firefox на Desktop"
 echo
 echo " 2. Панель администратора (iRedAdmin):"
 echo "      https://${MAIL_FQDN}/iredadmin"
-echo "    Логин  : ${MAIL_ADMIN}"
+echo "    Логин  : ${POSTMASTER}"
 echo "    Пароль : <указанный при установке>"
 echo
 echo " 3. Создай нового пользователя:"
@@ -75,7 +75,7 @@ echo " 4. Веб-почта (Roundcubemail):"
 echo "      https://${MAIL_FQDN}/mail"
 echo
 echo " 5. ЗАДАНИЕ — отправь письмо:"
-echo "    Войди как postmaster@${DOMAIN}"
+echo "    Войди как ${POSTMASTER}"
 echo "    Compose → To: user1@${DOMAIN}"
 echo "    Subject: Тест ЛР-7"
 echo "    Отправь письмо"
