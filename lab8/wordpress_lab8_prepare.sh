@@ -77,7 +77,7 @@ sleep 2
 echo "[OK] netplan применён. IP на ${NET_IF}:"
 ip -4 addr show "${NET_IF}" | grep inet || true
 
-# Отключаем systemd-resolved (он перезаписывает resolv.conf на 127.0.0.53)
+# Отключаем systemd-resolved
 if systemctl is-active systemd-resolved &>/dev/null; then
   systemctl disable systemd-resolved
   systemctl stop systemd-resolved
@@ -86,7 +86,6 @@ else
   echo "[ИНФО] systemd-resolved уже отключён"
 fi
 
-# Записываем статический resolv.conf показывающий на DNS gateway
 rm -f /etc/resolv.conf
 cat > /etc/resolv.conf <<EOF
 nameserver ${GW_IP}
@@ -113,11 +112,9 @@ if [[ "${RESOLVED}" == "${WP_IP}" ]]; then
   echo "[OK] DNS разрешает ${WP_FQDN} → ${RESOLVED}"
 else
   echo "[ОШИБКА] DNS не разрешает ${WP_FQDN} (получено: '${RESOLVED}')." >&2
-  echo "[ИНФО] Сначала запусти gateway_lab8_dns.sh на ВМ gateway" >&2
   exit 1
 fi
 
-# Проверка внешнего Интернета через gateway
 if ping -c2 -W3 8.8.8.8 >/dev/null 2>&1; then
   echo "[OK] Внешняя сеть (8.8.8.8) доступна"
 else
@@ -220,7 +217,9 @@ echo
 echo "--- Шаг 9: загрузка WordPress ---"
 
 WP_ARCHIVE="/tmp/wordpress.tar.gz"
+WP_URL="https://wordpress.org/latest.tar.gz"
 
+# Удаляем архив если он битый
 if [[ -f "${WP_ARCHIVE}" ]]; then
   if gzip -t "${WP_ARCHIVE}" 2>/dev/null; then
     echo "[ИНФО] wordpress.tar.gz уже есть в /tmp и целый"
@@ -231,7 +230,7 @@ if [[ -f "${WP_ARCHIVE}" ]]; then
 fi
 
 if [[ ! -f "${WP_ARCHIVE}" ]]; then
-  wget -q --show-progress https://ru.wordpress.org/latest-ruRU.tar.gz -O "${WP_ARCHIVE}"
+  wget -q --show-progress "${WP_URL}" -O "${WP_ARCHIVE}"
   echo "[OK] WordPress скачан"
 fi
 
