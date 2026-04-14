@@ -49,7 +49,7 @@ echo "[OK] /etc/hosts обновлён:"
 cat /etc/hosts
 
 # ------------------------------------------------------------------
-# ШАГ 3. Статический IP (netplan)
+# ШАГ 3. Статический IP (netplan) + статический resolv.conf
 # ------------------------------------------------------------------
 echo
 echo "--- Шаг 3: настройка статического IP (netplan) ---"
@@ -77,6 +77,24 @@ sleep 2
 echo "[OK] netplan применён. IP на ${NET_IF}:"
 ip -4 addr show "${NET_IF}" | grep inet || true
 
+# Отключаем systemd-resolved (он перезаписывает resolv.conf на 127.0.0.53)
+if systemctl is-active systemd-resolved &>/dev/null; then
+  systemctl disable systemd-resolved
+  systemctl stop systemd-resolved
+  echo "[OK] systemd-resolved отключён"
+else
+  echo "[ИНФО] systemd-resolved уже отключён"
+fi
+
+# Записываем статический resolv.conf показывающий на DNS gateway
+rm -f /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver ${GW_IP}
+search ${DOMAIN}
+EOF
+echo "[OK] /etc/resolv.conf перезаписан:"
+cat /etc/resolv.conf
+
 # ------------------------------------------------------------------
 # ШАГ 4. Проверка сети
 # ------------------------------------------------------------------
@@ -96,6 +114,14 @@ if [[ "${RESOLVED}" == "${WP_IP}" ]]; then
 else
   echo "[ОШИБКА] DNS не разрешает ${WP_FQDN} (получено: '${RESOLVED}')." >&2
   echo "[ИНФО] Сначала запусти gateway_lab8_dns.sh на ВМ gateway" >&2
+  exit 1
+fi
+
+# Проверка внешнего Интернета через gateway
+if ping -c2 -W3 8.8.8.8 >/dev/null 2>&1; then
+  echo "[OK] Внешняя сеть (8.8.8.8) доступна"
+else
+  echo "[ОШИБКА] Нет доступа в интернет. Проверь NAT/MASQUERADE на gateway." >&2
   exit 1
 fi
 
@@ -195,7 +221,6 @@ echo "--- Шаг 9: загрузка WordPress ---"
 
 WP_ARCHIVE="/tmp/wordpress.tar.gz"
 
-# Удаляем архив если он есть, но битый
 if [[ -f "${WP_ARCHIVE}" ]]; then
   if gzip -t "${WP_ARCHIVE}" 2>/dev/null; then
     echo "[ИНФО] wordpress.tar.gz уже есть в /tmp и целый"
