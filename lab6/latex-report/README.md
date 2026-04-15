@@ -4,9 +4,7 @@
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab6/latex-report)**
 
-## Готовый PDF
-
-**[📄 lab6\_latex\_report.pdf](./lab6_latex_report.pdf)**
+**[📄 Скачать готовый PDF](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab6/latex-report/lab6_latex_report.pdf)**
 
 ## Импорт в Overleaf
 
@@ -15,6 +13,7 @@
 3. Главный файл: `main.tex`, компилятор: **XeLaTeX**
 4. Свои данные — редактируй только `config.tex`
 5. Скриншоты клади в папку `img/` (имена: `01_...`, `02_...`)
+   — см. гайд [`screenshots/README.md`](screenshots/README.md)
 
 ## Структура
 
@@ -29,9 +28,12 @@ latex-report/
 │   ├── timesi.ttf
 │   └── timesbi.ttf
 ├── img/
+│   ├── 01_vbox_seafile_settings.png
+│   ├── 02_netplan_seafile.png
+│   └── ...
 ├── screenshots/
-│   ├── README.md
-│   └── screenshots.sh
+│   ├── screenshots.sh
+│   └── README.md
 └── parts/
     ├── title.tex
     ├── intro.tex
