@@ -1,54 +1,64 @@
-# Скриншоты — Лабораторная работа №9
+# 📸 Скриншоты — Lab 9
 
-## Запуск
+Интерактивный скрипт, который пошагово ведёт по всем 14 скриншотам для отчёта.
+
+---
+
+## ▶️ Запуск
 
 ```bash
+# Из папки latex-report/ на ВМ gateway:
 sudo bash screenshots/screenshots.sh
 ```
 
-Скрипт проведёт через все 14 шагов в правильном порядке.
+---
 
-## Механика работы
-
-Каждый шаг выглядит так:
+## ⚙️ Как работает скрипт
 
 ```
-========================================
-  [Скриншот NN] Описание
-  Файл: img/NN_название.png
-========================================
+════════════════════════════════════════
+  [Скриншот 10] ansible clients -m ping
+  Файл: img/10_ansible_ping.png
+════════════════════════════════════════
+
   → Нажми Enter чтобы выполнить команду...
-<выполнение команды>
-  ✔ Сделай скриншот и нажми Enter для продолжения...
+  [Enter]
+
+ansible clients -m ping    ← выполняется автоматически
+...
+
+  ✔ Сделай скриншот и нажми Enter...
+  [Enter]    ← переход к следующему шагу
 ```
 
-> ⚠️ Шаги 02 и 03 — **ручные**: нужно переключиться на ВМ `desktop1`
-> и `wordpress` соответственно, выполнить команду там и вернуться на gateway.
+---
 
-## Таблица скриншотов
+## 📝 Все 14 скриншотов
 
-| № | Файл | ВМ | Что показать |
-|---|---|---|---|
-| 01 | `01_gateway_ip_a.png` | gateway | `ip a` — все интерфейсы |
-| 02 | `02_client_ssh_status.png` | desktop1 | `systemctl status ssh` |
-| 03 | `03_wordpress_ssh_status.png` | wordpress | `systemctl status ssh` |
-| 04 | `04_ping_clients.png` | gateway | `ping` до обоих клиентов |
-| 05 | `05_ansible_version.png` | gateway | `ansible --version` |
-| 06 | `06_ssh_keygen.png` | gateway | генерация ключа `ed25519` |
-| 07 | `07_ssh_copy_desktop.png` | gateway | `ssh-copy-id` → desktop1, `Number of key(s) added: 1` |
-| 08 | `08_ssh_copy_wordpress.png` | gateway | `ssh-copy-id` → wordpress, `Number of key(s) added: 1` |
-| 09 | `09_ansible_hosts.png` | gateway | `cat /etc/ansible/hosts` |
-| 10 | `10_ansible_ping.png` | gateway | `ansible clients -m ping` → SUCCESS |
-| 11 | `11_playbook_content.png` | gateway | `cat monitoring.yml` |
-| 12 | `12_playbook_run.png` | gateway | `ansible-playbook monitoring.yml` → `failed=0` |
-| 13 | `13_info_desktop1.png` | gateway | `cat desktop1_info.txt` |
-| 14 | `14_info_wordpress.png` | gateway | `cat wordpress_info.txt` |
+| № | Файл | Что показать |
+|:---:|---|---|
+| 01 | `01_gateway_ip_a.png` | `ip a` — все интерфейсы gateway |
+| 02 | `02_client_ssh_status.png` | desktop1: `systemctl status ssh` |
+| 03 | `03_wordpress_ssh_status.png` | wordpress: `systemctl status ssh` |
+| 04 | `04_ping_clients.png` | `ping -c 3` до desktop1 и wordpress |
+| 05 | `05_ansible_version.png` | `ansible --version` |
+| 06 | `06_ssh_keygen.png` | генерация ключа `ed25519` |
+| 07 | `07_ssh_copy_desktop.png` | `ssh-copy-id` → desktop1, `Number of key(s) added: 1` |
+| 08 | `08_ssh_copy_wordpress.png` | `ssh-copy-id` → wordpress, `Number of key(s) added: 1` |
+| 09 | `09_ansible_hosts.png` | `cat /etc/ansible/hosts` |
+| 10 | `10_ansible_ping.png` | `ansible clients -m ping` → SUCCESS |
+| 11 | `11_playbook_content.png` | `cat monitoring.yml` |
+| 12 | `12_playbook_run.png` | `ansible-playbook monitoring.yml` → `failed=0` |
+| 13 | `13_info_desktop1.png` | `cat desktop1_info.txt` |
+| 14 | `14_info_wordpress.png` | `cat wordpress_info.txt` |
 
-## Зависимости между шагами
+> **⚠️ Шаги 02, 03** — выполняются вручную на ВМ `desktop1` и `wordpress` соответственно, скрипт только напомнит что делать.
+>
+> **⚠️ Шаги 07, 08** — потребуются пароль пользователя клиентской ВМ.
+>
+> **⚠️ Шаги 09–14** — требуют завершённых шагов 06–08 (`ssh-copy-id`).
 
-- Шаги 02, 03 — сначала запусти `client_lab9_prepare.sh` на клиентах
-- Шаги 07, 08 — потребуют пароль пользователя клиентской ВМ
-- Шаги 09–14 — требуют завершённого шага 06 (`ssh-copy-id`)
+---
 
 ## 📂 Куда положить скриншоты
 
