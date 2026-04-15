@@ -92,14 +92,6 @@ FLUSH PRIVILEGES;
 SQL
 \end{lstlisting}
 
-% --- Скриншот: статус MariaDB ---
-\begin{figure}[h]
-  \centering
-  \includegraphics{img/06_mariadb_status}
-  \caption{Сервис MariaDB активен и база данных wordpress создана}
-  \label{fig:mariadb_status}
-\end{figure}
-
 \section{Установка и настройка WordPress}
 
 Скачивается архив русской версии WordPress и распаковывается:
@@ -152,14 +144,6 @@ chmod -R 755 /var/www/html
 После нажатия кнопки \textit{«Установить WordPress»} система
 создаёт таблицы в базе данных и перенаправляет на страницу входа.
 
-% --- Скриншот: мастер установки WordPress ---
-\begin{figure}[h]
-  \centering
-  \includegraphics{img/08_wp_installer}
-  \caption{Мастер установки WordPress в браузере на ВМ desktop1}
-  \label{fig:wp_installer}
-\end{figure}
-
 % --- Скриншот: успешная установка ---
 \begin{figure}[h]
   \centering
@@ -176,14 +160,6 @@ chmod -R 755 /var/www/html
 
 Проверяется отображение записи на главной странице сайта
 \texttt{http://\cfgWpIP/}.
-
-% --- Скриншот: панель администратора ---
-\begin{figure}[h]
-  \centering
-  \includegraphics{img/10_wp_admin_panel}
-  \caption{Панель администратора WordPress после входа}
-  \label{fig:wp_admin}
-\end{figure}
 
 % --- Скриншот: тестовая запись на главной странице ---
 \begin{figure}[h]

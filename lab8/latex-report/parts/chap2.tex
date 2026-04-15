@@ -20,7 +20,7 @@
 Один сетевой адаптер:
 \begin{itemize}
   \item \texttt{enp0s3} --- Internal Network (\texttt{intnet}),
-        статический IP~\texttt{\cfgWpIP/24}, шлюз~\texttt{\cfgGwIP}.
+        \\статический IP~\texttt{\cfgWpIP/24}, \\шлюз~\texttt{\cfgGwIP}.
 \end{itemize}
 Установленный стек: Apache2, MariaDB, PHP~8.1, WordPress.
 
@@ -67,7 +67,7 @@
 sudo bash lab8/gateway_lab8_dns.sh
 \end{lstlisting}
 
-Скрипт добавляет в прямую зону \texttt{\cfgDomain} запись:
+Скрипт добавляет в прямую зону \texttt{\cfgDomain} запись:\\
 \begin{lstlisting}
 wordpress    IN  A  192.168.29.6
 \end{lstlisting}
@@ -92,7 +92,7 @@ wordpress    IN  A  192.168.29.6
 sudo bash lab8/wordpress_lab8_prepare.sh
 \end{lstlisting}
 
-Скрипт последовательно устанавливает hostname
+Скрипт последовательно устанавливает hostname\\
 \texttt{wordpress.\cfgDomain}, прописывает \texttt{/etc/hosts},
 настраивает статический IP через Netplan, проверяет связь с gateway
 и DNS, затем выполняет шаги установки стека и WordPress.

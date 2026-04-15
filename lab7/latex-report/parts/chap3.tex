@@ -12,14 +12,6 @@ wget https://github.com/iredmail/iRedMail/archive/refs/tags/1.6.2.tar.gz
 tar xvf 1.6.2.tar.gz
 \end{lstlisting}
 
-% — Скриншот: завершение распаковки архива iRedMail —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/06_iredmail_download}
-  \caption{Загрузка и распаковка архива \texttt{iRedMail-1.6.2}}
-  \label{fig:iredmail_download}
-\end{figure}
-
 \section{Предварительная загрузка пакетов}
 
 Перед запуском интерактивного установщика загружаем необходимые
@@ -31,14 +23,6 @@ cd pkgs/
 chmod +x get_all.sh
 ./get_all.sh
 \end{lstlisting}
-
-% — Скриншот: завершение ./get_all.sh —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/07_getall_done}
-  \caption{Завершение загрузки зависимостей \texttt{get\_all.sh}}
-  \label{fig:getall_done}
-\end{figure}
 
 \section{Запуск установщика iRedMail}
 
@@ -59,14 +43,6 @@ chmod +x iRedMail.sh
 Установщик предлагает выбрать веб-сервер: \textbf{Nginx} или Apache.
 Выбираем \textbf{Nginx}.
 
-% — Скриншот: экран выбора веб-сервера (Nginx выделен) —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/08_installer_nginx}
-  \caption{Установщик iRedMail — выбор Nginx в качестве веб-сервера}
-  \label{fig:installer_nginx}
-\end{figure}
-
 \subsection{Выбор бэкенда для пользователей}
 
 Установщик предлагает тип хранилища учётных записей.
@@ -77,30 +53,14 @@ chmod +x iRedMail.sh
 dc=yazikov,dc=iks531,dc=local
 \end{lstlisting}
 
-% — Скриншот: экран выбора OpenLDAP и ввода суффикса —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/09_installer_openldap}
-  \caption{Установщик iRedMail — выбор OpenLDAP и ввод суффикса домена}
-  \label{fig:installer_ldap}
-\end{figure}
-
 \subsection{Завершение установки}
 
 После прохождения всех экранов установщик производит автоматическую
 установку и настройку всех компонентов. По завершении появляется
 сообщение об успешной инсталляции.
 
-Установщик сообщает учётные данные администратора:
+Установщик сообщает учётные данные администратора:\\
 \texttt{postmaster@yazikov.iks531.local}.
-
-% — Скриншот: финальный экран установщика (установка завершена) —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/10_installer_done}
-  \caption{Завершение установки iRedMail — все компоненты настроены}
-  \label{fig:installer_done}
-\end{figure}
 
 \section{Проверка статуса сервисов}
 
@@ -145,8 +105,8 @@ systemctl status nginx
 https://mail.yazikov.iks531.local/iredadmin
 \end{lstlisting}
 
-Входим с учётными данными:
-\textit{Логин:} \texttt{postmaster@yazikov.iks531.local},
+Входим с учётными данными:\\
+\textit{Логин:}\\ \texttt{postmaster@yazikov.iks531.local},\\
 \textit{Пароль:} указанный при установке.
 
 % — Скриншот: браузер Desktop, страница авторизации iRedAdmin —

@@ -17,14 +17,6 @@ pip3 install --timeout=3600 django==3.2.* Pillow pylibmc captcha jinja2 \\
   mysqlclient pycryptodome==3.12.0 cffi==1.14.0
 \end{lstlisting}
 
-% — Скриншот: завершение pip3 install —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/05_apt_install_deps}
-  \caption{Установка Python-зависимостей Seafile}
-  \label{fig:deps}
-\end{figure}
-
 \subsection{MariaDB}
 
 \begin{lstlisting}
@@ -47,14 +39,6 @@ flush privileges;
 \begin{lstlisting}
 systemctl enable mariadb
 \end{lstlisting}
-
-% — Скриншот: завершение установки MariaDB —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/06_mariadb_install}
-  \caption{Установка MariaDB и сброс привилегий}
-  \label{fig:mariadb}
-\end{figure}
 
 \section{Загрузка и установка Seafile}
 
@@ -96,14 +80,6 @@ cd ./seafile-server-9.0.9/
   \item Порт MySQL: \texttt{3306} (по умолчанию);
   \item Пароль root MySQL — указанный при установке.
 \end{itemize}
-
-% — Скриншот: вывод setup-seafile-mysql.sh (завершение) —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/07_setup_seafile_sh}
-  \caption{Успешное завершение скрипта \texttt{setup-seafile-mysql.sh}}
-  \label{fig:setup_seafile}
-\end{figure}
 
 \section{Настройка Nginx}
 
@@ -154,7 +130,7 @@ service nginx restart
   \label{fig:nginx_conf}
 \end{figure}
 
-\section{Первый запуск Seafile и Seahub}
+\section{Запуск Seafile и Seahub}
 
 \begin{lstlisting}
 /opt/seafile/seafile-server-9.0.9/seafile.sh start
@@ -169,16 +145,8 @@ service nginx restart
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\textwidth]{img/09_seafile_start}
-  \caption{Первый запуск сервисов Seafile и Seahub}
+  \caption{Запуск сервисов Seafile и Seahub}
   \label{fig:seafile_start}
-\end{figure}
-
-% — Скриншот: ввод e-mail/пароля администратора —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/10_seahub_admin_create}
-  \caption{Создание учётной записи администратора Seahub}
-  \label{fig:admin_create}
 \end{figure}
 
 \section{Настройка автозапуска}
@@ -226,7 +194,8 @@ systemctl status seafile
 http://seafile
 \end{lstlisting}
 
-Входим с учётной записью администратора \texttt{admin@STUDENT.GROUP.local}.
+Входим с учётной записью администратора\\
+\texttt{admin@STUDENT.GROUP.local}.
 
 % — Скриншот: страница входа Seafile в браузере —
 \begin{figure}[h]
@@ -253,14 +222,6 @@ add-apt-repository ppa:seafile/seafile-client
 apt-get update
 apt-get install seafile-gui
 \end{lstlisting}
-
-% — Скриншот: apt-get install seafile-gui —
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\textwidth]{img/14_seafile_client_install}
-  \caption{Установка клиента \texttt{seafile-gui} на Desktop}
-  \label{fig:seafile_client_install}
-\end{figure}
 
 \subsection{Синхронизация библиотеки}
 

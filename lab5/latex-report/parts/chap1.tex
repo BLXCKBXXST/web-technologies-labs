@@ -77,7 +77,7 @@ TSIG-ключ \texttt{rndc-key} (HMAC-MD5), хранящийся в \texttt{/etc
 
 Этапы настройки DDNS:
 \begin{enumerate}
-  \item Скопировать ключ RNDC в каталог DHCP:
+  \item Скопировать ключ RNDC в каталог DHCP:\\
         \texttt{cp -Rr /etc/bind/rndc.key /etc/dhcp/ddns-keys/}
   \item Добавить в \texttt{/etc/dhcp/dhcpd.conf} директивы
         \texttt{ddns-updates on}, \texttt{ddns-update-style standard},
