@@ -1,0 +1,42 @@
+name: Release LaTeX zip
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lab*/latex-report/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build zips and release
+        shell: bash
+        run: |
+          for lab_dir in lab*/latex-report; do
+            lab=$(echo "$lab_dir" | cut -d'/' -f1)   # lab4, lab5, ...
+
+            # Собираем zip без screenshots/ и README.md
+            (cd "$lab_dir" && zip -r "../../${lab}_overleaf.zip" . \
+              --exclude "screenshots/*" \
+              --exclude "README.md")
+
+            echo "✓ Built ${lab}_overleaf.zip"
+          done
+
+      - name: Upload zips to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: overleaf-zips
+          name: "Overleaf ZIP archives"
+          body: |
+            Автоматически собранные ZIP для импорта в Overleaf.
+            Папки `screenshots/` и `README.md` исключены.
+          files: "*_overleaf.zip"
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
