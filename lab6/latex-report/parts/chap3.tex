@@ -125,7 +125,7 @@ service nginx restart
 % — Скриншот: nano /etc/nginx/sites-enabled/seafile.conf —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/08_nginx_conf}
+  \includegraphics[width=0.85\textwidth]{img/05_nginx_conf}
   \caption{Конфигурация Nginx для обратного проксирования Seahub}
   \label{fig:nginx_conf}
 \end{figure}
@@ -139,12 +139,12 @@ service nginx restart
 
 При первом запуске \texttt{seahub.sh} предлагает создать учётную
 запись администратора. Вводим e-mail в формате
-\texttt{admin@STUDENT.GROUP.local} и пароль.
+\texttt{admin@\cfgDomain} и пароль.
 
 % — Скриншот: вывод seafile.sh start + seahub.sh start —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/09_seafile_start}
+  \includegraphics[width=0.85\textwidth]{img/06_seafile_start}
   \caption{Запуск сервисов Seafile и Seahub}
   \label{fig:seafile_start}
 \end{figure}
@@ -182,7 +182,7 @@ systemctl status seafile
 % — Скриншот: systemctl status seafile (active/running) —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/11_seafile_service}
+  \includegraphics[width=0.85\textwidth]{img/07_seafile_service}
   \caption{Статус сервиса \texttt{seafile} — active (running)}
   \label{fig:seafile_service}
 \end{figure}
@@ -195,12 +195,12 @@ http://seafile
 \end{lstlisting}
 
 Входим с учётной записью администратора\\
-\texttt{admin@STUDENT.GROUP.local}.
+\texttt{admin@\cfgDomain}.
 
 % — Скриншот: страница входа Seafile в браузере —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/12_seafile_web_login}
+  \includegraphics[width=0.85\textwidth]{img/08_seafile_web_login}
   \caption{Веб-интерфейс Seafile — страница входа}
   \label{fig:seafile_login}
 \end{figure}
@@ -208,7 +208,7 @@ http://seafile
 % — Скриншот: главная страница библиотек —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/13_seafile_web_library}
+  \includegraphics[width=0.85\textwidth]{img/09_seafile_web_library}
   \caption{Веб-интерфейс Seafile — библиотека с загруженным файлом}
   \label{fig:seafile_library}
 \end{figure}
@@ -231,7 +231,7 @@ apt-get install seafile-gui
 % — Скриншот: клиент Seafile с синхронизированной библиотекой —
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{img/15_seafile_client_sync}
+  \includegraphics[width=0.85\textwidth]{img/10_seafile_client_sync}
   \caption{Клиент Seafile на Desktop — синхронизированная библиотека}
   \label{fig:seafile_sync}
 \end{figure}

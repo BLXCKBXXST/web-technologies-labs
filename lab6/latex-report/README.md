@@ -4,6 +4,10 @@
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab6/latex-report)**
 
+## Готовый PDF
+
+**[📄 lab6\_latex\_report.pdf](./lab6_latex_report.pdf)**
+
 ## Импорт в Overleaf
 
 1. Скачай архив по ссылке выше
@@ -18,7 +22,7 @@
 latex-report/
 ├── main.tex
 ├── config.tex
-├── refs.bib
+├── lab6_latex_report.pdf
 ├── fonts/
 │   ├── times.ttf
 │   ├── timesbd.ttf
