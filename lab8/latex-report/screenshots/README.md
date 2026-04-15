@@ -59,11 +59,6 @@ sudo bash screenshots/screenshots.sh
 
 ---
 
-## Перенос скриншотов на хост
+## 📂 Куда положить скриншоты
 
-После съёмки скриншоты нужно положить в `lab8/latex-report/img/`.
-С ВМ на хост:
-
-```bash
-scp img/*.png user@<host-ip>:/path/to/linux-admin-labs/lab8/latex-report/img/
-```
+Файлы клади в `../img/` с именами **точно как в таблице** (`.png`, без пробелов).

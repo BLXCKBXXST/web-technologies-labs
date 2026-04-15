@@ -63,8 +63,6 @@ sudo bash screenshots/screenshots.sh
 
 ---
 
-## Перенос скриншотов на хост
+## 📂 Куда положить скриншоты
 
-```bash
-scp img/*.png user@<IP_хоста>:/path/to/lab-7/latex-report/img/
-```
+Файлы клади в `../img/` с именами **точно как в таблице** (`.png`, без пробелов).

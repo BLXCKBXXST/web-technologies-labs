@@ -62,8 +62,3 @@ sudo bash screenshots/screenshots.sh
 ## 📂 Куда положить скриншоты
 
 Файлы клади в `../img/` с именами **точно как в таблице** (`.png`, без пробелов).
-
-```bash
-# Перенос с хоста через scp:
-scp *.png user@192.168.N.4:/path/to/lab6/latex-report/img/
-```
