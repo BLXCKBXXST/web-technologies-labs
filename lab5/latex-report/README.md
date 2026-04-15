@@ -31,6 +31,9 @@ latex-report/
 │   ├── 01_vbox_gateway_settings.jpg
 │   ├── 02_etc_hosts.png
 │   └── ...
+├── screenshots/
+│   ├── screenshots.sh
+│   └── README.md
 └── parts/
     ├── title.tex
     ├── intro.tex
