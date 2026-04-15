@@ -4,6 +4,8 @@
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab4/latex-report)**
 
+**[📄 Скачать готовый PDF](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab4/latex-report/lab4_latex_report.pdf)**
+
 ## Импорт в Overleaf
 
 1. Скачай архив по ссылке выше
@@ -19,19 +21,23 @@
 latex-report/
 ├── main.tex
 ├── config.tex
-├── refs.bib
+├── lab4_latex_report.pdf
 ├── fonts/
 │   ├── times.ttf
 │   ├── timesbd.ttf
 │   ├── timesi.ttf
 │   └── timesbi.ttf
 ├── img/
+│   ├── 01_vbox_adapters.jpg
+│   ├── 02_ip_a_before.png
+│   └── ...
 ├── screenshots/
 │   ├── screenshots.sh
 │   └── README.md
 └── parts/
-    ├── titlepage.tex
+    ├── title.tex
     ├── intro.tex
+    ├── chap1.tex
     ├── chap2.tex
     ├── chap3.tex
     └── conclusion.tex
