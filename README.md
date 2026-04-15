@@ -15,6 +15,15 @@
 
 ---
 
+## Скачать Ubuntu 20.04
+
+| Образ | Ссылка |
+|-------|--------|
+| 🖥️ Ubuntu 20.04 Desktop | [ubuntu-20.04.6-desktop-amd64.iso](https://releases.ubuntu.com/20.04/ubuntu-20.04.6-desktop-amd64.iso) |
+| 🔧 Ubuntu 20.04 Server | [ubuntu-20.04.6-live-server-amd64.iso](https://releases.ubuntu.com/20.04/ubuntu-20.04.6-live-server-amd64.iso) |
+
+---
+
 ## Лабораторные работы
 
 | Лаба | Тема | Что делается | Скрипты | LaTeX-отчёт | Скриншоты | Методичка |
