@@ -6,7 +6,10 @@ on:
     paths:
       - 'lab*/latex-report/**'
       - '.github/workflows/release-latex.yml'
-  workflow_dispatch:  # ручный запуск через GitHub UI
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -16,17 +19,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build zips and release
+      - name: Build zips
         shell: bash
         run: |
           for lab_dir in lab*/latex-report; do
-            lab=$(echo "$lab_dir" | cut -d'/' -f1)   # lab4, lab5, ...
-
-            # Собираем zip без screenshots/ и README.md
+            lab=$(echo "$lab_dir" | cut -d'/' -f1)
             (cd "$lab_dir" && zip -r "../../${lab}_overleaf.zip" . \
               --exclude "screenshots/*" \
               --exclude "README.md")
-
             echo "✓ Built ${lab}_overleaf.zip"
           done
 
