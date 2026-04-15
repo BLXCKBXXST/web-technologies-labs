@@ -3,7 +3,7 @@
 #  Практическая работа №9 — Часть 3
 #  Запуск Ansible playbook и проверка результатов
 #
-#  Запускать: sudo bash gateway_lab9_run.sh
+#  Запускать: bash gateway_lab9_run.sh  (БЕЗ sudo!)
 #  ВМ: gateway (Ubuntu Server)
 # =============================================================
 set -euo pipefail
@@ -18,8 +18,14 @@ echo " Playbook : ${PLAYBOOK_FILE}"
 echo " Результат: ${MONITORING_DIR}/"
 echo "================================================================"
 
-if [[ $EUID -ne 0 ]]; then
-  echo "[ОШИБКА] Запустите от root: sudo bash $0" >&2
+# Скрипт должен работать ОТ ОБЫЧНОГО ПОЛЬЗОВАТЕЛЯ
+# Ansible берёт SSH-ключ из ~/.ssh/ текущего пользователя
+if [[ $EUID -eq 0 ]]; then
+  echo "[ОШИБКА] Не запускайте этот скрипт через sudo!"
+  echo "[ОШИБКА] Ansible не найдёт SSH-ключ из /root/.ssh/ — все клиенты будут UNREACHABLE."
+  echo ""
+  echo "   Запускай так:"
+  echo "   bash gateway_lab9_run.sh"
   exit 1
 fi
 
