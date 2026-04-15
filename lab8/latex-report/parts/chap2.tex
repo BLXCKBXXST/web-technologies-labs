@@ -69,18 +69,18 @@ sudo bash lab8/gateway_lab8_dns.sh
 
 Скрипт добавляет в прямую зону \texttt{\cfgDomain} запись:\\
 \begin{lstlisting}
-wordpress    IN  A  192.168.29.6
+wordpress    IN  A  <WP_IP>
 \end{lstlisting}
 И в обратную зону:
 \begin{lstlisting}
-6    IN  PTR  wordpress.yazikov.iks531.local.
+<PTR_OCTET>    IN  PTR  wordpress.<DOMAIN>.
 \end{lstlisting}
 
 % --- Скриншот: результат gateway_lab8_dns.sh ---
 \begin{figure}[h]
   \centering
   \includegraphics{img/02_gateway_dns_result}
-  \caption{Результат выполнения gateway\_lab8\_dns.sh — DNS-записи добавлены}
+  \caption{Результат выполнения gateway\_lab8\_dns.sh --- DNS-записи добавлены}
   \label{fig:gateway_dns}
 \end{figure}
 

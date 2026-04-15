@@ -43,8 +43,8 @@ systemctl restart apache2
 Создаётся файл Virtual Host для WordPress:
 \begin{lstlisting}
 <VirtualHost *:80>
-    ServerName 192.168.29.6
-    ServerAlias wordpress.yazikov.iks531.local
+    ServerName <WP_IP>
+    ServerAlias wordpress.<DOMAIN>
     DocumentRoot /var/www/html
     <Directory /var/www/html>
         AllowOverride All

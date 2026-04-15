@@ -38,10 +38,11 @@ clear
 echo "=============================================="
 echo "  Lab 8 — Скрипт скриншотов"
 echo "  WordPress / LAMP"
-echo "  Всего: 12 шагов"
+echo "  Всего: 9 шагов"
 echo "=============================================="
 echo ""
-echo "  Скриншоты 01 и 08 делаются вручную (VirtualBox GUI и браузер)."
+echo "  Скриншот 01 делается вручную (VirtualBox GUI)."
+echo "  Скриншоты 09 и 11 делаются вручную (браузер на Desktop)."
 read -rp "  → Нажми Enter когда будешь готов..."
 
 # ============================================================
@@ -86,56 +87,24 @@ step "05" \
      cat /etc/apache2/sites-available/wordpress.conf 2>/dev/null || \
      echo 'Файл не найден — запусти wordpress_lab8_prepare.sh'"
 
-# 06 — Статус MariaDB
-step "06" \
-    "Статус MariaDB и наличие БД wordpress" \
-    "systemctl status mariadb --no-pager -l | head -15 && \
-     echo '' && \
-     mysql -u ${DB_USER} -p${DB_PASSWORD} \
-       -e 'SHOW DATABASES;' 2>/dev/null || true"
-
 # 07 — Файлы WordPress в /var/www/html
 step "07" \
     "Файлы WordPress развёрнуты в /var/www/html" \
     "ls -la /var/www/html/ | head -20"
 
-# 08 — Мастер установки в браузере (вручную, Desktop)
-echo ""
-echo "========================================"
-echo "  [Скриншот 08] Мастер установки WordPress в браузере"
-echo "  Файл: img/08_wp_installer.png"
-echo "  • Перейди на ВМ desktop1"
-echo "  • Открой браузер Firefox: http://${WP_IP}/"
-echo "  • Заполни форму установки:"
-echo "      Название сайта : ${DOMAIN}"
-echo "      Имя пользователя: admin"
-echo "      Email           : admin@${DOMAIN}"
-echo "  • Нажми 'Установить WordPress'"
-echo "  • Сделай скриншот страницы установки ДО нажатия кнопки"
-echo "========================================"
-read -rp "  ✔ Сделай скриншот и нажми Enter..."
-
-# 09 — Успешное завершение установки
+# 09 — Успешное завершение установки (вручную, Desktop)
 echo ""
 echo "========================================"
 echo "  [Скриншот 09] Успешное завершение установки WordPress"
 echo "  Файл: img/09_wp_install_success.png"
+echo "  • Перейди на ВМ desktop1"
+echo "  • Открой браузер Firefox: http://${WP_IP}/"
+echo "  • Пройди мастер установки WordPress"
 echo "  • Сделай скриншот страницы 'Установка завершена!'"
-echo "  • Затем войди: admin / <твой пароль>"
 echo "========================================"
 read -rp "  ✔ Сделай скриншот и нажми Enter..."
 
-# 10 — Панель администратора
-echo ""
-echo "========================================"
-echo "  [Скриншот 10] Панель администратора WordPress"
-echo "  Файл: img/10_wp_admin_panel.png"
-echo "  • Открой: http://${WP_IP}/wp-admin"
-echo "  • Сделай скриншот главной страницы Dashboard"
-echo "========================================"
-read -rp "  ✔ Сделай скриншот и нажми Enter..."
-
-# 11 — Тестовая запись
+# 11 — Тестовая запись (вручную, Desktop)
 echo ""
 echo "========================================"
 echo "  [Скриншот 11] Тестовая запись опубликована"
@@ -155,7 +124,7 @@ step "12" \
 # ============================================================
 echo ""
 echo "=============================================="
-echo "  Все 12 скриншотов сделаны!"
+echo "  Все 9 скриншотов сделаны!"
 echo "  Положи PNG-файлы в lab8/latex-report/img/"
 echo "  Имена файлов:"
 echo "    01_vbox_wordpress_settings.png"
@@ -163,11 +132,8 @@ echo "    02_gateway_dns_result.png"
 echo "    03_wp_network_check.png"
 echo "    04_apache2_status.png"
 echo "    05_vhost_conf.png"
-echo "    06_mariadb_status.png"
 echo "    07_wp_files.png"
-echo "    08_wp_installer.png"
 echo "    09_wp_install_success.png"
-echo "    10_wp_admin_panel.png"
 echo "    11_wp_post_published.png"
 echo "    12_post_check.png"
 echo "=============================================="
