@@ -167,7 +167,7 @@ echo " Установка Ansible завершена."
 echo
 echo " СЛЕДУЮЩИЙ ОБЯЗАТЕЛЬНЫЙ ШАГ — скопировать SSH-ключ на клиентов:"
 echo
-echo "   sudo -u ${REAL_USER} bash gateway_lab9_ssh_copy.sh"
+echo "   bash gateway_lab9_ssh_copy.sh"
 echo
-echo " (запускать БЕЗ sudo, так как ssh-copy-id работает от обычного пользователя)"
+echo " (запускать БЕЗ sudo — ssh-copy-id работает от обычного пользователя)"
 echo "================================================================"
