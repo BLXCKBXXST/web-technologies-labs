@@ -63,21 +63,35 @@ enp0s8 (intnet)
 
 ```
 linux-admin-labs/
-├── lab4/
-│   ├── config.sh
-│   ├── gateway_lab4_net.sh
-│   ├── gateway_lab4_dhcp.sh
-│   ├── desktop_lab4_prepare.sh
-│   ├── Методичка (lab4).pdf
-│   └── latex-report/
-├── lab5/ ...
-├── lab6/ ...
-├── lab7/ ...
-├── lab8/ ...
-├── lab9/ ...
+│
+├── labN/                          ← папка каждой лабораторной работы
+│   ├── README.md                  ← описание лабы + ссылка на скачивание scripts.zip
+│   ├── config.sh                  ← общие переменные (IP, имя студента, сеть)
+│   ├── <vm>_labN_<task>.sh        ← bash-скрипты автоматизации по ВМ и задаче
+│   ├── Методичка (labN).pdf       ← PDF методички преподавателя
+│   └── latex-report/              ← LaTeX-отчёт для Overleaf
+│       ├── README.md              ← ссылка на скачивание overleaf ZIP
+│       ├── main.tex               ← точка входа: подключает все части отчёта
+│       ├── config.tex             ← настройки студента (номер, ФИО, группа)
+│       ├── parts/                 ← разделы отчёта (intro, chap1..N, conclusion)
+│       │   ├── title.tex          ← титульная страница
+│       │   ├── intro.tex          ← введение
+│       │   ├── chap1.tex          ← глава 1 (теория / топология)
+│       │   ├── chap2.tex          ← глава 2 (практика / команды)
+│       │   ├── chap3.tex          ← глава 3 (результаты / проверка)
+│       │   └── conclusion.tex     ← заключение
+│       ├── screenshots/           ← скриншоты для отчёта (PNG/JPG)
+│       │   └── README.md          ← список скриншотов с подписями
+│       ├── img/                   ← прочие изображения (схемы, диаграммы)
+│       ├── fonts/                 ← шрифты (Times New Roman и др. для ГОСТ)
+│       └── labN_latex_report.pdf  ← скомпилированный PDF отчёта
+│
+├── LaTeX_g7-32_template_tsvs-main/  ← базовый LaTeX-шаблон по ГОСТ 7.32
+│
 └── .github/
     └── workflows/
-        └── release-latex.yml  ← автосборка ZIP для Overleaf при каждом push
+        └── release-latex.yml      ← GitHub Actions: собирает ZIP для Overleaf
+                                      и scripts.zip при каждом push в main
 ```
 
 ---
