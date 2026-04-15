@@ -40,19 +40,19 @@ sudo bash screenshots/screenshots.sh
 | 03 | `03_mail_ping_nslookup.png` | mail | `ping -c 4 192.168.29.1` и `nslookup gateway` |
 | 04 | `04_mail_etc_hosts.png` | mail | Файл `/etc/hosts` с FQDN `mail.yazikov.iks531.local` |
 | 05 | `05_dns_mail_record.png` | gateway | `nslookup mail.yazikov.iks531.local` после добавления A-записи |
-| 11 | `11_postfix_status.png` | mail | `systemctl status postfix` — active (running) |
-| 12 | `12_dovecot_status.png` | mail | `systemctl status dovecot` — active (running) |
-| 13 | `13_iredadmin_login.png` | Desktop | Браузер: страница входа `https://mail.../iredadmin` |
-| 14 | `14_iredadmin_dashboard.png` | Desktop | Дашборд iRedAdmin после успешного входа |
-| 15 | `15_roundcube_login.png` | Desktop | Браузер: страница входа `https://mail.../mail` |
+| 06 | `06_postfix_status.png` | mail | `systemctl status postfix` — active (running) |
+| 07 | `07_dovecot_status.png` | mail | `systemctl status dovecot` — active (running) |
+| 08 | `08_iredadmin_login.png` | Desktop | Браузер: страница входа `https://mail.../iredadmin` |
+| 09 | `09_iredadmin_dashboard.png` | Desktop | Дашборд iRedAdmin после успешного входа |
+| 10 | `10_roundcube_login.png` | Desktop | Браузер: страница входа `https://mail.../mail` |
 
 ---
 
 ## Предупреждения
 
-- **Шаги 01, 13–15** — ручные (GUI/браузер), выполняются без команды.
+- **Шаги 01, 08–10** — ручные (GUI/браузер), выполняются без команды.
 - **Шаг 05** выполняется на **gateway**, а не на mail.
-- Для шагов 13–15 нужен запущенный браузер на ВМ **Desktop**.
+- Для шагов 08–10 нужен запущенный браузер на ВМ **Desktop**.
 
 ---
 
