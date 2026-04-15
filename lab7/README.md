@@ -4,6 +4,10 @@
 **Вариант:** N=29 | Студент: yazikov | Группа: iks531  
 **Домен:** `yazikov.iks531.local`
 
+## Скачать
+
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab7_scripts.zip)**
+
 ---
 
 ## Виртуальные машины

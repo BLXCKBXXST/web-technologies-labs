@@ -1,6 +1,10 @@
 # Практическая работа №5
 **Настройка DNS + DHCP + DDNS** для локальной сети на Ubuntu Server
 
+## Скачать
+
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab5_scripts.zip)**
+
 ---
 
 ## ⚙️ Параметры варианта

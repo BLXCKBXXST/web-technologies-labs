@@ -1,6 +1,10 @@
 # Практическая работа №4
 **Настройка шлюза (NAT) и DHCP-сервера** на Ubuntu Server 20.04
 
+## Скачать
+
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab4_scripts.zip)**
+
 ---
 
 ## ⚙️ Параметры варианта

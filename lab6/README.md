@@ -1,6 +1,10 @@
 # Практическая работа №6
 **Облачное файловое хранилище Seafile** на Ubuntu Server 20.04
 
+## Скачать
+
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab6_scripts.zip)**
+
 ---
 
 ## ⚙️ Параметры варианта
@@ -241,7 +245,7 @@ sudo bash desktop_lab6_client.sh
 | `mysqladmin: connect to server failed` | MariaDB не запущена | `systemctl start mariadb`, `systemctl status mariadb` |
 | `setup-seafile-mysql.sh` падает на MySQL | Неверный пароль root или MariaDB не запущена | Перепроверь пароль, `systemctl status mariadb` |
 | `nginx -t` выдаёт ошибку | Синтаксис в `seafile.conf` | `nano /etc/nginx/sites-available/seafile.conf`, исправь, `nginx -t` снова |
-| `http://seafile.lan` не открывается с Desktop | nginx не слушает или DNS не резолвит | `ss -tnlp \| grep :80` на seafile, `nslookup seafile` на Desktop |
+| `http://seafile.lan` не открывается с Desktop | nginx не слушает или DNS не резолвит | `ss -tnlp | grep :80` на seafile, `nslookup seafile` на Desktop |
 | `Seahub failed to start` — ошибка `PIL.Image has no attribute ANTIALIAS` | Pillow 10+ несовместим с Seafile 9.x | `pip3 install Pillow==9.5.0`, затем повтори `seahub.sh start` |
 | Seahub не стартует (другие ошибки при `seahub.sh start`) | Не установлены pip-зависимости или БД не создана | Проверь `seafile_install.sh`, повтори `setup-seafile-mysql.sh` |
 | После перезагрузки Seafile не поднимается | systemd-юниты не включены | `systemctl enable seafile seahub`, проверь пути в unit-файлах |
