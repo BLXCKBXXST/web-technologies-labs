@@ -54,8 +54,9 @@ named-checkconf && ...    ← выполняется автоматически
 | 15 | `15_nslookup_desktop.png` | `nslookup DESKTOPNAME01` — разрешение через DDNS |
 | 16 | `16_syslog_ddns.png` | `tail -40 /var/log/syslog` — DDNS update succeeded |
 
-> **⚠️ Шаг 01** делается вручную в VirtualBox.
-> Шаги **15 и 16** требуют подключённого Desktop — он должен получить IP по DHCP и зарегистрироваться в DNS.
+> **⚠️ Шаг 01** — выполняется вручную в VirtualBox.
+>
+> **⚠️ Шаги 15 и 16** — требуют подключённого Desktop — он должен получить IP по DHCP и зарегистрироваться в DNS.
 
 ---
 
