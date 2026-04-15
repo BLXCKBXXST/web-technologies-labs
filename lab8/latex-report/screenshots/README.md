@@ -9,7 +9,7 @@ sudo bash screenshots/screenshots.sh
 ```
 
 > Скриншот 01 делается **вручную** (VirtualBox GUI).
-> Скриншоты 09 и 11 делаются **вручную** (браузер на Desktop).
+> Скриншоты 07 и 08 делаются **вручную** (браузер на Desktop).
 > Остальные шаги скрипт выполняет сам — нужно только сделать снимок экрана.
 
 ---
@@ -37,16 +37,16 @@ sudo bash screenshots/screenshots.sh
 | 03 | `03_wp_network_check.png` | `ping gateway` и `dig wordpress.<DOMAIN>` | wordpress |
 | 04 | `04_apache2_status.png` | `systemctl status apache2` — active running | wordpress |
 | 05 | `05_vhost_conf.png` | Содержимое `/etc/apache2/sites-enabled/wordpress.conf` | wordpress |
-| 07 | `07_wp_files.png` | `ls /var/www/html/` — файлы WordPress | wordpress |
-| 09 | `09_wp_install_success.png` | Страница «Установка завершена!» | desktop1 |
-| 11 | `11_wp_post_published.png` | Тестовая запись на главной странице сайта | desktop1 |
-| 12 | `12_post_check.png` | Вывод `wordpress_lab8_post.sh` — все проверки OK | wordpress |
+| 06 | `06_wp_files.png` | `ls /var/www/html/` — файлы WordPress | wordpress |
+| 07 | `07_wp_install_success.png` | Страница «Установка завершена!» | desktop1 |
+| 08 | `08_wp_post_published.png` | Тестовая запись на главной странице сайта | desktop1 |
+| 09 | `09_post_check.png` | Вывод `wordpress_lab8_post.sh` — все проверки OK | wordpress |
 
 ---
 
 ## Зависимости между ВМ
 
-> ⚠️ Скриншоты 09 и 11 требуют **трёх ВМ одновременно**:
+> ⚠️ Скриншоты 07 и 08 требуют **трёх ВМ одновременно**:
 > gateway (DNS работает), wordpress (Apache запущен), desktop1 (браузер).
 
 Порядок запуска перед съёмкой:
