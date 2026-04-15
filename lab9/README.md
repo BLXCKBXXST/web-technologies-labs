@@ -25,8 +25,8 @@
 | `config.sh` | — | Единый конфиг варианта (IP, пользователи, пути Ansible) |
 | `client_lab9_prepare.sh` | `desktop1`, `wordpress` | Установка openssh-server и python3 на клиентах |
 | `gateway_lab9_setup.sh` | `gateway` | Установка Ansible, генерация SSH-ключа, создание hosts/ansible.cfg/playbook |
-| `gateway_lab9_ssh_copy.sh` | `gateway` | Копирование SSH-ключа на клиентов (интерактивный, без sudo) |
-| `gateway_lab9_run.sh` | `gateway` | Запуск playbook и вывод результатов мониторинга |
+| `gateway_lab9_ssh_copy.sh` | `gateway` | Копирование SSH-ключа на клиентов (без sudo) |
+| `gateway_lab9_run.sh` | `gateway` | Запуск playbook и вывод результатов мониторинга (без sudo) |
 | `README.md` | — | Этот файл |
 
 ---
@@ -66,8 +66,6 @@ sudo bash gateway_lab9_setup.sh
 - Создание `/etc/ansible/hosts`, `/etc/ansible/ansible.cfg`
 - Создание playbook `/etc/ansible/playbooks/monitoring.yml`
 
-> **Важно:** После скрипта он подскажет запустить `gateway_lab9_ssh_copy.sh`.
-
 ---
 
 ### 3. На ВМ `gateway` — копирование SSH-ключа на клиентов
@@ -78,7 +76,7 @@ bash gateway_lab9_ssh_copy.sh
 
 > Запускать **без sudo** — ssh-copy-id работает от обычного пользователя.
 
-Скрипт последовательно запросит пароль каждого клиента, скопирует публичный ключ и в конце проверит `ansible clients -m ping`.
+Скрипт последовательно запросит пароль каждого клиента, скопирует публичный ключ и в конце проверяет `ansible clients -m ping`.
 
 **Ожидаемый вывод:**
 ```
@@ -91,8 +89,10 @@ wordpress | SUCCESS => {..."ping": "pong"...}
 ### 4. На ВМ `gateway` — запуск playbook
 
 ```bash
-sudo bash gateway_lab9_run.sh
+bash gateway_lab9_run.sh
 ```
+
+> Запускать **без sudo** — Ansible берёт SSH-ключ из `~/.ssh/` текущего пользователя.
 
 Скрипт:
 - Проверяет `ansible ping`
@@ -105,13 +105,13 @@ sudo bash gateway_lab9_run.sh
 Hostname: desktop1
 IP: 192.168.29.10
 OS: Ubuntu 20.04
-Free disk space on /: 12.34 GB
+Free disk space on /: 13.09 GB
 
 === wordpress_info.txt ===
 Hostname: wordpress
 IP: 192.168.29.6
 OS: Ubuntu 20.04
-Free disk space on /: 8.76 GB
+Free disk space on /: 4.95 GB
 ```
 
 ---
@@ -122,10 +122,10 @@ Free disk space on /: 8.76 GB
 |---|---|---|
 | `ansible: command not found` | pip3 install прошёл, но PATH не обновился | `export PATH=$PATH:~/.local/bin` или перелогинься |
 | `UNREACHABLE` при ansible ping | SSH не настроен или ключ не скопирован | Проверь `systemctl status ssh` на клиенте; перезапусти `gateway_lab9_ssh_copy.sh` |
-| `Permission denied (publickey)` | Неверный `ansible_user` в hosts | Поправь `CLIENT1_USER` / `CLIENT2_USER` в `config.sh` и пересоздай hosts |
-| `Number of key(s) added: 0` при ssh-copy-id | Ключ уже был скопирован ранее | Ничего страшного, можно продолжать |
+| `Permission denied (publickey)` | Неверный `ansible_user` в hosts | Поправь `CLIENT1_USER` / `CLIENT2_USER` в `config.sh` и перезапусти setup |
+| `Permission denied (publickey)` | Запустил `gateway_lab9_run.sh` через sudo | Запускай без sudo: `bash gateway_lab9_run.sh` |
+| `Number of key(s) added: 0` | Ключ уже был скопирован ранее | Ничего страшного, можно продолжать |
 | Playbook падает с `MODULE FAILURE` | Python3 не установлен на клиенте | `sudo apt-get install -y python3` на клиентской ВМ |
-| `host_key_checking` запрашивает yes/no | `ansible.cfg` не применился | Проверь путь: `ansible --version` показывает `config file = /etc/ansible/ansible.cfg` |
-| Файлы мониторинга не созданы | Playbook не дошёл до `copy` задачи | Смотри вывод `ansible-playbook` — ищи `failed=1` |
+| `Destination not writable` | Папка monitoring создана через sudo | `sudo chown -R $USER:$USER /etc/ansible/monitoring` |
 | `pip3: command not found` | python3-pip не установлен | `apt-get install -y python3-pip` |
-| Нет связи с клиентом через ping | ВМ выключена или не в intnet | Запусти ВМ; проверь сетевой адаптер VirtualBox → Internal Network |
+| Нет связи с клиентом | ВМ выключена или не в intnet | Запусти ВМ; проверь адаптер VirtualBox → Internal Network |
