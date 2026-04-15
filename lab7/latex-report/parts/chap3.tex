@@ -50,7 +50,7 @@ chmod +x iRedMail.sh
 в поле \textit{LDAP suffix} вводим:
 
 \begin{lstlisting}
-dc=yazikov,dc=iks531,dc=local
+\cfgLdapSuffix
 \end{lstlisting}
 
 \subsection{Завершение установки}
@@ -60,7 +60,7 @@ dc=yazikov,dc=iks531,dc=local
 сообщение об успешной инсталляции.
 
 Установщик сообщает учётные данные администратора:\\
-\texttt{postmaster@yazikov.iks531.local}.
+\texttt{postmaster@\cfgDomain}.
 
 \section{Проверка статуса сервисов}
 
@@ -102,11 +102,11 @@ systemctl status nginx
 С браузера Desktop переходим по адресу:
 
 \begin{lstlisting}
-https://mail.yazikov.iks531.local/iredadmin
+https://mail.\cfgDomain/iredadmin
 \end{lstlisting}
 
 Входим с учётными данными:\\
-\textit{Логин:}\\ \texttt{postmaster@yazikov.iks531.local},\\
+\textit{Логин:}\\ \texttt{postmaster@\cfgDomain},\\
 \textit{Пароль:} указанный при установке.
 
 % — Скриншот: браузер Desktop, страница авторизации iRedAdmin —
@@ -130,7 +130,7 @@ https://mail.yazikov.iks531.local/iredadmin
 Для входа в почтовый клиент переходим по адресу:
 
 \begin{lstlisting}
-https://mail.yazikov.iks531.local/mail
+https://mail.\cfgDomain/mail
 \end{lstlisting}
 
 % — Скриншот: страница авторизации Roundcube —

@@ -4,6 +4,10 @@
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab7/latex-report)**
 
+## Готовый отчёт
+
+**[📄 lab7\_latex\_report.pdf](./lab7_latex_report.pdf)**
+
 ## Импорт в Overleaf
 
 1. Скачай архив по ссылке выше
@@ -18,6 +22,7 @@
 latex-report/
 ├── main.tex
 ├── config.tex
+├── lab7_latex_report.pdf
 ├── fonts/
 │   ├── times.ttf
 │   ├── timesbd.ttf

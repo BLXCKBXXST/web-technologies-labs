@@ -40,11 +40,6 @@ sudo bash screenshots/screenshots.sh
 | 03 | `03_mail_ping_nslookup.png` | mail | `ping -c 4 192.168.29.1` и `nslookup gateway` |
 | 04 | `04_mail_etc_hosts.png` | mail | Файл `/etc/hosts` с FQDN `mail.yazikov.iks531.local` |
 | 05 | `05_dns_mail_record.png` | gateway | `nslookup mail.yazikov.iks531.local` после добавления A-записи |
-| 06 | `06_iredmail_download.png` | mail | Завершение распаковки архива `iRedMail-1.6.2` |
-| 07 | `07_getall_done.png` | mail | Завершение `./get_all.sh` |
-| 08 | `08_installer_nginx.png` | mail | Экран установщика — выбор Nginx |
-| 09 | `09_installer_openldap.png` | mail | Экран установщика — выбор OpenLDAP, ввод суффикса |
-| 10 | `10_installer_done.png` | mail | Финальный экран установщика (установка завершена) |
 | 11 | `11_postfix_status.png` | mail | `systemctl status postfix` — active (running) |
 | 12 | `12_dovecot_status.png` | mail | `systemctl status dovecot` — active (running) |
 | 13 | `13_iredadmin_login.png` | Desktop | Браузер: страница входа `https://mail.../iredadmin` |
@@ -55,10 +50,8 @@ sudo bash screenshots/screenshots.sh
 
 ## Предупреждения
 
-- **Шаги 01, 08–10, 13–15** — ручные (GUI/браузер), выполняются без команды.
+- **Шаги 01, 13–15** — ручные (GUI/браузер), выполняются без команды.
 - **Шаг 05** выполняется на **gateway**, а не на mail.
-- Шаги 08–10 отображаются **внутри терминала установщика** iRedMail —
-  скриншоты нужно делать именно в этот момент.
 - Для шагов 13–15 нужен запущенный браузер на ВМ **Desktop**.
 
 ---
