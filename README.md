@@ -1,9 +1,9 @@
 # linux-admin-labs
 
 Лабораторные работы по Linux-администрированию (СибГУТИ).  
-Курс: Web-Technologies / Linux, ИКС-531
+Предмет: Web-технологии
 
-Среда: VirtualBox + Ubuntu 20.04/22.04 Server/Desktop.  
+Среда: VirtualBox + Ubuntu 20.04 Server/Desktop.  
 Каждая лаба содержит bash-скрипты для автоматизации и LaTeX-отчёт, готовый для импорта в Overleaf.
 
 ---
