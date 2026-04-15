@@ -10,14 +10,14 @@
 
 ## Лабораторные работы
 
-| Лаба | Тема | Что делается | ZIP | PDF | Скриншоты |
-|------|------|----------------|-----|-----|----------|
-| Lab 4 | NAT + DHCP | Настройка шлюза (gateway) с NAT и iptables, установка DHCP-сервера isc-dhcp-server | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab4_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab4/latex-report/lab4_latex_report.pdf) | [📸](lab4/latex-report/screenshots/README.md) |
-| Lab 5 | DNS + DDNS | Установка BIND9, настройка прямой/обратной DNS-зоны, интеграция с DHCP (динамические DNS-записи) | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab5_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab5/latex-report/lab5_latex_report.pdf) | [📸](lab5/latex-report/screenshots/README.md) |
-| Lab 6 | Seafile | Развёртывание облачного хранилища Seafile на MariaDB + Nginx, подключение Desktop-клиента | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab6_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab6/latex-report/lab6_latex_report.pdf) | [📸](lab6/latex-report/screenshots/README.md) |
-| Lab 7 | iRedMail | Настройка полноценного почтового сервера iRedMail (Postfix + Dovecot + OpenLDAP + Nginx), отправка писем | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab7_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab7/latex-report/lab7_latex_report.pdf) | [📸](lab7/latex-report/screenshots/README.md) |
-| Lab 8 | WordPress + PrivateBin | Развёртывание LAMP-стека (Apache2 + MySQL + PHP), установка WordPress и PrivateBin с HTTPS | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab8_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab8/latex-report/lab8_latex_report.pdf) | [📸](lab8/latex-report/screenshots/README.md) |
-| Lab 9 | Ansible Monitoring | Автоматизация сбора информации с узлов сети через Ansible (SSH-ключи, inventory, playbook) | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab9_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab9/latex-report/lab9_latex_report.pdf) | [📸](lab9/latex-report/screenshots/README.md) |
+| Лаба | Тема | Что делается | ZIP | PDF | Скриншоты | Методичка |
+|------|------|----------------|-----|-----|----------|----------|
+| Lab 4 | NAT + DHCP | Настройка шлюза (gateway) с NAT и iptables, установка DHCP-сервера isc-dhcp-server | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab4_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab4/latex-report/lab4_latex_report.pdf) | [📸](lab4/latex-report/screenshots/README.md) | [📖](lab4/metodichka.pdf) |
+| Lab 5 | DNS + DDNS | Установка BIND9, настройка прямой/обратной DNS-зоны, интеграция с DHCP (динамические DNS-записи) | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab5_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab5/latex-report/lab5_latex_report.pdf) | [📸](lab5/latex-report/screenshots/README.md) | [📖](lab5/metodichka.pdf) |
+| Lab 6 | Seafile | Развёртывание облачного хранилища Seafile на MariaDB + Nginx, подключение Desktop-клиента | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab6_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab6/latex-report/lab6_latex_report.pdf) | [📸](lab6/latex-report/screenshots/README.md) | [📖](lab6/metodichka.pdf) |
+| Lab 7 | iRedMail | Настройка полноценного почтового сервера iRedMail (Postfix + Dovecot + OpenLDAP + Nginx), отправка писем | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab7_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab7/latex-report/lab7_latex_report.pdf) | [📸](lab7/latex-report/screenshots/README.md) | [📖](lab7/metodichka.pdf) |
+| Lab 8 | WordPress + PrivateBin | Развёртывание LAMP-стека (Apache2 + MySQL + PHP), установка WordPress и PrivateBin с HTTPS | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab8_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab8/latex-report/lab8_latex_report.pdf) | [📸](lab8/latex-report/screenshots/README.md) | [📖](lab8/metodichka.pdf) |
+| Lab 9 | Ansible Monitoring | Автоматизация сбора информации с узлов сети через Ansible (SSH-ключи, inventory, playbook) | [📦](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab9_overleaf.zip) | [📄](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab9/latex-report/lab9_latex_report.pdf) | [📸](lab9/latex-report/screenshots/README.md) | [📖](lab9/metodichka.pdf) |
 
 ---
 
@@ -48,16 +48,22 @@ enp0s8 (intnet)
 ```
 linux-admin-labs/
 ├── lab4/
+│   ├── metodichka.pdf
 │   └── latex-report/
 ├── lab5/
+│   ├── metodichka.pdf
 │   └── latex-report/
 ├── lab6/
+│   ├── metodichka.pdf
 │   └── latex-report/
 ├── lab7/
+│   ├── metodichka.pdf
 │   └── latex-report/
 ├── lab8/
+│   ├── metodichka.pdf
 │   └── latex-report/
 ├── lab9/
+│   ├── metodichka.pdf
 │   └── latex-report/
 └── .github/
     └── workflows/
