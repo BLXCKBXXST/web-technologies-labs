@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'lab*/latex-report/**'
+      - '.github/workflows/release-latex.yml'
+  workflow_dispatch:  # ручный запуск через GitHub UI
 
 jobs:
   build:
