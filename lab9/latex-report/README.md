@@ -18,6 +18,7 @@
 latex-report/
 ├── main.tex
 ├── config.tex
+├── lab9_latex_report.pdf
 ├── fonts/
 │   ├── times.ttf
 │   ├── timesbd.ttf
