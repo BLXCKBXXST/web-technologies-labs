@@ -1,10 +1,10 @@
-name: Release LaTeX zip
+name: Release zips
 
 on:
   push:
     branches: [main]
     paths:
-      - 'lab*/latex-report/**'
+      - 'lab*/**'
       - '.github/workflows/release-latex.yml'
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build zips
+      - name: Build LaTeX zips
         shell: bash
         run: |
           for lab_dir in lab*/latex-report; do
@@ -30,15 +30,31 @@ jobs:
             echo "✓ Built ${lab}_overleaf.zip"
           done
 
+      - name: Build scripts zips
+        shell: bash
+        run: |
+          for lab in lab4 lab5 lab6 lab7 lab8 lab9; do
+            [ -d "$lab" ] || continue
+            (cd "$lab" && zip -r "../${lab}_scripts.zip" . \
+              --exclude "latex-report/*" \
+              --exclude "*.pdf" \
+              --exclude "README.md")
+            echo "✓ Built ${lab}_scripts.zip"
+          done
+
       - name: Upload zips to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: overleaf-zips
-          name: "Overleaf ZIP archives"
+          name: "ZIP archives"
           body: |
-            Автоматически собранные ZIP для импорта в Overleaf.
-            Папки `screenshots/` и `README.md` исключены.
-          files: "*_overleaf.zip"
+            Автоматически собранные архивы.
+
+            `labN_overleaf.zip` — LaTeX-отчёт для импорта в Overleaf (bez screenshots/ и README.md).
+            `labN_scripts.zip` — bash-скрипты лабы (bez latex-report/ и PDF).
+          files: |
+            *_overleaf.zip
+            lab*_scripts.zip
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
