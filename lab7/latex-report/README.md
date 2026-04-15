@@ -4,9 +4,7 @@
 
 **[📦 Скачать latex-report.zip](https://download-directory.github.io/?url=https://github.com/BLXCKBXXST/linux-admin-labs/tree/main/lab7/latex-report)**
 
-## Готовый отчёт
-
-**[📄 lab7\_latex\_report.pdf](./lab7_latex_report.pdf)**
+**[📄 Скачать готовый PDF](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab7/latex-report/lab7_latex_report.pdf)**
 
 ## Импорт в Overleaf
 
@@ -15,6 +13,7 @@
 3. Главный файл: `main.tex`, компилятор: **XeLaTeX**
 4. Свои данные — редактируй только `config.tex`
 5. Скриншоты клади в папку `img/` (имена: `01_...`, `02_...`)
+   — см. гайд [`screenshots/README.md`](screenshots/README.md)
 
 ## Структура
 
@@ -29,14 +28,17 @@ latex-report/
 │   ├── timesi.ttf
 │   └── timesbi.ttf
 ├── img/
-├── parts/
-│   ├── title.tex
-│   ├── intro.tex
-│   ├── chap1.tex
-│   ├── chap2.tex
-│   ├── chap3.tex
-│   └── conclusion.tex
-└── screenshots/
-    ├── screenshots.sh
-    └── README.md
+│   ├── 01_vbox_mail_network.png
+│   ├── 02_mail_ip_a.png
+│   └── ...
+├── screenshots/
+│   ├── screenshots.sh
+│   └── README.md
+└── parts/
+    ├── title.tex
+    ├── intro.tex
+    ├── chap1.tex
+    ├── chap2.tex
+    ├── chap3.tex
+    └── conclusion.tex
 ```
