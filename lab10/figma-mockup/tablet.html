@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Зелёный дом — планшетная версия</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --terracotta: #C97B5E;
+      --terracotta-dark: #A85E45;
+      --ochre: #D9A55A;
+      --olive: #6B7A4B;
+      --olive-dark: #4F5A37;
+      --cream: #FAF6EE;
+      --cream-dark: #F0E9D8;
+      --brown: #3A2E22;
+      --brown-light: #6B5A48;
+      --white: #FFFFFF;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --shadow: 0 6px 18px rgba(58, 46, 34, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 768px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--brown);
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    .serif { font-family: 'Playfair Display', serif; }
+    .script { font-family: 'Caveat', cursive; }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      width: 768px;
+      padding: 20px 32px;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-burger {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--olive);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-leaf {
+      width: 24px;
+      height: 24px;
+      color: var(--terracotta);
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: transparent;
+      color: var(--brown);
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      width: 768px;
+      padding: 16px 32px 48px;
+    }
+
+    .hero-inner {
+      width: 704px;
+      background: var(--cream-dark);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Caveat', cursive;
+      font-size: 24px;
+      color: var(--terracotta);
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 44px;
+      line-height: 1.1;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--brown-light);
+      margin-bottom: 28px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 16px 32px;
+      border-radius: 999px;
+      background: var(--terracotta);
+      color: var(--white);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .btn-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--brown);
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--olive);
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--brown-light);
+    }
+
+    /* ===== CATEGORIES ===== */
+    .categories {
+      width: 768px;
+      padding: 24px 32px;
+    }
+
+    .categories-grid {
+      width: 704px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .category-tile {
+      position: relative;
+      aspect-ratio: 1.4;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .category-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .category-tile-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 20px;
+      background: linear-gradient(to top, rgba(58, 46, 34, 0.7), transparent);
+      color: var(--white);
+    }
+
+    .category-tile-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .category-tile-count {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    /* ===== OFFERS ===== */
+    .offers {
+      width: 768px;
+      padding: 56px 32px;
+    }
+
+    .section-head {
+      width: 704px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .section-head p {
+      font-size: 15px;
+      color: var(--brown-light);
+      max-width: 420px;
+    }
+
+    .section-head-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--terracotta);
+    }
+
+    .product-grid {
+      width: 704px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-image-wrap {
+      position: relative;
+      aspect-ratio: 1.1;
+      background: var(--cream-dark);
+    }
+
+    .product-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: var(--ochre);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .product-fav {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brown);
+    }
+
+    .product-info {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .product-meta {
+      font-size: 12px;
+      color: var(--brown-light);
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .product-price-old {
+      font-size: 13px;
+      color: var(--brown-light);
+      text-decoration: line-through;
+    }
+
+    .btn-add {
+      margin-top: 10px;
+      padding: 11px 14px;
+      border-radius: 999px;
+      border: 1.5px solid var(--olive);
+      color: var(--olive);
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .offers-footer {
+      width: 704px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-outline {
+      padding: 16px 40px;
+      border-radius: 999px;
+      border: 1.5px solid var(--brown);
+      color: var(--brown);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    /* ===== PROMO ===== */
+    .promo {
+      width: 768px;
+      padding: 24px 32px 56px;
+    }
+
+    .promo-inner {
+      width: 704px;
+      background: var(--olive);
+      color: var(--cream);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .promo-eyebrow {
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      color: var(--ochre);
+      margin-bottom: 6px;
+    }
+
+    .promo h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .promo p {
+      font-size: 15px;
+      opacity: 0.85;
+      margin-bottom: 24px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .promo-form {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .promo-form input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--cream);
+    }
+
+    .promo-form input::placeholder { color: rgba(250, 246, 238, 0.6); }
+
+    .promo-form button {
+      padding: 14px 24px;
+      border-radius: 999px;
+      background: var(--ochre);
+      color: var(--brown);
+      font-weight: 600;
+    }
+
+    .promo-illustration {
+      width: 180px;
+      height: 180px;
+      color: var(--ochre);
+    }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      width: 768px;
+      background: var(--brown);
+      color: var(--cream);
+      padding: 48px 32px 24px;
+    }
+
+    .footer-grid {
+      width: 704px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid rgba(250, 246, 238, 0.15);
+    }
+
+    .footer-about { grid-column: 1 / -1; }
+
+    .footer-about .logo { color: var(--cream); margin-bottom: 12px; }
+
+    .footer-about p {
+      font-size: 14px;
+      opacity: 0.7;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      max-width: 480px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(250, 246, 238, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+    }
+
+    .footer-col h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: var(--cream);
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 14px; opacity: 0.75; }
+
+    .footer-bottom {
+      width: 704px;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      opacity: 0.6;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-legal { display: flex; gap: 18px; }
+  </style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <button class="header-burger" aria-label="Меню">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
+
+  <a href="#" class="logo">
+    <svg class="logo-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22c0-7 4-12 10-12-1 6-5 12-10 12zM12 22c0-7-4-12-10-12 1 6 5 12 10 12zM12 22V8"/>
+    </svg>
+    Зелёный дом
+  </a>
+
+  <div class="header-icons">
+    <button class="icon-btn" aria-label="Поиск">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="Корзина">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>
+      </svg>
+      <span class="cart-badge">2</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">— весенняя коллекция</div>
+      <h1>Растения, которые делают дом живым</h1>
+      <p>Доставим зелёного питомца к вашей двери за один день. Гарантия приживания 30 дней, бесплатная консультация по уходу.</p>
+      <div class="hero-cta">
+        <a href="#" class="btn-primary">Смотреть каталог</a>
+        <a href="#" class="btn-text">
+          Подобрать растение
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+    <img class="hero-image" src="https://placehold.co/640x320/6B7A4B/FAF6EE?text=Sunlit+room+with+monstera" alt="Комната с растениями">
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">240+</div>
+        <div class="hero-stat-label">видов растений</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">30</div>
+        <div class="hero-stat-label">дней гарантии</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">5 000</div>
+        <div class="hero-stat-label">довольных садоводов</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section class="categories">
+  <div class="categories-grid">
+    <a href="#" class="category-tile">
+      <img src="https://placehold.co/600x430/8FA773/FAF6EE?text=Sansevieria" alt="">
+      <div class="category-tile-overlay">
+        <div class="category-tile-title">Неприхотливые</div>
+        <div class="category-tile-count">48 видов</div>
+      </div>
+    </a>
+    <a href="#" class="category-tile">
+      <img src="https://placehold.co/600x430/C97B5E/FAF6EE?text=Orchid" alt="">
+      <div class="category-tile-overlay">
+        <div class="category-tile-title">Цветущие</div>
+        <div class="category-tile-count">62 вида</div>
+      </div>
+    </a>
+    <a href="#" class="category-tile">
+      <img src="https://placehold.co/600x430/4F5A37/FAF6EE?text=Monstera" alt="">
+      <div class="category-tile-overlay">
+        <div class="category-tile-title">Большие напольные</div>
+        <div class="category-tile-count">31 вид</div>
+      </div>
+    </a>
+    <a href="#" class="category-tile">
+      <img src="https://placehold.co/600x430/D9A55A/3A2E22?text=Echeveria" alt="">
+      <div class="category-tile-overlay">
+        <div class="category-tile-title">Суккуленты</div>
+        <div class="category-tile-count">54 вида</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ OFFERS ============ -->
+<section class="offers">
+  <div class="section-head">
+    <div>
+      <div class="hero-eyebrow">— хит сезона</div>
+      <h2>Предложения месяца</h2>
+      <p>Самые популярные растения этой весны — с гарантией приживания и бесплатной заменой грунта.</p>
+    </div>
+    <a href="#" class="section-head-link">
+      Все растения
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="product-grid">
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/6B7A4B/FAF6EE?text=Monstera" alt="">
+        <div class="product-badge">−15%</div>
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Монстера Деликатесная</div>
+        <div class="product-meta">высота 60 см · горшок Ø18 см</div>
+        <div class="product-price-row">
+          <span class="product-price">3 290 ₽</span>
+          <span class="product-price-old">3 870 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/4F5A37/FAF6EE?text=Ficus" alt="">
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Фикус Лирата</div>
+        <div class="product-meta">высота 80 см · горшок Ø22 см</div>
+        <div class="product-price-row">
+          <span class="product-price">4 590 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/8FA773/3A2E22?text=Calathea" alt="">
+        <div class="product-badge">−15%</div>
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Калатея Орбифолия</div>
+        <div class="product-meta">высота 40 см · горшок Ø15 см</div>
+        <div class="product-price-row">
+          <span class="product-price">2 490 ₽</span>
+          <span class="product-price-old">2 940 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/6B7A4B/D9A55A?text=Zamioculcas" alt="">
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Замиокулькас</div>
+        <div class="product-meta">высота 70 см · горшок Ø20 см</div>
+        <div class="product-price-row">
+          <span class="product-price">3 990 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/4F5A37/FAF6EE?text=Alocasia" alt="">
+        <div class="product-badge">новинка</div>
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Алоказия Полли</div>
+        <div class="product-meta">высота 50 см · горшок Ø16 см</div>
+        <div class="product-price-row">
+          <span class="product-price">2 790 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/C97B5E/FAF6EE?text=Strelitzia" alt="">
+        <div class="product-badge">−20%</div>
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Стрелиция</div>
+        <div class="product-meta">высота 100 см · горшок Ø24 см</div>
+        <div class="product-price-row">
+          <span class="product-price">5 590 ₽</span>
+          <span class="product-price-old">6 990 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/8FA773/3A2E22?text=Chlorophytum" alt="">
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Хлорофитум</div>
+        <div class="product-meta">высота 35 см · горшок Ø14 см</div>
+        <div class="product-price-row">
+          <span class="product-price">1 290 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+    <article class="product-card">
+      <div class="product-image-wrap">
+        <img src="https://placehold.co/360x320/6B7A4B/D9A55A?text=Sansevieria" alt="">
+        <div class="product-badge">−15%</div>
+        <button class="product-fav" aria-label="В избранное">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Сансевиерия</div>
+        <div class="product-meta">высота 55 см · горшок Ø16 см</div>
+        <div class="product-price-row">
+          <span class="product-price">1 990 ₽</span>
+          <span class="product-price-old">2 340 ₽</span>
+        </div>
+        <button class="btn-add">+ В корзину</button>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="offers-footer">
+    <a href="#" class="btn-outline">Показать все растения</a>
+  </div>
+</section>
+
+<!-- ============ PROMO ============ -->
+<section class="promo">
+  <div class="promo-inner">
+    <svg class="promo-illustration" viewBox="0 0 240 240" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M70 180c0-40 30-70 70-70" />
+      <path d="M140 110c0-20 15-40 40-50" />
+      <path d="M140 110c10-15 30-25 50-25" />
+      <path d="M110 140c-20 0-40 15-50 30" />
+      <ellipse cx="70" cy="180" rx="50" ry="14" />
+      <path d="M30 180h80v20a10 10 0 0 1-10 10H40a10 10 0 0 1-10-10z" />
+      <path d="M110 195h25l8-8h-15"/>
+    </svg>
+    <div class="promo-text">
+      <div class="promo-eyebrow">— подписка</div>
+      <h2>Получите −10% на первый заказ</h2>
+      <p>Подпишитесь на рассылку — раз в неделю мы присылаем советы по уходу, обзоры новинок и закрытые скидки для подписчиков.</p>
+      <form class="promo-form" onsubmit="event.preventDefault()">
+        <input type="email" placeholder="Ваш e-mail">
+        <button type="submit">Подписаться</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="footer-grid">
+
+    <div class="footer-about">
+      <a href="#" class="logo">
+        <svg class="logo-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c0-7 4-12 10-12-1 6-5 12-10 12zM12 22c0-7-4-12-10-12 1 6 5 12 10 12zM12 22V8"/>
+        </svg>
+        Зелёный дом
+      </a>
+      <p>Доставляем растения по Москве и области с 2018 года. Гарантия приживания 30 дней.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#" aria-label="Telegram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 3 2 10.5l6 2 2 7 4-4 5 4 3-16z"/></svg>
+        </a>
+        <a class="social-btn" href="#" aria-label="VK">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 17h-2c-3 0-6-3-6-9V7h3v1c0 4 1 6 3 6V7h3v3l1-1c1-1 2-2 2-2h3l-3 4 3 5h-3l-2-3-1 1z"/></svg>
+        </a>
+        <a class="social-btn" href="#" aria-label="YouTube">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 7c0-2-2-3-3-3H5C4 4 2 5 2 7v10c0 2 2 3 3 3h14c1 0 3-1 3-3V7zM10 16V8l6 4z"/></svg>
+        </a>
+        <a class="social-btn" href="#" aria-label="Pinterest">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M11 9c0-2 2-3 4-2s2 4 0 6-4 1-4-1l-2 9"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Магазин</h4>
+      <ul>
+        <li><a href="#">Каталог</a></li>
+        <li><a href="#">Новинки</a></li>
+        <li><a href="#">Скидки</a></li>
+        <li><a href="#">Подарочные сертификаты</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Помощь</h4>
+      <ul>
+        <li><a href="#">Доставка</a></li>
+        <li><a href="#">Оплата</a></li>
+        <li><a href="#">Возврат</a></li>
+        <li><a href="#">Уход за растениями</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>О нас</h4>
+      <ul>
+        <li><a href="#">Команда</a></li>
+        <li><a href="#">Блог</a></li>
+        <li><a href="#">Вакансии</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Контакты</h4>
+      <ul>
+        <li><a href="#">+7 495 123-45-67</a></li>
+        <li><a href="#">hello@green-home.ru</a></li>
+        <li>Москва, ул. Зелёная, 12</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <div>© 2026 Зелёный дом. Все права защищены.</div>
+    <div class="footer-legal">
+      <a href="#">Политика конфиденциальности</a>
+      <a href="#">Оферта</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

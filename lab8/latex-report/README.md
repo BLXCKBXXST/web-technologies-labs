@@ -2,9 +2,9 @@
 
 ## Скачать
 
-**[📦 Скачать latex-report.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab8_overleaf.zip)**
+**[📦 Скачать latex-report.zip](https://github.com/BLXCKBXXST/web-technologies-labs/releases/download/overleaf-zips/lab8_overleaf.zip)**
 
-**[📄 Скачать готовый PDF](https://github.com/BLXCKBXXST/linux-admin-labs/raw/main/lab8/latex-report/lab8_latex_report.pdf)**
+**[📄 Скачать готовый PDF](https://github.com/BLXCKBXXST/web-technologies-labs/raw/main/lab8/latex-report/lab8_latex_report.pdf)**
 
 ## Импорт в Overleaf
 

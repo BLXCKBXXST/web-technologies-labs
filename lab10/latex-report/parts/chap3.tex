@@ -1,0 +1,251 @@
+\chapter{Создание макета интернет-магазина}
+\label{ch:practice}
+
+\section{Задание~1. Главная страница (десктоп~1440\,px)}
+
+\subsection{Шапка с меню и иконками}
+
+В верхней части фрейма \texttt{Desktop~1440} создаётся горизонтальный
+блок шапки высотой ~80\,px.
+Состав:
+\begin{itemize}
+  \item \textbf{Логотип} (слева) --- текстовый слой с названием магазина
+        (например, \textit{Greenly}) или иконка листа из
+        \texttt{Figma~Community};
+  \item \textbf{Навигация} (по центру или справа) --- горизонтальный
+        список текстовых слоёв: <<Каталог>>, <<Доставка>>, <<Уход>>,
+        <<О~нас>>, <<Контакты>>;
+  \item \textbf{Иконки} (справа) --- поиск, избранное, корзина, профиль.
+        Иконки берутся из \texttt{Figma~Community} (плагины
+        \texttt{Iconify}, \texttt{Material~Icons}) или ищутся в
+        интернете в формате \texttt{SVG}.
+\end{itemize}
+Все элементы шапки объединяются во фрейм \texttt{Header} (\texttt{Ctrl+Alt+G}),
+что позволит позже применить к нему привязки.
+
+% — Скриншот: шапка с меню и иконками —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/03_header}
+  \caption{Шапка интернет-магазина с навигацией и иконками}
+  \label{fig:header}
+\end{figure}
+
+\subsection{Обложка (Hero-блок)}
+
+Hero-блок --- крупный заголовочный экран сразу под шапкой. Состав:
+\begin{itemize}
+  \item фоновое изображение растения (\texttt{Unsplash}, ключевые слова
+        \textit{houseplant}, \textit{indoor~plants}) либо
+        одноцветная/градиентная заливка;
+  \item крупный заголовок (\texttt{H1}, \texttt{60--72\,pt}, жирное
+        начертание) --- слоган магазина;
+  \item подзаголовок (\texttt{18--20\,pt}) --- краткое описание;
+  \item CTA-кнопка \textit{<<В каталог>>}: прямоугольник с радиусом
+        \texttt{8\,px}, заливка контрастного цвета, текстовый слой
+        внутри.
+\end{itemize}
+
+% — Скриншот: Hero-блок с заголовком и CTA-кнопкой —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/04_hero}
+  \caption{Обложка с заголовком, описанием и CTA-кнопкой}
+  \label{fig:hero}
+\end{figure}
+
+\subsection{Блоки с фотографиями}
+
+Под Hero-блоком располагается секция с маленькими тематическими
+карточками (3--4 в ряд). Каждая карточка --- фрейм со скруглением углов
+\(12\,\)px, содержащий:
+\begin{itemize}
+  \item изображение из \texttt{Unsplash} (заливка прямоугольника);
+  \item краткую подпись над/под изображением.
+\end{itemize}
+Карточки можно использовать как навигационные превью категорий
+(<<Суккуленты>>, <<Папоротники>>, <<Цветущие>>, <<Тропические>>).
+
+% — Скриншот: блок с фотографиями растений —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/05_gallery}
+  \caption{Блок с тематическими карточками-категориями}
+  \label{fig:gallery}
+\end{figure}
+
+\textbf{Самопроверка задания~1:}
+\begin{itemize}
+  \item меню в шапке создано;
+  \item собрана обложка с текстом и кнопкой;
+  \item добавлены блоки с маленькими фото.
+\end{itemize}
+
+\section{Задание~2. Дополнительные блоки и адаптивные версии}
+
+\subsection{Блок <<Предложения месяца>>}
+
+Блок представляет собой каталог из 2~рядов по 3--4 карточки товара.
+
+Структура одной карточки (фрейм \texttt{Card}, ширина ~280\,px,
+высота ~360\,px):
+\begin{enumerate}
+  \item изображение товара сверху (\(280\times240\,\)px);
+  \item название товара (\texttt{16\,pt}, жирное);
+  \item краткое описание / латинское название (\texttt{12\,pt},
+        тонкое);
+  \item цена (\texttt{18\,pt}) и кнопка \textit{<<В корзину>>}.
+\end{enumerate}
+Все элементы карточки объединяются во фрейм
+(\texttt{Ctrl+Alt+G}). Привязки внутри карточки настраиваются так,
+чтобы при изменении её ширины фото и текст вели себя предсказуемо
+(фото --- \texttt{Left~and~Right} + \texttt{Top}, цена --- \texttt{Left}
++ \texttt{Bottom}).
+
+После завершения первой карточки --- копирование её
+(\texttt{Ctrl+D}) и замена текста/изображения для остальных. Второй
+ряд получается копированием первого ряда целиком.
+
+% — Скриншот: блок «Предложения месяца» с карточками товаров —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/06_offers}
+  \caption{Блок <<Предложения месяца>> --- два ряда карточек товара}
+  \label{fig:offers}
+\end{figure}
+
+\subsection{Футер}
+
+Футер --- нижний блок страницы. Состав:
+\begin{itemize}
+  \item заголовок \textit{<<Подпишись на новости>>};
+  \item поле ввода e-mail (прямоугольник с обводкой и плейсхолдер-текстом);
+  \item кнопка \textit{<<Подписаться>>};
+  \item ниже --- три колонки ссылок: <<Магазин>>, <<Информация>>,
+        <<Помощь>>;
+  \item иконки социальных сетей (Telegram, ВКонтакте, YouTube,
+        Instagram) --- 4--5 шт., из \texttt{Figma~Community};
+  \item копирайт-строка \textit{<<\copyright~\cfgYear~Greenly>>}.
+\end{itemize}
+
+% — Скриншот: футер с формой подписки и иконками соцсетей —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/07_footer}
+  \caption{Футер с подпиской, ссылками и иконками социальных сетей}
+  \label{fig:footer}
+\end{figure}
+
+\subsection{Layout grid}
+
+Колоночная сетка применяется к корневому фрейму \texttt{Desktop~1440}:
+\begin{itemize}
+  \item тип \texttt{Columns};
+  \item количество --- \texttt{12};
+  \item \texttt{Width} --- \texttt{Auto} (\texttt{Stretch});
+  \item \texttt{Margin} --- \texttt{80\,px};
+  \item \texttt{Gutter} --- \texttt{24\,px};
+  \item видимость сетки переключается \texttt{Ctrl+G}.
+\end{itemize}
+После применения сетки все ключевые блоки (шапка, Hero, карточки,
+футер) выравниваются по колонкам.
+
+% — Скриншот: десктоп-макет с включённой 12-колоночной сеткой —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/08_grid}
+  \caption{12-колоночная \texttt{Layout grid} на фрейме \texttt{Desktop~1440}}
+  \label{fig:grid}
+\end{figure}
+
+\subsection{Constraints}
+
+Для каждого ключевого блока выбираются привязки:
+\begin{itemize}
+  \item \texttt{Header}, \texttt{Footer} --- \texttt{Left~and~Right}
+        + соответственно \texttt{Top}/\texttt{Bottom};
+  \item Hero-фон --- \texttt{Left~and~Right} + \texttt{Top};
+  \item ряд карточек --- \texttt{Left~and~Right} + \texttt{Top}; каждая
+        карточка внутри --- \texttt{Scale} по горизонтали;
+  \item иконки в шапке --- \texttt{Right} + \texttt{Top};
+  \item логотип --- \texttt{Left} + \texttt{Top}.
+\end{itemize}
+
+% — Скриншот: панель Constraints для карточки товара —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_constraints}
+  \caption{Панель \texttt{Constraints} для карточки товара}
+  \label{fig:constraints}
+\end{figure}
+
+\subsection{Адаптивная версия~768\,px (планшет)}
+
+Алгоритм:
+\begin{enumerate}
+  \item Скопировать корневой фрейм (\texttt{Ctrl+D}),
+        переименовать в \texttt{Tablet~768}.
+  \item На правой панели в разделе \texttt{Design} изменить ширину
+        фрейма с \(1440\) на \(768\,\)px. Благодаря привязкам Figma
+        автоматически адаптирует контент.
+  \item Поправить детали вручную:
+  \begin{itemize}
+    \item перестроить карточки товара в 2~колонки вместо 3--4;
+    \item уменьшить отступы шапки и Hero;
+    \item обновить \texttt{Layout grid}: \texttt{6}~колонок,
+          \texttt{Margin~32\,px}, \texttt{Gutter~16\,px}.
+  \end{itemize}
+\end{enumerate}
+
+% — Скриншот: адаптивная версия 768 px —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/10_tablet_768}
+  \caption{Адаптивная версия макета шириной \(768\,\)px (планшет)}
+  \label{fig:tablet}
+\end{figure}
+
+\subsection{Адаптивная версия~360\,px (мобильный)}
+
+Алгоритм:
+\begin{enumerate}
+  \item Скопировать \texttt{Tablet~768}, переименовать в
+        \texttt{Mobile~360}.
+  \item Изменить ширину до \(360\,\)px.
+  \item Обработать сужения:
+  \begin{itemize}
+    \item скрыть горизонтальное меню, заменив его на иконку
+          <<гамбургер>>;
+    \item уменьшить кегль заголовков (\texttt{H1: 36--40\,pt} вместо
+          \texttt{60--72\,pt}; \texttt{H2: 24\,pt});
+    \item построить карточки в одну колонку;
+    \item перейти на 4-колоночную \texttt{Layout grid}: \texttt{Margin
+          16\,px}, \texttt{Gutter 8\,px}.
+  \end{itemize}
+\end{enumerate}
+
+% — Скриншот: адаптивная версия 360 px —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/11_mobile_360}
+  \caption{Адаптивная версия макета шириной \(360\,\)px (мобильный)}
+  \label{fig:mobile}
+\end{figure}
+
+\section{Готовый макет в Figma}
+
+Ссылка на Figma-файл с тремя адаптивными версиями макета:
+
+\begin{lstlisting}
+TODO: вставить URL общего доступа к Figma-файлу
+\end{lstlisting}
+
+\textbf{Самопроверка задания~2:}
+\begin{itemize}
+  \item создан блок <<Предложения месяца>> и футер;
+  \item к корневому фрейму применена 12-колоночная \texttt{Layout grid};
+  \item для всех ключевых элементов настроены \texttt{Constraints};
+  \item созданы две адаптивные версии (\(768\,\)px и \(360\,\)px).
+\end{itemize}
+
+\endinput

@@ -6,7 +6,7 @@
 
 ## Скачать
 
-**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab9_scripts.zip)**
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/web-technologies-labs/releases/download/overleaf-zips/lab9_scripts.zip)**
 
 ---
 
@@ -48,7 +48,7 @@
 Скопируй папку `lab9` на каждую клиентскую ВМ (`scp` или `git clone`) и запусти:
 
 ```bash
-cd linux-admin-labs/lab9
+cd web-technologies-labs/lab9
 sudo bash client_lab9_prepare.sh
 ```
 
@@ -59,7 +59,7 @@ sudo bash client_lab9_prepare.sh
 ### 2. На ВМ `gateway` — установка Ansible
 
 ```bash
-cd linux-admin-labs/lab9
+cd web-technologies-labs/lab9
 sudo bash gateway_lab9_setup.sh
 ```
 

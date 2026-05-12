@@ -3,7 +3,7 @@
 
 ## Скачать
 
-**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab6_scripts.zip)**
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/web-technologies-labs/releases/download/overleaf-zips/lab6_scripts.zip)**
 
 ---
 

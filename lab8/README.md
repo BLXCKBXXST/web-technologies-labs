@@ -6,7 +6,7 @@
 
 ## Скачать
 
-**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab8_scripts.zip)**
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/web-technologies-labs/releases/download/overleaf-zips/lab8_scripts.zip)**
 
 ---
 
@@ -47,7 +47,7 @@
 ### 1. На ВМ `gateway` — добавить DNS-запись
 
 ```bash
-cd linux-admin-labs/lab8
+cd web-technologies-labs/lab8
 sudo bash gateway_lab8_dns.sh
 ```
 
@@ -63,7 +63,7 @@ sudo bash gateway_lab8_dns.sh
 Скопируй папку `lab8` на ВМ wordpress (`scp` или `git clone`).
 
 ```bash
-cd linux-admin-labs/lab8
+cd web-technologies-labs/lab8
 sudo bash wordpress_lab8_prepare.sh
 ```
 
@@ -118,7 +118,7 @@ sudo bash wordpress_lab8_post.sh
 ### 5. На ВМ `desktop1` — проверка доступа
 
 ```bash
-cd linux-admin-labs/lab8
+cd web-technologies-labs/lab8
 sudo bash desktop_lab8_check.sh
 ```
 

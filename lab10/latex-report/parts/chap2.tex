@@ -1,0 +1,101 @@
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
+
+\section{Программная среда}
+
+Работа выполняется в облачном редакторе \textbf{Figma}, доступном двумя
+способами:
+\begin{itemize}
+  \item \textbf{Веб-версия} --- открыть \texttt{https://www.figma.com}
+        в современном браузере (рекомендуется Chromium-семейство:
+        Google~Chrome, Microsoft~Edge, Yandex~Browser);
+  \item \textbf{Desktop-приложение} --- установить клиент для
+        Windows/macOS со страницы загрузки. Функционал идентичен
+        веб-версии; единственное преимущество --- работа в нативном окне
+        и поддержка локальных шрифтов системы.
+\end{itemize}
+Для выполнения данной лабораторной работы достаточно браузерной версии.
+Регистрация в Figma выполняется по электронной почте или через аккаунт
+Google. Бесплатный тарифный план \texttt{Starter} позволяет создавать
+до трёх файлов в одной команде, чего достаточно для учебного проекта.
+
+% — Скриншот: общий вид рабочего пространства Figma после входа —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/01_workspace}
+  \caption{Рабочее пространство Figma после входа в аккаунт}
+  \label{fig:workspace}
+\end{figure}
+
+\section{Подготовка рабочего пространства}
+
+Этапы:
+\begin{enumerate}
+  \item На главной странице Figma в команде \texttt{Drafts} нажать
+        \texttt{New design file}. Откроется новый пустой файл.
+  \item Переименовать файл в \texttt{Lab~10~--~Plant~Shop}
+        (двойной клик по названию вверху окна).
+  \item На левой панели страница по умолчанию называется
+        \texttt{Page~1}. Переименовать её в \texttt{Главная страница}.
+\end{enumerate}
+
+\section{Создание десктоп-фрейма}
+
+Десктоп-макет создаётся как фрейм фиксированной ширины:
+\begin{enumerate}
+  \item Выбрать инструмент \texttt{Frame}~(\texttt{F}).
+  \item На правой панели в разделе \texttt{Design~\(\rightarrow\)~Desktop}
+        выбрать \texttt{Desktop~--~1440\(\times\)1024} или вручную
+        нарисовать прямоугольник нужного размера, затем растянуть его
+        по высоте.
+  \item Задать имя фрейма \texttt{Desktop~1440} (двойной клик по имени
+        в левой панели слоёв).
+  \item В разделе \texttt{Fill} задать фон \texttt{\#FFFFFF}
+        (или светлый зелёный оттенок \texttt{\#F5F8F2}, тематически
+        ближе к магазину растений).
+\end{enumerate}
+
+% — Скриншот: созданный фрейм Desktop 1440 на холсте —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/02_frame_1440}
+  \caption{Десктоп-фрейм \texttt{Desktop~1440} с белым фоном}
+  \label{fig:frame_1440}
+\end{figure}
+
+\section{Установка плагина Unsplash}
+
+Плагин \texttt{Unsplash} даёт прямой доступ к каталогу бесплатных
+фотографий из Figma.
+
+\begin{enumerate}
+  \item Открыть меню \texttt{Main~menu~\(\rightarrow\)~Plugins~\(\rightarrow\)
+        Manage plugins}.
+  \item Перейти на вкладку \texttt{Browse plugins in Community}.
+  \item В строке поиска ввести \texttt{Unsplash}; выбрать одноимённый
+        плагин разработчика \textit{Unsplash}.
+  \item Нажать \texttt{Install} (потребуется быть авторизованным
+        в Figma).
+\end{enumerate}
+
+После установки плагин доступен через
+\texttt{Resources~(Shift+I)~\(\rightarrow\)~Plugins~\(\rightarrow\)~Unsplash}
+или контекстным меню по правому клику на выделенной фигуре:
+\texttt{Plugins~\(\rightarrow\)~Unsplash}.
+
+\section{Эталонные примеры}
+
+В тексте методички (\texttt{Методичка~(lab10).pdf}) приведены ссылки на
+три эталонных макета:
+\begin{itemize}
+  \item \textbf{Пример~1} --- общая структура страницы интернет-магазина;
+  \item \textbf{Пример~2} --- блок <<Предложения месяца>> и футер;
+  \item \textbf{Пример~3} --- адаптивные версии (\(768\,\)px и
+        \(360\,\)px).
+\end{itemize}
+Эталоны открыты в режиме просмотра и используются как ориентир
+по типографике, цветовой палитре и расположению блоков. Точное
+повторение не требуется: допускается выбор тематики фотографий и
+цветовой схемы по вкусу автора.
+
+\endinput

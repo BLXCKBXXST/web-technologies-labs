@@ -6,7 +6,7 @@
 
 ## Скачать
 
-**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/linux-admin-labs/releases/download/overleaf-zips/lab7_scripts.zip)**
+**[📦 Скачать scripts.zip](https://github.com/BLXCKBXXST/web-technologies-labs/releases/download/overleaf-zips/lab7_scripts.zip)**
 
 ---
 
@@ -47,7 +47,7 @@
 ### 1. На ВМ `gateway` — добавить DNS-записи
 
 ```bash
-cd linux-admin-labs/lab7
+cd web-technologies-labs/lab7
 sudo bash gateway_lab7_dns.sh
 ```
 
@@ -65,7 +65,7 @@ sudo bash gateway_lab7_dns.sh
 Скопируй папку `lab7` на ВМ mail (через shared folder или `scp`).
 
 ```bash
-cd linux-admin-labs/lab7
+cd web-technologies-labs/lab7
 sudo bash mail_lab7_prepare.sh
 ```
 
@@ -120,7 +120,7 @@ reboot
 ### 4. На ВМ `mail` — проверка после перезагрузки
 
 ```bash
-cd linux-admin-labs/lab7
+cd web-technologies-labs/lab7
 sudo bash mail_lab7_post.sh
 ```
 
@@ -131,7 +131,7 @@ sudo bash mail_lab7_post.sh
 ### 5. На ВМ `desktop1` — проверка доступа и отправка письма
 
 ```bash
-cd linux-admin-labs/lab7
+cd web-technologies-labs/lab7
 sudo bash desktop_lab7_hints.sh
 ```
 
