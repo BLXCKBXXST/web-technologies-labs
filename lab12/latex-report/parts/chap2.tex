@@ -1,0 +1,133 @@
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
+
+\section{Codepen как онлайн-редактор}
+
+\textbf{Codepen} (\texttt{codepen.io}) --- браузерный редактор фрагментов
+HTML, CSS и JavaScript, созданный Крисом Койером и Тимом Сэбэтом в
+2012~году. Сервис ориентирован на быстрые демонстрации UI-приёмов и
+учебные задания: каждый <<pen>> --- это набор из трёх панелей
+(\texttt{HTML}, \texttt{CSS}, \texttt{JS}) и панели \texttt{Preview},
+которая мгновенно перерисовывается при каждом изменении кода.
+
+В рамках лабораторной работы~12 используется только базовый функционал:
+форк готового pen-а, редактирование разметки/стилей и сохранение
+результата под собственным аккаунтом.
+
+\section{Регистрация}
+
+На странице \texttt{codepen.io} в правом верхнем углу --- кнопка
+\texttt{Sign~Up}. Доступны три способа:
+\begin{itemize}
+  \item \texttt{Continue~with~GitHub} --- быстрая авторизация через
+        GitHub-аккаунт (рекомендуется для разработчиков);
+  \item \texttt{Continue~with~Google} --- через Google-аккаунт;
+  \item Email~+~пароль --- классическая регистрация с подтверждением
+        по почте.
+\end{itemize}
+
+Бесплатного тарифа \texttt{Free} достаточно: лимит --- неограниченное
+число публичных pen-ов, до трёх частных за всё время существования
+аккаунта; кодпен-эссеты (картинки, шрифты) могут быть подключены по
+внешним URL.
+
+% — Скриншот: окно регистрации Codepen —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_codepen_save}
+  \caption{Интерфейс редактора Codepen: панели HTML/CSS/JS и Preview}
+  \label{fig:codepen_ui}
+\end{figure}
+
+\section{Структура pen-а}
+
+Каждый pen состоит из четырёх взаимосвязанных панелей:
+\begin{itemize}
+  \item \texttt{HTML} --- разметка тела документа. Codepen
+        автоматически оборачивает её в \texttt{<!DOCTYPE~html>},
+        \texttt{<html>}, \texttt{<head>}, \texttt{<body>}: писать
+        обвязку вручную не требуется.
+  \item \texttt{CSS} --- стили; по умолчанию подключаются как
+        внутренний \texttt{<style>}.
+  \item \texttt{JS} --- JavaScript-код, исполняемый после загрузки
+        DOM (в текущей лабораторной не используется).
+  \item \texttt{Preview} --- iframe с отрисованным результатом;
+        обновляется автоматически или по \texttt{Ctrl+S}.
+\end{itemize}
+
+Через кнопку \texttt{Settings} к pen-у подключаются внешние ресурсы:
+\begin{itemize}
+  \item \texttt{HTML~\(\rightarrow\)~Stuff~for~<head>} --- произвольные
+        теги в \texttt{<head>} (например, \texttt{<meta>}, \texttt{<link>}
+        на шрифты);
+  \item \texttt{CSS~\(\rightarrow\)~Add~External~Stylesheets} --- список
+        URL внешних таблиц стилей; в стартовых pen-ах текущей
+        работы здесь уже подключены Material~Design~Lite и базовая
+        таблица Netology, поэтому в собственный CSS их повторять
+        не нужно.
+  \item \texttt{CSS~\(\rightarrow\)~CSS~Preprocessor} --- выбор препроцессора
+        (\texttt{None}, \texttt{SCSS}, \texttt{LESS}, \texttt{Stylus});
+        в этой работе остаётся значение \texttt{None}.
+\end{itemize}
+
+\section{Fork-workflow}
+
+Стартовые pen-ы методички принадлежат автору \texttt{Andrei-Andreev-the-builder}
+и доступны студенту только в режиме просмотра. Чтобы внести правки,
+нужно создать собственную копию --- \emph{форк}:
+
+\begin{enumerate}
+  \item Перейти на стартовый pen по ссылке \texttt{clck.ru/...} из
+        методички (таблица соответствий приведена в разделе~\ref{ch:practice}).
+  \item Войти в аккаунт Codepen.
+  \item Нажать кнопку \texttt{Fork} в правом верхнем углу страницы
+        pen-а. Codepen создаст новый pen с тем же содержимым, но
+        под текущим пользователем, и автоматически откроет его в
+        режиме редактирования.
+  \item Внести правки в панели \texttt{HTML} (для блоков~1.1, 1.2)
+        и/или \texttt{CSS} (для блоков~2.1, 2.2). Preview
+        обновляется автоматически.
+  \item Нажать \texttt{Save} (или \texttt{Ctrl+S}) --- pen
+        получит уникальный URL, который остаётся за студентом
+        навсегда. Этот URL вставляется в раздел \texttt{<<Готовые
+        форки в Codepen>>} главы~\ref{ch:practice}.
+\end{enumerate}
+
+% — Скриншот: кнопка Fork → Save в Codepen —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_codepen_save}
+  \caption{Кнопки \texttt{Fork} и \texttt{Save} в правой верхней панели Codepen}
+  \label{fig:codepen_fork}
+\end{figure}
+
+\section{Параллельная локальная разработка}
+
+Codepen удобен для коротких демо, но плохо подходит для редактирования
+вне браузера или для контроля версий через git. Поэтому в каталоге
+\texttt{lab12/codepen-solutions/} хранятся локальные копии каждого
+из четырёх решений: четыре подкаталога (\texttt{1.1-html-tags/},
+\texttt{1.2-lists-tables/}, \texttt{2.1-selectors/},
+\texttt{2.2-text-styling/}), каждый с собственным \texttt{index.html}
+и --- для блоков, требующих CSS, --- \texttt{styles.css}.
+
+Все четыре изображения, требуемые методичкой (три фотографии гейзеров
+Камчатки для блока~1.1 и фон цитаты для блока~2.2), скачаны из
+методички Яндекс.Диска и положены в \texttt{codepen-solutions/img/};
+ссылки в HTML --- относительные (\texttt{../img/<имя>.jpg}).
+Это позволяет открывать локальные страницы офлайн: для рендеринга
+требуется только CDN с шрифтами Google~Fonts, Material~Design~Lite
+и общими таблицами стилей Netology (\texttt{netology-code.github.io}).
+
+Запуск любого решения:
+\begin{lstlisting}[language=bash]
+xdg-open lab12/codepen-solutions/1.1-html-tags/index.html
+xdg-open lab12/codepen-solutions/1.2-lists-tables/index.html
+xdg-open lab12/codepen-solutions/2.1-selectors/index.html
+xdg-open lab12/codepen-solutions/2.2-text-styling/index.html
+\end{lstlisting}
+
+После проверки локального рендера правки переносятся в
+соответствующий форк Codepen.
+
+\endinput
