@@ -1,0 +1,175 @@
+\documentclass[a4paper,14pt,oneside,openany]{memoir}
+
+%%% Поля (ГОСТ 7.32) %%%
+\usepackage[left=30mm, right=15mm, top=20mm, bottom=20mm]{geometry}
+\pagestyle{plain}
+\parindent=1.25cm
+\usepackage{indentfirst}
+
+%%% Язык и шрифт %%%
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage[indentfirst=true,forceheadingpunctuation=false]{russian}
+\setotherlanguages{english}
+
+\IfFontExistsTF{Times New Roman}{
+  \setmainfont{Times New Roman}
+  \newfontfamily\cyrillicfont{Times New Roman}[Script=Cyrillic]
+}{
+  \setmainfont[
+    Path=./fonts/,
+    Extension=.ttf,
+    UprightFont=times,
+    BoldFont=timesbd,
+    ItalicFont=timesi,
+    BoldItalicFont=timesbi
+  ]{Times New Roman}
+  \newfontfamily\cyrillicfont[
+    Path=./fonts/,
+    Extension=.ttf,
+    UprightFont=times,
+    BoldFont=timesbd,
+    ItalicFont=timesi,
+    BoldItalicFont=timesbi
+  ]{Times New Roman}[Script=Cyrillic]
+}
+
+\IfFontExistsTF{Courier New}{
+  \setmonofont{Courier New}
+  \newfontfamily\cyrillicfonttt{Courier New}[Script=Cyrillic]
+}{
+  \setmonofont[Script=Cyrillic]{FreeMono}
+}
+
+%%% Стили заголовков %%%
+\setsecnumdepth{subsection}
+\renewcommand*{\chapterheadstart}{}
+\renewcommand*{\printchaptername}{}
+\renewcommand*{\chapnumfont}{\normalfont\bfseries}
+\renewcommand*{\afterchapternum}{\hspace{1em}}
+\renewcommand*{\printchaptertitle}{\normalfont\bfseries\centering\MakeUppercase}
+\setbeforesecskip{20pt}
+\setaftersecskip{20pt}
+\setsecheadstyle{\raggedright\normalfont\bfseries}
+\setbeforesubsecskip{20pt}
+\setaftersubsecskip{20pt}
+\setsubsecheadstyle{\raggedright\normalfont\bfseries}
+
+%%% Оглавление %%%
+\addto\captionsrussian{\renewcommand\contentsname{Содержание}}
+\setrmarg{2.55em plus1fil}
+\renewcommand{\aftertoctitle}{\afterchaptertitle \vspace{-\cftbeforechapterskip}}
+\renewcommand*{\cftchapternumwidth}{1.5em}
+\renewcommand*{\cftchapterfont}{\normalfont\MakeUppercase}
+\renewcommand*{\cftchapterpagefont}{\normalfont}
+\renewcommand*{\cftchapterdotsep}{\cftdotsep}
+\renewcommand*{\cftdotsep}{1}
+\renewcommand*{\cftchapterleader}{\cftdotfill{\cftchapterdotsep}}
+\maxtocdepth{subsection}
+
+%%% Переносы %%%
+\tolerance 1414
+\hbadness 1414
+\emergencystretch 1.5em
+\hfuzz 0.3pt
+\vfuzz \hfuzz
+\clubpenalty=10000
+\widowpenalty=10000
+\brokenpenalty=4991
+
+%%% Русские буквы для перечислений (ГОСТ: без ё з й о ч ь ы ъ) %%%
+\makeatletter
+  \def\russian@Alph#1{\ifcase#1\or
+     А\or Б\or В\or Г\or Д\or Е\or Ж\or
+     И\or К\or Л\or М\or Н\or
+     П\or Р\or С\or Т\or У\or Ф\or Х\or
+     Ц\or Ш\or Щ\or Э\or Ю\or Я\else\xpg@ill@value{#1}{russian@Alph}\fi}
+  \def\russian@alph#1{\ifcase#1\or
+     а\or б\or в\or г\or д\or е\or ж\or
+     и\or к\or л\or м\or н\or
+     п\or р\or с\or т\or у\or ф\or х\or
+     ц\or ш\or щ\or э\or ю\or я\else\xpg@ill@value{#1}{russian@alph}\fi}
+\makeatother
+
+%%% Рисунки и таблицы %%%
+\usepackage{graphicx, caption, subcaption}
+\graphicspath{{img/}}
+\captionsetup[figure]{font=small,width=\textwidth,name=Рисунок,justification=centering}
+\captionsetup[subfigure]{font=small}
+\captionsetup[table]{singlelinecheck=false,font=small,width=\textwidth,justification=justified}
+\captiondelim{ — }
+\setkeys{Gin}{width=0.85\textwidth}
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+\usepackage[section]{placeins}
+
+%%% Сквозная нумерация %%%
+\counterwithout{figure}{chapter}
+\counterwithout{equation}{chapter}
+\counterwithout{table}{chapter}
+
+%%% Списки %%%
+\usepackage{enumitem}
+\renewcommand*{\labelitemi}{\normalfont{--}}
+\makeatletter
+  \AddEnumerateCounter{\asbuk}{\russian@alph}{}
+\makeatother
+\renewcommand{\labelenumii}{\asbuk{enumii})}
+\renewcommand{\labelenumiii}{\arabic{enumiii})}
+\setlist{noitemsep, leftmargin=*}
+\setlist[1]{labelindent=\parindent}
+\setlist[2]{leftmargin=\parindent}
+\setlist[3]{leftmargin=\parindent}
+
+%%% Листинги %%%
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+  basicstyle=\small\ttfamily,
+  breaklines=true,
+  frame=single,
+  tabsize=2,
+  showstringspaces=false,
+  inputencoding=utf8,
+  extendedchars=true
+}
+
+%%% Гиперссылки %%%
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linktoc=all,
+  linktocpage=true,
+  linkcolor=red,
+  urlcolor=blue
+}
+
+%%% Доп. пакеты %%%
+\usepackage{longtable,ltcaption}
+\usepackage{multirow,makecell}
+\usepackage{booktabs}
+\usepackage{soulutf8}
+\usepackage{icomma}
+\usepackage{textcomp}
+\usepackage{amsmath}
+
+%%% Переменные отчёта %%%
+\input{config}
+
+%%% Документ %%%
+\begin{document}
+
+\input{parts/title}
+
+\newpage
+\setcounter{page}{2}
+\OnehalfSpacing*
+
+\tableofcontents*
+
+\input{parts/intro}
+\input{parts/chap1}
+\input{parts/chap2}
+\input{parts/chap3}
+\input{parts/conclusion}
+
+\end{document}

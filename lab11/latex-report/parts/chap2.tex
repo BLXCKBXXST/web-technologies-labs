@@ -1,0 +1,153 @@
+\chapter{Описание стенда и подготовка}
+\label{ch:stand}
+
+\section{Программная среда}
+
+Работа выполняется в облачном редакторе \textbf{Figma}, доступном двумя
+способами:
+\begin{itemize}
+  \item \textbf{Веб-версия} --- открыть \texttt{https://www.figma.com}
+        в современном браузере (рекомендуется Chromium-семейство:
+        Google~Chrome, Microsoft~Edge, Yandex~Browser);
+  \item \textbf{Desktop-приложение} --- установить клиент для
+        Windows/macOS со страницы загрузки. Функционал идентичен
+        веб-версии; единственное преимущество --- работа в нативном окне
+        и поддержка локальных шрифтов системы.
+\end{itemize}
+Для выполнения данной лабораторной работы достаточно браузерной версии.
+Регистрация в Figma выполняется по электронной почте или через аккаунт
+Google. Бесплатный тарифный план \texttt{Starter} позволяет создавать
+до трёх файлов в одной команде, чего достаточно для учебного проекта.
+
+% — Скриншот: общий вид рабочего пространства Figma после входа —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/01_workspace}
+  \caption{Рабочее пространство Figma после входа в аккаунт}
+  \label{fig:workspace}
+\end{figure}
+
+\section{Подготовка рабочего пространства}
+
+Поскольку макет включает пять смысловых страниц (главная, команда,
+участник, турнирная таблица, магазин), а каждая страница --- ещё и три
+адаптивные версии, удобно с самого начала разнести их по отдельным
+страницам файла Figma.
+
+Этапы:
+\begin{enumerate}
+  \item На главной странице Figma в команде \texttt{Drafts} нажать
+        \texttt{New design file}. Откроется новый пустой файл.
+  \item Переименовать файл в \texttt{Lab~11~--~PHYGITAL~FC}
+        (двойной клик по названию вверху окна).
+  \item На левой панели страница по умолчанию называется
+        \texttt{Page~1}. Переименовать её в \texttt{Главная страница}.
+  \item Кнопкой \texttt{+} в верхней части левой панели добавить ещё
+        четыре страницы: \texttt{Команда}, \texttt{Участник},
+        \texttt{Турнирная таблица}, \texttt{Магазин}.
+\end{enumerate}
+
+Между страницами файла удобно переключаться кликом по имени в левой
+панели; все они шарят общую библиотеку компонентов, цветов и шрифтов
+(см.\ раздел~\ref{ch:practice}).
+
+\section{Создание десктоп-фрейма}
+
+Десктоп-макет каждой страницы создаётся как фрейм фиксированной ширины.
+На странице \texttt{Главная страница}:
+\begin{enumerate}
+  \item Выбрать инструмент \texttt{Frame}~(\texttt{F}).
+  \item На правой панели в разделе \texttt{Design~\(\rightarrow\)~Desktop}
+        выбрать \texttt{Desktop~--~1440\(\times\)1024} или вручную
+        нарисовать прямоугольник нужного размера, затем растянуть его
+        по высоте.
+  \item Задать имя фрейма \texttt{Desktop~1440} (двойной клик по имени
+        в левой панели слоёв).
+  \item В разделе \texttt{Fill} задать линейный градиент-фон от
+        \texttt{\#0B1024} (deep-navy) сверху к \texttt{\#11183A}
+        (тёмно-синий) снизу --- основа выбранного стиля
+        \emph{glassmorphism}.
+\end{enumerate}
+
+% — Скриншот: созданный фрейм Desktop 1440 на холсте —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/02_frame_1440}
+  \caption{Десктоп-фрейм \texttt{Desktop~1440} с градиентным фоном}
+  \label{fig:frame_1440}
+\end{figure}
+
+\section{Импорт HTML-каркаса (плагин html.to.design)}
+
+Чтобы не рисовать пятнадцать макетов вручную (\(5\) страниц
+\(\times~3\) ширины), используется промежуточный HTML-каркас, который
+автоматически импортируется во фреймы Figma:
+
+\begin{enumerate}
+  \item Открыть меню \texttt{Main~menu~\(\rightarrow\)~Plugins~\(\rightarrow\)
+        Manage plugins}.
+  \item В строке поиска ввести \texttt{html.to.design}; установить
+        одноимённый плагин.
+  \item Запустить плагин: \texttt{Plugins~\(\rightarrow\)
+        html.to.design~\(\rightarrow\)~Run}.
+  \item На вкладке \texttt{Upload file} загрузить
+        \texttt{desktop/home.html}, в поле \texttt{Viewport~width}
+        указать \texttt{1440}.
+  \item Включить опции \texttt{Use~Autolayout},
+        \texttt{Create~styles~\&~variables},
+        \texttt{HTML~layer~names}; остальные опции выключить.
+  \item Повторить для оставшихся четырнадцати HTML-файлов из
+        \texttt{figma-mockup/}: каждый импорт уходит на свою страницу
+        (\texttt{Команда}, \texttt{Участник}, \ldots) и попадает в
+        фрейм нужной ширины.
+\end{enumerate}
+
+\section{Установка плагина Unsplash}
+
+Плагин \texttt{Unsplash} даёт прямой доступ к каталогу бесплатных
+фотографий из Figma. Он понадобится на этапе доводки макета, когда
+плейсхолдеры из HTML-каркаса заменяются на тематические снимки
+(стадион, болельщики, портреты игроков, мерч).
+
+\begin{enumerate}
+  \item Открыть меню \texttt{Main~menu~\(\rightarrow\)~Plugins~\(\rightarrow\)
+        Manage plugins}.
+  \item Перейти на вкладку \texttt{Browse plugins in Community}.
+  \item В строке поиска ввести \texttt{Unsplash}; выбрать одноимённый
+        плагин разработчика \textit{Unsplash}.
+  \item Нажать \texttt{Install} (потребуется быть авторизованным
+        в Figma).
+\end{enumerate}
+
+После установки плагин доступен через
+\texttt{Resources~(Shift+I)~\(\rightarrow\)~Plugins~\(\rightarrow\)~Unsplash}
+или контекстным меню по правому клику на выделенной фигуре:
+\texttt{Plugins~\(\rightarrow\)~Unsplash}.
+
+\section{Фирменный стиль чемпионата}
+
+Перед началом проектирования зафиксирована визуальная система,
+единая для всех пяти страниц:
+
+\begin{itemize}
+  \item \textbf{Палитра.} Фон --- линейный градиент от
+        \texttt{\#0B1024} к \texttt{\#11183A}; основной акцент ---
+        \texttt{\#3A8DFF} (electric-blue); дополнительный акцент ---
+        \texttt{\#C7FF4F} (lime); поверхность карточек ---
+        \texttt{rgba(255,255,255,0.08)} с обводкой
+        \texttt{rgba(255,255,255,0.12)} и размытием
+        \texttt{backdrop-filter:~blur(20px)} (стиль
+        \emph{glassmorphism}).
+  \item \textbf{Шрифты.}
+        \texttt{Space~Grotesk} --- заголовки и крупные акцентные числа;
+        \texttt{Inter} --- основной текст интерфейса;
+        \texttt{JetBrains~Mono} --- табличная статистика и счёт матчей.
+        Все три шрифта подключаются как Google~Fonts.
+  \item \textbf{Иконография.} Phosphor~Icons либо Lucide --- линейные
+        иконки толщиной \texttt{1.5\,px}, цвет \texttt{\#3A8DFF} либо
+        белый \texttt{rgba(255,255,255,0.8)}.
+  \item \textbf{Скругления.} Карточки --- \texttt{16\,px}; кнопки ---
+        \texttt{12\,px}; чипы и теги --- \texttt{999\,px} (pill).
+\end{itemize}
+
+\endinput
