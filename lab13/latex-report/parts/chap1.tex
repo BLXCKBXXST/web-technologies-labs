@@ -1,0 +1,195 @@
+\chapter{Теоретические сведения}
+\label{ch:theory}
+
+\section{JavaScript как язык программирования}
+
+\textbf{JavaScript} (часто сокращается до \textbf{JS}) --- интерпретируемый
+язык программирования с динамической типизацией, разработанный в
+\textit{Netscape Communications} в 1995~году Бренданом Айком. Изначально
+создавался для добавления интерактивности в веб-страницы, в дальнейшем
+стандартизирован как \textbf{ECMAScript} (текущая редакция --- ES2024).
+
+Ключевые особенности языка:
+\begin{itemize}
+  \item \textbf{Интерпретируемость} --- код выполняется построчно
+        средой исполнения (браузер, \texttt{Node.js}), без отдельного
+        этапа компиляции в машинный код;
+  \item \textbf{Динамическая типизация} --- тип переменной определяется
+        значением во время выполнения и может меняться;
+  \item \textbf{Прототипная объектная модель} --- наследование строится
+        через цепочки прототипов, а не через классы (синтаксис
+        \texttt{class} с ES2015 --- лишь синтаксический сахар над
+        прототипами);
+  \item \textbf{Функции первого класса} --- функции являются полноценными
+        значениями: их можно сохранять в переменных, передавать в
+        аргументы, возвращать из других функций;
+  \item \textbf{Однопоточная асинхронная модель} --- ровно один поток
+        исполнения и очередь задач (\textit{event loop}); долгие
+        операции (сетевые запросы, таймеры) выполняются вне основного
+        потока и возвращают результат через колбэки или промисы.
+\end{itemize}
+
+\section{Переменные и типы данных}
+
+Объявление переменных в современном JavaScript --- через ключевые слова
+\texttt{let} (изменяемая) и \texttt{const} (неизменяемая ссылка).
+Устаревшее \texttt{var} не используется: оно не поддерживает блочную
+область видимости и приводит к скрытым ошибкам.
+
+\begin{lstlisting}[caption={Объявление переменных и базовые типы},captionpos=b]
+const username = 'my name';   // строка, неизменяемая
+let bonusBalance = 1000;      // число, изменяемая
+const isActive = true;        // логический тип
+const messages = [];          // массив (объект)
+const user = { name: 'Ann' }; // объект
+let absent;                   // undefined
+const empty = null;           // null
+\end{lstlisting}
+
+Семь примитивных типов: \texttt{string}, \texttt{number},
+\texttt{boolean}, \texttt{null}, \texttt{undefined}, \texttt{symbol},
+\texttt{bigint}. Всё остальное (массивы, функции, даты, регулярные
+выражения, экземпляры классов) --- объекты.
+
+\section{Массивы и их методы}
+
+Массив в JavaScript --- индексируемая коллекция произвольных значений.
+Базовые методы:
+
+\begin{itemize}
+  \item \texttt{push(x)} / \texttt{pop()} --- добавить/удалить элемент с
+        конца;
+  \item \texttt{forEach(fn)} --- вызвать функцию для каждого элемента;
+  \item \texttt{map(fn)} --- получить новый массив, применив функцию к
+        каждому элементу;
+  \item \texttt{filter(fn)} --- получить новый массив только из тех
+        элементов, для которых функция вернула \texttt{true};
+  \item \texttt{join(sep)} --- объединить элементы в строку через
+        разделитель;
+  \item \texttt{includes(value)} --- проверить, есть ли значение в
+        массиве (\texttt{true}/\texttt{false}).
+\end{itemize}
+
+У строк есть одноимённый метод \texttt{includes}, который проверяет
+наличие подстроки:
+
+\begin{lstlisting}[caption={Поиск подстроки методом \texttt{includes}},captionpos=b]
+'Чёрный чай'.includes('зелёный'); // false
+'Кажется, пойдём в кино'.includes('кино'); // true
+\end{lstlisting}
+
+\section{Управляющие конструкции}
+
+Условный оператор \texttt{if/else~if/else}, тернарный оператор
+\texttt{a~?~b~:~c}, оператор выбора \texttt{switch}. Циклы:
+\texttt{for} (классический счётный), \texttt{for...of} (по значениям
+итерируемого объекта), \texttt{for...in} (по ключам объекта),
+\texttt{while} и \texttt{do~while}.
+
+\begin{lstlisting}[caption={Цикл с условным выбором имени отправителя},captionpos=b]
+for (let i = 0; i < messages.length; i++) {
+    const author = i % 2 === 0 ? 'Друг' : 'Вы';
+    console.log(author + ': ' + messages[i]);
+}
+\end{lstlisting}
+
+\section{Функции}
+
+Функция в JavaScript --- объект, который можно вызывать. Способы
+объявления:
+
+\begin{lstlisting}[caption={Три способа объявить функцию},captionpos=b]
+// 1. Декларация функции
+function sum(a, b) { return a + b; }
+
+// 2. Функциональное выражение
+const sum = function(a, b) { return a + b; };
+
+// 3. Стрелочная функция (ES2015)
+const sum = (a, b) => a + b;
+\end{lstlisting}
+
+Стрелочные функции компактны и не имеют собственного \texttt{this} ---
+удобно для колбэков. Декларации <<всплывают>> (\textit{hoisting}) ---
+их можно вызывать выше по тексту, чем сама декларация. Функциональные
+выражения и стрелочные функции \textbf{не} всплывают.
+
+\section{Объекты и работа с JSON}
+
+Объект --- неупорядоченное множество пар <<ключ--значение>>. Запись
+объекта в текстовом виде --- \textbf{JSON} (\textit{JavaScript Object
+Notation}) --- де-факто стандарт обмена данными в вебе. Преобразование
+между JSON-строкой и объектом:
+
+\begin{lstlisting}[caption={\texttt{JSON.parse} и \texttt{JSON.stringify}},captionpos=b]
+const obj = JSON.parse('{"name": "Spider-Man", "id": 1009610}');
+const str = JSON.stringify(obj); // '{"name":"Spider-Man","id":1009610}'
+\end{lstlisting}
+
+\section{DOM API}
+
+\textbf{DOM} (\textit{Document Object Model}) --- объектная модель
+HTML-документа: страница представлена деревом узлов
+(\texttt{Element}, \texttt{Text}, \texttt{Comment}). Через JavaScript
+доступны методы поиска узлов и их изменения:
+
+\begin{itemize}
+  \item \texttt{document.getElementById(id)} --- узел по атрибуту
+        \texttt{id};
+  \item \texttt{document.querySelector(selector)} --- первый узел по
+        CSS-селектору; \texttt{querySelectorAll} --- все совпадения;
+  \item \texttt{element.innerHTML = '...'} --- заменить внутреннее
+        содержимое узла на готовую HTML-строку (быстро, но требует
+        самостоятельного экранирования пользовательских данных);
+  \item \texttt{element.textContent = '...'} --- задать текст без
+        интерпретации тегов (безопасно по умолчанию);
+  \item \texttt{element.addEventListener(event, handler)} ---
+        подписаться на событие (\texttt{click}, \texttt{submit},
+        \texttt{DOMContentLoaded} и др.).
+\end{itemize}
+
+Событие \texttt{DOMContentLoaded} срабатывает, когда браузер построил
+DOM-дерево (но ещё не загрузил картинки и стили). Это правильный
+момент для запуска скриптов, которые ищут элементы по \texttt{id}.
+
+\section{Асинхронность: \texttt{Promise} и \texttt{async/await}}
+
+Сетевые запросы выполняются в фоне и завершаются непредсказуемо ---
+JavaScript описывает такой результат объектом \textbf{Promise}.
+Промис находится в одном из трёх состояний: \textit{pending} (ожидание),
+\textit{fulfilled} (успех) или \textit{rejected} (ошибка). Цепочки
+\texttt{.then(...)}\,/\,\texttt{.catch(...)} в современном коде заменены
+на синтаксис \texttt{async/await}, который делает асинхронный код
+визуально похожим на синхронный.
+
+Запрос к серверу выполняется через встроенный \texttt{fetch}:
+
+\begin{lstlisting}[caption={Асинхронный запрос с обработкой ошибки},captionpos=b]
+async function fetchCharacters() {
+    const response = await fetch('https://jsfree-les-3-api.onrender.com/characters');
+    if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+    }
+    return await response.json();
+}
+\end{lstlisting}
+
+\texttt{fetch} возвращает промис, который разрешается объектом
+\texttt{Response}; чтобы получить распарсенный JSON, нужен ещё один
+\texttt{await response.json()}. Ошибки сети попадают в
+\texttt{catch}, ошибки уровня HTTP (\(4xx\), \(5xx\)) --- нет:
+\texttt{response.ok} проверяется вручную.
+
+\section{Подключение скриптов в HTML}
+
+JavaScript-файлы подключаются тегом \texttt{<script>} в \texttt{<head>}
+или в конце \texttt{<body>}. По умолчанию браузер блокирует разбор
+HTML на время загрузки и выполнения скрипта --- поэтому скрипты,
+которые работают с DOM, удобно размещать в конце \texttt{<body>}.
+Атрибуты \texttt{defer} и \texttt{async} позволяют загружать скрипты
+параллельно с разбором HTML; \texttt{defer} дополнительно гарантирует
+порядок выполнения и запуск после построения DOM. В учебном проекте
+выбран простой вариант --- три тега \texttt{<script>} в конце
+\texttt{<body>} (Bootstrap-бандл, \texttt{index.js}, \texttt{start.js}).
+
+\endinput

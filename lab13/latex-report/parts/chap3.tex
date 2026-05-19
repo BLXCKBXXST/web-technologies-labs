@@ -1,0 +1,446 @@
+\chapter{Ход работы}
+\label{ch:practice}
+
+В этой главе по порядку описаны все четыре урока методички:
+консольные задачи на базовые конструкции JavaScript (уроки~1 и~2),
+реализация сайта-каталога (урок~3) и публикация сайта на собственном
+сервере с обратным прокси (урок~4). Для каждого урока приведён код
+решения, ожидаемый вывод и скриншоты результата.
+
+\section{Урок~1. Базовые понятия}
+
+Цель урока --- научиться объявлять переменные и выводить значения в
+консоль. Согласно методичке, моделируется бонусная программа
+интернет-магазина.
+
+\subsection{Задача 1: имя и баланс пользователя}
+
+Объявляются две переменные --- \texttt{username} и
+\texttt{bonusBalance}, --- значения которых выводятся в консоль двумя
+строками.
+
+\begin{lstlisting}[caption={\texttt{les-1/task1.js} --- имя и баланс},captionpos=b]
+const username = 'my name';
+const bonusBalance = 1000;
+
+console.log('Пользователь ' + username);
+console.log('Баланс ' + bonusBalance);
+\end{lstlisting}
+
+Скрипт запускается командой \texttt{node task1.js} из каталога
+\texttt{les-1/}. Вывод:
+
+\begin{lstlisting}[caption={Вывод \texttt{task1.js}},captionpos=b]
+Пользователь my name
+Баланс 1000
+\end{lstlisting}
+
+% — Скриншот: вывод les-1/task1 —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/01_les1_task1}
+  \caption{Вывод задачи 1 урока~1 в консоли Node.js}
+  \label{fig:les1_task1}
+\end{figure}
+
+\subsection{Задача 2: баланс через 7 дней}
+
+За каждую покупку начисляется \(50\) бонусных баллов, ежедневно
+сгорает \(3\) балла. Покупки совершаются раз в два дня, первая ---
+во вторник. За 7~дней приходится 4~покупки (вт, чт, сб, пн), баланс
+изменяется на \(4 \cdot 50 - 7 \cdot 3 = 200 - 21 = 179\) баллов.
+
+\begin{lstlisting}[caption={\texttt{les-1/task2.js} --- баланс через 7 дней},captionpos=b]
+let bonusBalance = 1000;
+const purchaseBonus = 50;
+const dailyBurn = 3;
+const days = 7;
+
+// Первая покупка во вторник, дальше раз в два дня: вт, чт, сб, пн.
+const purchases = 4;
+
+bonusBalance = bonusBalance + purchases * purchaseBonus - days * dailyBurn;
+
+console.log('Баланс через ' + days + ' дней: ' + bonusBalance);
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+Баланс через 7 дней: 1179
+\end{lstlisting}
+
+% — Скриншот: вывод les-1/task2 —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/02_les1_task2}
+  \caption{Вывод задачи 2 урока~1 в консоли Node.js}
+  \label{fig:les1_task2}
+\end{figure}
+
+\section{Урок~2. Основы JavaScript}
+
+Цель урока --- работа с массивами, циклами и строковыми методами на
+примере мини-мессенджера.
+
+\subsection{Задача 1: вывод переписки в чате}
+
+Инициализируется массив из четырёх сообщений; чётные индексы
+(\(0,~2,~\dots\)) принадлежат Другу, нечётные --- Вам. Используется
+цикл \texttt{for} с условным оператором, выбирающим имя отправителя.
+
+\begin{lstlisting}[caption={\texttt{les-2/task1.js} --- вывод переписки},captionpos=b]
+const messages = [
+    'Пойдем гулять в парк?',
+    'Кажется, дождь собирается. Лучше пойдем в кино!',
+    'Давай, сегодня как раз вышел новый фильм.',
+    'Встречаемся через час у кинотеатра.',
+];
+
+// Первое сообщение — от Друга, дальше чередование.
+for (let i = 0; i < messages.length; i++) {
+    const author = i % 2 === 0 ? 'Друг' : 'Вы';
+    console.log(author + ': ' + messages[i]);
+}
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+Друг: Пойдем гулять в парк?
+Вы: Кажется, дождь собирается. Лучше пойдем в кино!
+Друг: Давай, сегодня как раз вышел новый фильм.
+Вы: Встречаемся через час у кинотеатра.
+\end{lstlisting}
+
+% — Скриншот: вывод les-2/task1 —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/03_les2_task1}
+  \caption{Вывод переписки в консоли Node.js}
+  \label{fig:les2_task1}
+\end{figure}
+
+\subsection{Задача 2: поиск по тексту сообщений}
+
+Реализован простейший поиск: тот же массив сообщений фильтруется
+методом \texttt{Array.prototype.filter} с проверкой
+\texttt{String.prototype.includes(searchText)}. Найденные сообщения
+выводятся списком.
+
+\begin{lstlisting}[caption={\texttt{les-2/task2.js} --- поиск через \texttt{includes}},captionpos=b]
+const messages = [
+    'Пойдем гулять в парк?',
+    'Кажется, дождь собирается. Лучше пойдем в кино!',
+    'Давай, сегодня как раз вышел новый фильм.',
+    'Встречаемся через час у кинотеатра.',
+];
+
+const searchText = 'кино';
+
+console.log('Поиск по слову: "' + searchText + '"');
+const found = messages.filter(msg => msg.includes(searchText));
+
+if (found.length === 0) {
+    console.log('Совпадений не найдено.');
+} else {
+    found.forEach(msg => console.log('— ' + msg));
+}
+\end{lstlisting}
+
+Вывод:
+
+\begin{lstlisting}
+Поиск по слову: "кино"
+— Кажется, дождь собирается. Лучше пойдем в кино!
+— Встречаемся через час у кинотеатра.
+\end{lstlisting}
+
+% — Скриншот: вывод les-2/task2 —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/04_les2_task2}
+  \caption{Вывод поиска по сообщениям в консоли Node.js}
+  \label{fig:les2_task2}
+\end{figure}
+
+\section{Урок~3. Сайт <<Персонажи Marvel>>}
+
+Главный артефакт лабораторной работы --- одностраничный сайт-каталог
+девятнадцати героев Marvel, реализованный в файлах
+\texttt{les-3/index.html}, \texttt{les-3/index.js},
+\texttt{les-3/start.js}.
+
+\subsection{Каркас страницы}
+
+\texttt{index.html} --- статическая разметка на компонентах Bootstrap.
+Сразу после загрузки страница содержит тёмный навбар, заголовок
+<<Персонажи Marvel>> и спиннер-плейсхолдер; ниже --- два пустых
+контейнера для будущих карточек и модальных окон.
+
+\begin{lstlisting}[caption={Ключевая часть \texttt{les-3/index.html}},captionpos=b]
+<div class="container">
+    <h1 class="pt-3 pb-3">Персонажи Marvel</h1>
+
+    <div class="row" id="character-card-box">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="character-modal-box"></div>
+</div>
+
+<script src=".../bootstrap.bundle.min.js"></script>
+<script src="index.js"></script>
+<script src="start.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() { start(); });
+</script>
+\end{lstlisting}
+
+\subsection{Получение данных с API}
+
+Функция \texttt{fetchCharacters} выполняет GET-запрос к учебному
+API и возвращает распарсенный JSON-массив. При ошибке HTTP
+выбрасывается исключение, которое перехватывается в \texttt{start()}.
+
+\begin{lstlisting}[caption={\texttt{les-3/index.js} --- запрос к API},captionpos=b]
+const API_URL = 'https://jsfree-les-3-api.onrender.com/characters';
+
+async function fetchCharacters() {
+    const response = await fetch(API_URL);
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    return await response.json();
+}
+\end{lstlisting}
+
+\subsection{Карточка персонажа}
+
+\texttt{getCharacterCard} принимает один объект-персонаж и возвращает
+HTML-строку с Bootstrap-карточкой: обложка (\texttt{thumbnail}),
+имя по-русски, имя на оригинале, краткое описание (обрезается до
+\(160\) символов) и кнопка <<Подробнее>>, которая открывает модальное
+окно через атрибуты \texttt{data-bs-toggle} и \texttt{data-bs-target}.
+
+\begin{lstlisting}[caption={\texttt{getCharacterCard} --- HTML-карточка героя},captionpos=b]
+function getCharacterCard(character) {
+    const modalId = `character-modal-${character.id}`;
+    const thumb = escapeHtml(toHttps(character.thumbnail));
+    const name = escapeHtml(character.name);
+    const nameor = escapeHtml(character.nameor);
+    const short = escapeHtml(truncate(character.description, 160));
+
+    return `
+<div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm">
+        <img src="${thumb}" class="card-img-top" alt="${name}" loading="lazy"
+             style="height: 320px; object-fit: cover; object-position: top;">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-1">${name}</h5>
+            <p class="text-muted small mb-2">${nameor}</p>
+            <p class="card-text flex-grow-1">${short}</p>
+            <button type="button" class="btn btn-danger mt-2"
+                    data-bs-toggle="modal" data-bs-target="#${modalId}">
+                Подробнее
+            </button>
+        </div>
+    </div>
+</div>`;
+}
+
+function getCharacterCards(characters) {
+    return characters.map(getCharacterCard).join('');
+}
+\end{lstlisting}
+
+Все значения, попадающие в HTML, пропускаются через
+\texttt{escapeHtml} --- защита от XSS на случай, если в данных
+встретятся служебные символы (\texttt{<}, \texttt{>}, \texttt{\&},
+кавычки). URL обложки переписывается с \texttt{http} на
+\texttt{https} (функция \texttt{toHttps}), иначе браузер заблокирует
+изображение из-за \textit{mixed content} на HTTPS-странице.
+
+\subsection{Модальное окно персонажа}
+
+\texttt{getCharacterModal} собирает Bootstrap-модал с подробной
+биографией героя, увеличенной обложкой и списком до \(10\) комиксов с
+его участием. Идентификатор модала формируется из \texttt{id} героя ---
+именно по нему карточка ищет нужный модал через
+\texttt{data-bs-target}.
+
+\begin{lstlisting}[caption={\texttt{getCharacterModal} --- модальное окно},captionpos=b]
+function getCharacterModal(character) {
+    const modalId = `character-modal-${character.id}`;
+    const comics = Array.isArray(character.comics) ? character.comics.slice(0, 10) : [];
+    const comicsList = comics.length
+        ? `<ul>${comics.map(c => `<li>${escapeHtml(c.name)}</li>`).join('')}</ul>`
+        : '<p class="text-muted">Список комиксов недоступен.</p>';
+
+    return `
+<div class="modal fade" id="${modalId}" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"> ... </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4"> <img src="..." class="img-fluid rounded"> </div>
+                    <div class="col-md-8">
+                        <p>${escapeHtml(character.description)}</p>
+                        <h6>Появления в комиксах:</h6>
+                        ${comicsList}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"> ... </div>
+        </div>
+    </div>
+</div>`;
+}
+
+function getCharacterModals(characters) {
+    return characters.map(getCharacterModal).join('');
+}
+\end{lstlisting}
+
+(В листинге опущены повторяющиеся блоки \texttt{modal-header} и
+\texttt{modal-footer} --- полный код находится в репозитории.)
+
+\subsection{Оркестрация: \texttt{start.js}}
+
+Функция \texttt{start} вызывается по событию
+\texttt{DOMContentLoaded}: получает данные с API, заполняет оба
+контейнера готовой разметкой; при ошибке заменяет спиннер сообщением
+для пользователя.
+
+\begin{lstlisting}[caption={\texttt{les-3/start.js} --- запуск приложения},captionpos=b]
+async function start() {
+    const cardBox = document.getElementById('character-card-box');
+    const modalBox = document.getElementById('character-modal-box');
+
+    try {
+        const characters = await fetchCharacters();
+        cardBox.innerHTML = getCharacterCards(characters);
+        modalBox.innerHTML = getCharacterModals(characters);
+    } catch (err) {
+        cardBox.innerHTML = `
+<div class="col-12">
+    <div class="alert alert-danger">
+        Не удалось загрузить персонажей: ${err.message}.
+    </div>
+</div>`;
+    }
+}
+\end{lstlisting}
+
+\subsection{Локальная проверка}
+
+Открыть \texttt{index.html} напрямую через \texttt{file://} нельзя:
+браузер блокирует \texttt{fetch} к чужому домену. Поэтому для проверки
+поднимается локальный HTTP-сервер:
+
+\begin{lstlisting}
+cd les-3 && python3 -m http.server 8000
+\end{lstlisting}
+
+Страница открывается по адресу \texttt{http://localhost:8000}. Через
+несколько секунд (или до \(30\) секунд при холодном старте API)
+спиннер сменяется сеткой карточек. Клик по кнопке <<Подробнее>>
+открывает модальное окно с биографией и списком комиксов.
+
+% — Скриншот: главная страница локально —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/05_marvel_local_grid}
+  \caption{Сайт <<Персонажи Marvel>> локально: сетка карточек}
+  \label{fig:marvel_local}
+\end{figure}
+
+% — Скриншот: открытая модалка —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/06_marvel_modal}
+  \caption{Открытое модальное окно с биографией и комиксами}
+  \label{fig:marvel_modal}
+\end{figure}
+
+% — Скриншот: мобильная версия —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/07_marvel_mobile}
+  \caption{Адаптивная вёрстка на мобильной ширине (\(360\,\)px)}
+  \label{fig:marvel_mobile}
+\end{figure}
+
+\section{Урок~4. Публикация сайта}
+
+Согласно методичке, готовый сайт должен быть выложен на публичный
+хостинг, а ссылка указана в отчёте. Вместо коммерческого Timeweb
+сайт развёрнут на собственном домашнем сервере, на котором уже
+работает обратный прокси \textbf{Caddy} с автоматическими
+TLS-сертификатами Let's~Encrypt (см.~\hyperref[ch:project]{главу~2}).
+
+\subsection{Автоматизация деплоя}
+
+В соседнем репозитории \texttt{home-server} добавлен скрипт
+\texttt{scripts/51-deploy-marvel-site.sh}. Он идемпотентный --- то
+есть может быть безопасно перезапущен любое число раз, без побочных
+эффектов. Шаги работы:
+
+\begin{enumerate}
+  \item Запрашивает у пользователя домен (по умолчанию ---
+        \texttt{marvel.server34.netcraze.club}) и путь к исходникам
+        сайта на локальной файловой системе.
+  \item Проверяет, что Caddy уже установлен
+        (\texttt{50-install-caddy-proxy.sh} был запущен ранее);
+        иначе --- ошибка и выход.
+  \item Делает резервные копии \texttt{docker-compose.yml} и
+        \texttt{Caddyfile} с меткой времени.
+  \item Через \texttt{rsync -a --delete} синхронизирует исходники
+        \texttt{lab13/les-3/} в \texttt{/opt/stack/marvel/site/}.
+  \item Если в \texttt{docker-compose.yml} ещё нет сервиса
+        \texttt{marvel} --- добавляет: образ \texttt{nginx:alpine},
+        монтирует директорию сайта в \texttt{/usr/share/nginx/html}
+        в режиме только для чтения.
+  \item Если в \texttt{Caddyfile} ещё нет блока для нашего поддомена
+        --- дописывает в конец:
+        \begin{lstlisting}
+${MARVEL_DOMAIN} {
+    encode gzip
+    reverse_proxy marvel:80
+}
+        \end{lstlisting}
+  \item Валидирует итоговый \texttt{docker-compose.yml}
+        (\texttt{docker compose config}), запускает контейнер
+        \texttt{marvel} и перезагружает Caddy
+        (\texttt{caddy reload}).
+\end{enumerate}
+
+Первый запрос к новому поддомену запускает выпуск TLS-сертификата
+Let's~Encrypt; через несколько секунд страница открывается по HTTPS.
+Готовый адрес --- \url{https://marvel.server34.netcraze.club}.
+
+% — Скриншот: живой сайт по HTTPS —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/08_marvel_live_https}
+  \caption{Развёрнутый сайт по адресу
+           \texttt{https://marvel.server34.netcraze.club}
+           (Let's~Encrypt-сертификат активен)}
+  \label{fig:marvel_live}
+\end{figure}
+
+% — Скриншот: вывод docker compose ps на сервере —
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{img/09_docker_compose_ps}
+  \caption{Сервис \texttt{marvel} в общем \texttt{docker-compose.yml}
+           домашнего сервера}
+  \label{fig:compose_ps}
+\end{figure}
+
+\endinput

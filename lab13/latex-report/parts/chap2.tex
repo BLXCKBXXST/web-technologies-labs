@@ -1,0 +1,152 @@
+\chapter{Описание проекта}
+\label{ch:project}
+
+\section{Технологический стек}
+
+Все четыре урока решаются исключительно средствами браузера и
+\texttt{Node.js} --- без сборщиков, транспиляторов и менеджеров
+зависимостей. Это сознательное решение: цель курса --- показать,
+насколько мало <<ритуала>> требуется современному фронтенду.
+
+\begin{itemize}
+  \item \textbf{HTML5} --- разметка единственной страницы каталога;
+  \item \textbf{CSS3 + Bootstrap~5.0.1} --- готовая 12-колоночная
+        сетка, утилитарные классы, компоненты
+        \texttt{card}, \texttt{modal}, \texttt{navbar},
+        \texttt{spinner};
+  \item \textbf{Vanilla JavaScript} (ES2022) --- никаких фреймворков
+        и сборки; синтаксис \texttt{async/await},
+        \texttt{template literals}, \texttt{Array.map}, опциональная
+        цепочка \texttt{?.}; код выполняется браузером как есть;
+  \item \textbf{Node.js~18+} --- запуск консольных задач уроков~1
+        и~2 без браузера.
+\end{itemize}
+
+Bootstrap подключён одной строкой в \texttt{<head>}, JS-бандл
+Bootstrap (для модальных окон) --- в конце \texttt{<body>}; никаких
+\texttt{npm install} и \texttt{node\_modules}.
+
+\section{Учебный API персонажей Marvel}
+
+Источник данных --- учебный REST-API курса:
+\url{https://jsfree-les-3-api.onrender.com/characters}. Без
+авторизации, HTTPS, CORS открыт. По GET-запросу возвращает
+JSON-массив из девятнадцати героев. Структура одного объекта:
+
+\begin{lstlisting}[caption={Фрагмент ответа API (один персонаж)},captionpos=b]
+{
+    "id": 1009610,
+    "name": "Человек-паук",
+    "nameor": "Spider-Man",
+    "description": "Укушенный радиоактивным пауком...",
+    "modified": "2020-07-21T10:30:10-0400",
+    "thumbnail": "http://i.annihil.us/u/prod/marvel/i/mg/3/50/526548a343e4b.jpg",
+    "comics": [
+        { "resourceURI": "...", "name": "A+X (2012) #4" },
+        ...
+    ],
+    "urls": [ ... ]
+}
+\end{lstlisting}
+
+Полезные поля: \texttt{id} (уникальный идентификатор --- используется
+для связи карточки с модальным окном), \texttt{name} (русское имя),
+\texttt{nameor} (оригинальное имя), \texttt{description} (биография),
+\texttt{thumbnail} (URL обложки), \texttt{comics[]} (список комиксов).
+Поле \texttt{modified} и \texttt{urls} в проекте не используются.
+
+\textbf{Особенность.} Изображения раздаются по протоколу \texttt{http},
+а сайт публикуется на \texttt{https}. Браузер блокирует такой
+\textit{mixed content}, поэтому в \texttt{index.js} URL картинки
+принудительно переписывается на \texttt{https} --- домен
+\texttt{i.annihil.us} поддерживает оба протокола.
+
+API хостится на бесплатном тарифе платформы Render. При отсутствии
+запросов более 15 минут контейнер усыпляется и первый запрос может
+обрабатываться до \(30\) секунд (\textit{cold start}). Это учтено в
+интерфейсе: на время загрузки в \texttt{\#character-card-box} отображается
+спиннер Bootstrap, ошибка сети выводится понятным сообщением в
+\texttt{alert-danger}.
+
+\section{Структура каталога \texttt{lab13/}}
+
+Папка лабораторной работы разделена на четыре подкаталога по числу
+уроков:
+
+\begin{lstlisting}[caption={Файловая структура \texttt{lab13/}},captionpos=b]
+lab13/
+├── README.md
+├── Методичка (lab13).pdf
+├── les-1/
+│   ├── task1.js          # пользователь + бонусный баланс
+│   └── task2.js          # баланс через 7 дней
+├── les-2/
+│   ├── task1.js          # вывод переписки
+│   └── task2.js          # поиск по includes
+├── les-3/                # сайт «Персонажи Marvel»
+│   ├── index.html
+│   ├── index.js
+│   └── start.js
+└── latex-report/         # этот отчёт
+\end{lstlisting}
+
+\section{Архитектура сайта}
+
+Сайт \texttt{les-3/} --- это \emph{single-page application} (SPA),
+собирающий разметку прямо в браузере. Точка входа ---
+\texttt{index.html}: статический каркас на Bootstrap-компонентах,
+содержит навбар, заголовок, два пустых контейнера
+(\texttt{\#character-card-box} и \texttt{\#character-modal-box}) и
+спиннер-плейсхолдер. По событию \texttt{DOMContentLoaded}
+вызывается функция \texttt{start()} из \texttt{start.js}.
+
+\begin{lstlisting}[caption={Граф зависимостей файлов},captionpos=b]
+index.html
+    │
+    ├── Bootstrap CSS (CDN, <head>)
+    ├── Bootstrap JS bundle (CDN, конец <body>)
+    │
+    ├── index.js  ← fetchCharacters, getCharacterCard[s],
+    │                getCharacterModal[s], escapeHtml, toHttps
+    │
+    └── start.js  ← start(): fetchCharacters → render
+\end{lstlisting}
+
+Разделение на \texttt{index.js} (чистые функции преобразования данных
+в HTML-строки) и \texttt{start.js} (оркестрация: запрос, рендер,
+обработка ошибок) повторяет учебный шаблон преподавателя и облегчает
+тестирование отдельных функций.
+
+\section{Способ публикации}
+
+Публикация сайта (урок~4 методички) выполнена не на коммерческом
+хостинге \textit{Timeweb}, а на собственном домашнем сервере под
+управлением \texttt{Debian~12}. Сервер хостит несколько Docker-сервисов
+(Crafty, FileBrowser, FindMyDevice) под одним обратным прокси
+\textbf{Caddy}. Marvel-сайт добавляется в эту инфраструктуру как ещё
+один Docker-контейнер на образе \texttt{nginx:alpine}, раздающий
+статические файлы \texttt{index.html}, \texttt{index.js},
+\texttt{start.js}.
+
+Логическая схема:
+
+\begin{lstlisting}[caption={Маршрут запроса до сайта},captionpos=b]
+браузер  →  443/tcp  →  Caddy (Let's Encrypt TLS)
+                              │
+                              └─→ marvel:80 (nginx) → /usr/share/nginx/html
+\end{lstlisting}
+
+Адрес сайта --- \url{https://marvel.server34.netcraze.club}. TLS-сертификат
+выпускается автоматически Let's~Encrypt при первом запросе по новому
+поддомену. DNS-запись \texttt{marvel} --- CNAME на основной домен
+\texttt{server34.netcraze.club}, который указывает на внешний IP
+домашнего роутера; роутер пробрасывает порты \(80\) и \(443\) на сервер.
+
+Автоматизация деплоя --- идемпотентный bash-скрипт
+\texttt{home-server/scripts/51-deploy-marvel-site.sh}: синхронизирует
+файлы сайта в \texttt{/opt/stack/marvel/site/}, добавляет (если ещё нет)
+сервис \texttt{marvel} в общий \texttt{docker-compose.yml}, дописывает
+блок поддомена в \texttt{Caddyfile} и перезагружает Caddy. Подробное
+описание шагов скрипта --- в~\hyperref[ch:practice]{главе~3}.
+
+\endinput
