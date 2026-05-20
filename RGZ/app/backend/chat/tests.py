@@ -16,7 +16,10 @@ from videos.models import Video
 
 @pytest.fixture
 def user():
-    return User.objects.create_user('viewer@example.com', 'Нина', 'Зрителева')
+    return User.objects.create_user(
+        username='viewer', password='viewerpass123',
+        first_name='Нина', last_name='Зрителева',
+    )
 
 
 @pytest.fixture

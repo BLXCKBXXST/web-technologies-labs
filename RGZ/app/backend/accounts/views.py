@@ -1,22 +1,17 @@
-"""Эндпоинты авторизации без пароля и профиля пользователя."""
+"""Эндпоинты авторизации (username/пароль, гость) и профиля пользователя."""
 
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import LoginCode, User
-from .serializers import (
-    RegisterSerializer,
-    RequestCodeSerializer,
-    UserSerializer,
-    VerifySerializer,
-)
-from .services import issue_and_send_code, issue_jwt_pair
+from .models import User
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .services import auth_response
 
 
 class RegisterView(APIView):
-    """Регистрация: создаёт пользователя и высылает код подтверждения."""
+    """Регистрация по username/паролю — сразу авторизует (выдаёт пару токенов)."""
 
     permission_classes = [AllowAny]
 
@@ -24,35 +19,28 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        issue_and_send_code(user, LoginCode.PURPOSE_REGISTER)
-        return Response({'detail': 'Код отправлен на ваш e-mail.'}, status=202)
+        return Response(auth_response(user), status=201)
 
 
-class RequestCodeView(APIView):
-    """Запрос кода для входа. Ответ одинаков вне зависимости от наличия e-mail."""
-
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = RequestCodeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = User.objects.filter(email__iexact=serializer.validated_data['email']).first()
-        if user is not None:
-            issue_and_send_code(user, LoginCode.PURPOSE_LOGIN)
-        return Response({'detail': 'Если e-mail зарегистрирован, код отправлен.'})
-
-
-class VerifyView(APIView):
-    """Проверка одноразового кода — при успехе выдаёт пару JWT-токенов."""
+class LoginView(APIView):
+    """Вход по имени пользователя и паролю."""
 
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = VerifySerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        tokens = issue_jwt_pair(user)
-        return Response({**tokens, 'user': UserSerializer(user).data})
+        return Response(auth_response(serializer.validated_data['user']))
+
+
+class GuestView(APIView):
+    """Создаёт гостевой аккаунт и сразу его авторизует."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = User.objects.create_guest()
+        return Response(auth_response(user), status=201)
 
 
 class MeView(RetrieveUpdateAPIView):

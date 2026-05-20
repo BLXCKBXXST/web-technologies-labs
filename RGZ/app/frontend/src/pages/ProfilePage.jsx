@@ -9,7 +9,7 @@ import './ProfilePage.css'
 
 // Профиль пользователя: данные, имя в чате и управление своими видео.
 export default function ProfilePage() {
-  const { user, updateUser } = useAuth()
+  const { user, isGuest, updateUser } = useAuth()
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingName, setEditingName] = useState(false)
@@ -54,12 +54,18 @@ export default function ProfilePage() {
           {user.display_name.slice(0, 1).toUpperCase()}
         </div>
         <div>
-          <h1 className="profile__name">
-            {user.first_name} {user.last_name}
-          </h1>
-          <p className="profile__email">{user.email}</p>
+          <h1 className="profile__name">{user.display_name}</h1>
+          <p className="profile__email">@{user.username}</p>
         </div>
       </div>
+
+      {isGuest && (
+        <p className="profile__guest-note">
+          Это гостевой аккаунт. Он будет удалён после 24 часов простоя вместе
+          со всеми загруженными видео и комнатами. Зарегистрируйтесь, чтобы
+          сохранить доступ.
+        </p>
+      )}
 
       <div className="profile__chatname">
         {editingName ? (

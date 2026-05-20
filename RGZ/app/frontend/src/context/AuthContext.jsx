@@ -52,6 +52,7 @@ export function AuthProvider({ children }) {
     user,
     loading,
     isAuthenticated: Boolean(user),
+    isGuest: Boolean(user?.is_guest),
     login,
     logout,
     updateUser: setUser,

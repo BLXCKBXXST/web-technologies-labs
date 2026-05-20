@@ -1,19 +1,17 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import AuthLayout from '../components/auth/AuthLayout.jsx'
-import CodeVerifyForm from '../components/auth/CodeVerifyForm.jsx'
 import TextField from '../components/ui/TextField.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { register, requestCode } from '../api/auth.js'
+import { register } from '../api/auth.js'
 import { extractError, extractFieldErrors } from '../api/errors.js'
 
-// Экран регистрации: шаг 1 — анкета, шаг 2 — ввод кода из письма.
+// Экран регистрации: имя пользователя + пароль. После успеха — сразу вход.
 export default function RegisterPage() {
   const { isAuthenticated, login } = useAuth()
   const navigate = useNavigate()
-  const [step, setStep] = useState('form')
-  const [form, setForm] = useState({ email: '', last_name: '', first_name: '' })
+  const [form, setForm] = useState({ username: '', password: '', chat_display_name: '' })
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -24,76 +22,62 @@ export default function RegisterPage() {
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
 
-  const submitForm = async (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     setErrors({})
     setFormError('')
     setLoading(true)
     try {
-      await register(form)
-      setStep('code')
+      const { data } = await register(form)
+      login(data)
+      navigate('/', { replace: true })
     } catch (err) {
       setErrors(extractFieldErrors(err))
       setFormError(extractError(err, 'Не удалось зарегистрироваться.'))
-    } finally {
       setLoading(false)
     }
   }
 
-  const onVerified = (data) => {
-    login(data)
-    navigate('/', { replace: true })
-  }
-
   return (
     <AuthLayout>
-      {step === 'form' ? (
-        <form className="auth-form" onSubmit={submitForm} noValidate>
-          <p className="auth-section-title">Данные для авторизации</p>
-          <TextField
-            label="Электронная почта"
-            name="email"
-            type="email"
-            placeholder="my_email@mail.com"
-            value={form.email}
-            onChange={update('email')}
-            error={errors.email}
-            required
-          />
-          <p className="auth-section-title">Прочие данные</p>
-          <TextField
-            label="Фамилия"
-            name="last_name"
-            placeholder="Ваша фамилия"
-            value={form.last_name}
-            onChange={update('last_name')}
-            error={errors.last_name}
-            required
-          />
-          <TextField
-            label="Имя"
-            name="first_name"
-            placeholder="Ваше имя"
-            value={form.first_name}
-            onChange={update('first_name')}
-            error={errors.first_name}
-            required
-          />
-          {formError && Object.keys(errors).length === 0 && (
-            <p className="auth-error">{formError}</p>
-          )}
-          <Button type="submit" fullWidth loading={loading}>
-            Отправить
-          </Button>
-          <p className="auth-required-note">* поле, обязательное для заполнения</p>
-        </form>
-      ) : (
-        <CodeVerifyForm
-          email={form.email}
-          onSuccess={onVerified}
-          onResend={() => requestCode(form.email)}
+      <form className="auth-form" onSubmit={submit} noValidate>
+        <p className="auth-section-title">Создание аккаунта</p>
+        <TextField
+          label="Имя пользователя"
+          name="username"
+          placeholder="username"
+          hint="Латиница, цифры и символы . _ - + — минимум 3 символа"
+          value={form.username}
+          onChange={update('username')}
+          error={errors.username}
+          required
         />
-      )}
+        <TextField
+          label="Пароль"
+          name="password"
+          type="password"
+          placeholder="Минимум 8 символов"
+          value={form.password}
+          onChange={update('password')}
+          error={errors.password}
+          required
+        />
+        <TextField
+          label="Имя в чате"
+          name="chat_display_name"
+          placeholder="Как вас видно в комнатах (необязательно)"
+          value={form.chat_display_name}
+          onChange={update('chat_display_name')}
+          error={errors.chat_display_name}
+        />
+        {formError && Object.keys(errors).length === 0 && (
+          <p className="auth-error">{formError}</p>
+        )}
+        <Button type="submit" fullWidth loading={loading}>
+          Зарегистрироваться
+        </Button>
+        <p className="auth-required-note">* поле, обязательное для заполнения</p>
+      </form>
     </AuthLayout>
   )
 }

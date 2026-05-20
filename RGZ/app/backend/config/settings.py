@@ -58,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Трекинг активности для отсчёта простоя гостевых аккаунтов.
+    'accounts.middleware.LastSeenMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -109,8 +111,16 @@ else:
 # --- Аутентификация ----------------------------------------------------------
 AUTH_USER_MODEL = 'accounts.User'
 
-# Паролей у пользователей нет (вход по одноразовому коду), валидаторы не нужны.
-AUTH_PASSWORD_VALIDATORS = []
+# Вход по имени пользователя и паролю — проверки пароля при регистрации.
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 8},
+    },
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
 
 # --- DRF и JWT ---------------------------------------------------------------
 REST_FRAMEWORK = {
@@ -132,17 +142,6 @@ SIMPLE_JWT = {
 
 # --- CORS --------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = env('CORS_ALLOWED_ORIGINS')
-
-# --- Почта (доставка одноразовых кодов) --------------------------------------
-# Локально — вывод письма в консоль (код виден в логах backend).
-# На сервере — SMTP (iRedMail) через переменные EMAIL_*.
-EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = env('EMAIL_HOST', default='')
-EMAIL_PORT = env.int('EMAIL_PORT', default=587)
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
-EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='no-reply@blxck.hub')
 
 # --- Интернационализация -----------------------------------------------------
 LANGUAGE_CODE = 'ru-ru'

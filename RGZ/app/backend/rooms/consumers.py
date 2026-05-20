@@ -52,6 +52,9 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
         self.joined = True
 
         await self._join_participant(room)
+        # Подключение к комнате — это активность: продлеваем срок жизни аккаунта.
+        if self.user.is_authenticated:
+            await self._touch_last_seen()
         # Новому участнику — сразу текущее состояние плеера.
         await self.send_json(state_payload(room))
         await self._broadcast_participants()
@@ -117,6 +120,13 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
     @database_sync_to_async
     def _get_room(self):
         return WatchRoom.objects.filter(pk=self.room_id, is_active=True).first()
+
+    @database_sync_to_async
+    def _touch_last_seen(self):
+        """Отмечает активность пользователя (для отсчёта простоя гостей)."""
+        from django.contrib.auth import get_user_model
+
+        get_user_model().objects.filter(pk=self.user.id).update(last_seen=timezone.now())
 
     @database_sync_to_async
     def _update_room_state(self, position, is_playing):

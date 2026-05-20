@@ -101,8 +101,6 @@ POSTGRES_USER=blxckhub
 POSTGRES_PASSWORD=${db_pass}
 REDIS_URL=redis://blxckhub-redis:6379/0
 CORS_ALLOWED_ORIGINS=https://${DOMAIN}
-EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-DEFAULT_FROM_EMAIL=no-reply@blxck.hub
 EOF
     else
         echo "==> ${ENV_FILE} уже существует — оставляю без изменений."
@@ -185,9 +183,8 @@ blxck.hub развёрнут.
   1. Убедитесь, что DNS A/CNAME ${DOMAIN} указывает на внешний IP сервера.
   2. Откройте https://${DOMAIN} — при первом запросе Caddy ~30 секунд выпускает
      TLS-сертификат Let's Encrypt.
-  3. Одноразовые коды входа печатаются в лог бэкенда (console-почта):
-       docker logs -f blxckhub-backend
-     Для реальной отправки писем пропишите SMTP в ${ENV_FILE}.
+  3. Вход — по имени пользователя и паролю; есть кнопка «войти как гостем».
+     Гостевые аккаунты автоматически удаляются после 24 ч простоя.
   4. Логи: docker logs -f blxckhub-backend | blxckhub-frontend | caddy
 
 Снести после демонстрации:

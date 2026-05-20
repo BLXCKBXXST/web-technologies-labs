@@ -18,7 +18,7 @@ export default function AuthLayout({ children }) {
             Регистрация
           </NavLink>
           <NavLink to="/login" className={tabClass}>
-            Код доступа
+            Вход
           </NavLink>
         </nav>
         <div className="auth__card">{children}</div>

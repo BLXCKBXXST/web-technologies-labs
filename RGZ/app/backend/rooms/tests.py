@@ -44,7 +44,10 @@ def test_effective_position_never_goes_backwards():
 
 @pytest.fixture
 def host_user():
-    return User.objects.create_user('host@example.com', 'Хост', 'Ведущий')
+    return User.objects.create_user(
+        username='host', password='hostpass123',
+        first_name='Хост', last_name='Ведущий',
+    )
 
 
 @pytest.fixture

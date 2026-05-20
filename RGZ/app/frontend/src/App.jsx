@@ -8,7 +8,7 @@ import WatchRoomPage from './pages/WatchRoomPage.jsx'
 import UploadPage from './pages/UploadPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
-import CodeLoginPage from './pages/CodeLoginPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
 
       {/* Экраны авторизации — без шапки */}
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/login" element={<CodeLoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
     </Routes>
   )
 }

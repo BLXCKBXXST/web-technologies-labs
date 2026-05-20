@@ -1,8 +1,12 @@
 """Сериализаторы приложения accounts."""
 
+from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.validators import ASCIIUsernameValidator
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
-from .models import LoginCode, User
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,54 +16,53 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'chat_display_name', 'display_name')
-        read_only_fields = ('id', 'email')
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'chat_display_name', 'display_name', 'is_guest',
+        )
+        read_only_fields = ('id', 'username', 'display_name', 'is_guest')
 
 
 class RegisterSerializer(serializers.Serializer):
-    """Регистрация: e-mail, имя и фамилия. Пароль не используется."""
+    """Регистрация по имени пользователя и паролю."""
 
-    email = serializers.EmailField()
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
+    username = serializers.CharField(
+        min_length=3, max_length=150, validators=[ASCIIUsernameValidator()]
+    )
+    password = serializers.CharField(write_only=True)
+    chat_display_name = serializers.CharField(
+        max_length=150, required=False, allow_blank=True
+    )
 
-    def validate_email(self, value):
-        if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError('Этот e-mail уже зарегистрирован.')
+    def validate_username(self, value):
+        if User.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError('Это имя пользователя уже занято.')
+        return value
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(list(exc.messages))
         return value
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
 
-class RequestCodeSerializer(serializers.Serializer):
-    """Запрос одноразового кода для входа по уже зарегистрированному e-mail."""
+class LoginSerializer(serializers.Serializer):
+    """Вход по имени пользователя и паролю."""
 
-    email = serializers.EmailField()
-
-
-class VerifySerializer(serializers.Serializer):
-    """Проверка одноразового кода. При успехе кладёт пользователя в validated_data."""
-
-    email = serializers.EmailField()
-    code = serializers.CharField(min_length=6, max_length=6)
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     default_error_messages = {
-        'invalid': 'Неверный или просроченный код.',
+        'invalid': 'Неверное имя пользователя или пароль.',
     }
 
     def validate(self, attrs):
-        user = User.objects.filter(email__iexact=attrs['email']).first()
-        if user is None:
+        user = authenticate(username=attrs['username'], password=attrs['password'])
+        if user is None or not user.is_active:
             self.fail('invalid')
-
-        login_code = (
-            LoginCode.objects.filter(user=user, consumed_at__isnull=True)
-            .order_by('-created_at')
-            .first()
-        )
-        if login_code is None or not login_code.verify(attrs['code']):
-            self.fail('invalid')
-
         attrs['user'] = user
         return attrs

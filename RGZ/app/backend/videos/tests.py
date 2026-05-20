@@ -1,5 +1,7 @@
 """Тесты приложения videos: загрузка, видимость, просмотры, Range-стриминг."""
 
+import os
+
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
@@ -18,7 +20,10 @@ def api():
 
 @pytest.fixture
 def user():
-    return User.objects.create_user('owner@example.com', 'Олег', 'Владелец')
+    return User.objects.create_user(
+        username='owner', password='ownerpass123',
+        first_name='Олег', last_name='Владелец',
+    )
 
 
 @pytest.fixture
@@ -103,7 +108,10 @@ def test_stream_returns_full_content_without_range(auth, settings, tmp_path):
 def test_non_owner_cannot_delete_video(auth, api, settings, tmp_path):
     settings.MEDIA_ROOT = str(tmp_path)
     video_id = upload(auth).json()['id']
-    other = User.objects.create_user('other@example.com', 'Чужой', 'Юзер')
+    other = User.objects.create_user(
+        username='other', password='otherpass123',
+        first_name='Чужой', last_name='Юзер',
+    )
     token = RefreshToken.for_user(other).access_token
     api.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
     resp = api.delete(f'/api/videos/{video_id}/')
@@ -128,3 +136,17 @@ def test_mine_returns_only_own_videos(auth, settings, tmp_path):
     resp = auth.get('/api/videos/mine/')
     assert resp.status_code == 200
     assert resp.json()['count'] == 1
+
+
+def test_deleting_video_removes_file_from_disk(user, settings, tmp_path):
+    settings.MEDIA_ROOT = str(tmp_path)
+    video = Video.objects.create(
+        owner=user,
+        title='Удаляемое',
+        file=SimpleUploadedFile('d.mp4', b'\x00' * 128, content_type='video/mp4'),
+    )
+    path = video.file.path
+    assert os.path.exists(path)
+    # Сигнал pre_delete должен убрать файл с диска вместе с записью.
+    video.delete()
+    assert not os.path.exists(path)

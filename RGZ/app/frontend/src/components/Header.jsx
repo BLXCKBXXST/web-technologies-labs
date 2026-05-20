@@ -5,7 +5,7 @@ import './Header.css'
 
 // Шапка приложения: логотип, кнопка загрузки, профиль и выход.
 export default function Header() {
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, isGuest, logout } = useAuth()
 
   return (
     <header className="header">
@@ -20,6 +20,14 @@ export default function Header() {
               <Link to="/upload">
                 <Button variant="secondary">Загрузить видео</Button>
               </Link>
+              {isGuest && (
+                <span
+                  className="header__guest"
+                  title="Гостевой аккаунт удаляется после 24 часов простоя"
+                >
+                  гость
+                </span>
+              )}
               <Link to="/profile" className="header__user" title="Профиль">
                 <span className="header__avatar">
                   {user.display_name.slice(0, 1).toUpperCase()}
