@@ -81,7 +81,7 @@ lab12/
    соответствующие панели форка.
 5. **Сохранить форк** (`Save`), скопировать URL и вписать его в
    [`latex-report/parts/chap3.tex`](latex-report/parts/chap3.tex) рядом с
-   соответствующим блоком (плейсхолдер `TODO: URL форка`).
+   соответствующим блоком (для текущего варианта уже подставлено).
 6. **Снять скриншоты** по списку [`latex-report/screenshots/README.md`](latex-report/screenshots/README.md)
    и положить в [`latex-report/img/`](latex-report/img/).
 7. **Скомпилировать отчёт** в Overleaf (Compiler: **XeLaTeX**, Main:
@@ -91,16 +91,14 @@ lab12/
 
 ## 🔗 Ссылки на форки Codepen
 
-После шага 5 заполнить таблицу:
-
 | Блок | URL форка |
 |---|---|
-| 1.1 | TODO |
-| 1.2 | TODO |
-| 2.1 | TODO |
-| 2.2 | TODO |
+| 1.1 | [codepen.io/blxckweed/pen/EaNmYge](https://codepen.io/blxckweed/pen/EaNmYge) |
+| 1.2 | [codepen.io/blxckweed/pen/YPpVKpm](https://codepen.io/blxckweed/pen/YPpVKpm) |
+| 2.1 | [codepen.io/blxckweed/pen/vEymBmY](https://codepen.io/blxckweed/pen/vEymBmY) |
+| 2.2 | [codepen.io/blxckweed/pen/vEymBxB](https://codepen.io/blxckweed/pen/vEymBxB) |
 
-Эти же URL подставляются в `latex-report/parts/chap3.tex`.
+Эти же URL подставлены в `latex-report/parts/chap3.tex`.
 
 ---
 
