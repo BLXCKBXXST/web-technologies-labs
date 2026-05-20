@@ -386,15 +386,22 @@ TLS-сертификатами Let's~Encrypt (см.~\hyperref[ch:project]{гла
 
 \subsection{Автоматизация деплоя}
 
-В соседнем репозитории \texttt{home-server} добавлен скрипт
-\texttt{scripts/51-deploy-marvel-site.sh}. Он идемпотентный --- то
-есть может быть безопасно перезапущен любое число раз, без побочных
-эффектов. Шаги работы:
+В корне \texttt{lab13/} лежит скрипт \texttt{deploy.sh} с двумя
+ключами --- \texttt{--install} и \texttt{--uninstall}. Оба режима
+идемпотентные, перезапуск ничего не ломает.
+
+\begin{lstlisting}[caption={Запуск деплоя и сноса сайта},captionpos=b]
+./deploy.sh --install     # развернуть сайт
+./deploy.sh --uninstall   # снести сайт после показа
+\end{lstlisting}
+
+Шаги режима \texttt{--install}:
 
 \begin{enumerate}
   \item Запрашивает у пользователя домен (по умолчанию ---
         \texttt{marvel.server34.netcraze.club}) и путь к исходникам
-        сайта на локальной файловой системе.
+        сайта (по умолчанию --- соседний каталог
+        \texttt{les-3/}).
   \item Проверяет, что Caddy уже установлен
         (\texttt{50-install-caddy-proxy.sh} был запущен ранее);
         иначе --- ошибка и выход.
@@ -409,7 +416,7 @@ TLS-сертификатами Let's~Encrypt (см.~\hyperref[ch:project]{гла
   \item Если в \texttt{Caddyfile} ещё нет блока для нашего поддомена
         --- дописывает в конец:
         \begin{lstlisting}
-${MARVEL_DOMAIN} {
+marvel.server34.netcraze.club {
     encode gzip
     reverse_proxy marvel:80
 }
@@ -419,6 +426,12 @@ ${MARVEL_DOMAIN} {
         \texttt{marvel} и перезагружает Caddy
         (\texttt{caddy reload}).
 \end{enumerate}
+
+Режим \texttt{--uninstall} выполняет обратные действия: останавливает
+и удаляет контейнер \texttt{marvel}, awk-фильтром вырезает сервис из
+\texttt{docker-compose.yml} и блок поддомена из \texttt{Caddyfile},
+удаляет каталог \texttt{/opt/stack/marvel/} и перезагружает Caddy.
+Бэкапы конфигов с меткой времени остаются рядом --- на случай отката.
 
 Первый запрос к новому поддомену запускает выпуск TLS-сертификата
 Let's~Encrypt; через несколько секунд страница открывается по HTTPS.

@@ -94,16 +94,23 @@ API на бесплатном тарифе Render может «холодно» 
 
 ## 🌐 Хостинг
 
-Развёрнутая версия: **<https://marvel.server34.netcraze.club>**
+Развёрнутая версия (временно, на период сдачи задания): **<https://marvel.server34.netcraze.club>**
 
-Деплой делается скриптом в соседнем репозитории `home-server`:
+Деплой и снос делаются одним скриптом [deploy.sh](deploy.sh) с двумя ключами:
 
 ```bash
-# на самом домашнем сервере, после первичной установки Caddy
-bash ~/home-server/scripts/51-deploy-marvel-site.sh
+# Развернуть сайт (после первичной установки Caddy на сервере)
+./deploy.sh --install
+
+# Снести сайт после демонстрации
+./deploy.sh --uninstall
 ```
 
-Скрипт идемпотентный: rsync исходников в `/opt/stack/marvel/site`, добавляет (если ещё нет) сервис `marvel: nginx:alpine` в общий `/opt/stack/docker-compose.yml`, дописывает блок поддомена в `/opt/stack/caddy/Caddyfile` и перезагружает контейнер Caddy. TLS-сертификат выпускается автоматически Let's~Encrypt при первом обращении.
+`--install` — идемпотентно: rsync исходников из [les-3/](les-3/) в `/opt/stack/marvel/site`, добавляет сервис `marvel: nginx:alpine` в общий `/opt/stack/docker-compose.yml`, дописывает блок поддомена в `/opt/stack/caddy/Caddyfile` и перезагружает контейнер Caddy. TLS-сертификат выпускается автоматически Let's Encrypt при первом обращении.
+
+`--uninstall` — обратная операция: останавливает и удаляет контейнер `marvel`, выпиливает сервис из compose, удаляет блок поддомена из Caddyfile, сносит `/opt/stack/marvel/`, перезагружает Caddy. Бэкапы compose и Caddyfile с меткой времени остаются рядом — на случай отката.
+
+Скрипт требует уже установленного Caddy на сервере (см. [home-server/scripts/50-install-caddy-proxy.sh](https://github.com/BLXCKBXXST/home-server/blob/main/scripts/50-install-caddy-proxy.sh)).
 
 ---
 
