@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Аватар по умолчанию">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b6ef0"/>
+      <stop offset="1" stop-color="#2347b8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <g fill="#eef2ff">
+    <circle cx="200" cy="158" r="74"/>
+    <path d="M200 250c-78 0-128 47-138 116a8 8 0 0 0 8 9h260a8 8 0 0 0 8-9c-10-69-60-116-138-116z"/>
+  </g>
+</svg>

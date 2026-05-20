@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Редактируемое резюме с экспортом в PDF и эффектом Material Wave">
+    <link rel="icon" type="image/svg+xml" href="img/avatar.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Резюме</title>
+</head>
+<body>
+
+<!-- Панель управления: видна на экране, скрывается при печати (@media print). -->
+<header class="toolbar">
+    <span class="toolbar__brand">Конструктор резюме</span>
+    <p class="toolbar__hint">Кликните по тексту или фото, чтобы отредактировать</p>
+    <div class="toolbar__actions">
+        <button id="btn-pdf" class="btn btn--primary ripple-host" type="button">Скачать PDF</button>
+        <button id="btn-reset" class="btn btn--ghost ripple-host" type="button">Сбросить</button>
+    </div>
+</header>
+
+<!-- Уведомление, если localStorage недоступен (приватный режим и т. п.). -->
+<p id="storage-warning" class="storage-warning" hidden>
+    Хранилище браузера недоступно — изменения не сохранятся при перезагрузке.
+</p>
+
+<!-- Сюда renderResume() из resume.js вставляет вёрстку резюме. -->
+<main id="resume-root" class="resume-wrap"></main>
+
+<!-- Скрытый выбор файла для загрузки фотографии. -->
+<input type="file" id="photo-input" accept="image/*" hidden>
+
+<script src="js/config.js"></script>
+<script src="js/resume.js"></script>
+<script src="js/start.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        start();
+    });
+</script>
+
+</body>
+</html>
