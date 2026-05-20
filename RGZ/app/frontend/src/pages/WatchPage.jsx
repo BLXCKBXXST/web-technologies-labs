@@ -19,11 +19,11 @@ export default function WatchPage() {
 
   useEffect(() => {
     let cancelled = false
-    setVideo(null)
-    setError('')
     getVideo(id)
       .then(({ data }) => {
-        if (!cancelled) setVideo(data)
+        if (cancelled) return
+        setVideo(data)
+        setError('')
       })
       .catch(() => {
         if (!cancelled) setError('Видео не найдено или недоступно.')
@@ -49,7 +49,8 @@ export default function WatchPage() {
   }
 
   if (error) return <p className="page-state">{error}</p>
-  if (!video) return <p className="page-state">Загрузка…</p>
+  // Пока грузится видео или открыт ещё прежний ролик — показываем заглушку.
+  if (!video || video.id !== id) return <p className="page-state">Загрузка…</p>
 
   return (
     <div className="watch">

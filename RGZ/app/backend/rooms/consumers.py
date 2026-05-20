@@ -65,14 +65,33 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive_json(self, content, **kwargs):
         message_type = content.get('type')
+
+        # --- Синхронизация плеера ---
         if message_type in self.HOST_ACTIONS:
             # Управлять плеером может только ведущий.
             if self.is_host:
                 await self._apply_host_action(message_type, content)
-        elif message_type == 'player.sync_request':
+            return
+        if message_type == 'player.sync_request':
             room = await self._get_room()
             if room is not None:
                 await self.send_json(state_payload(room))
+            return
+
+        # --- Чат и Q&A: отправлять может только авторизованный участник ---
+        if not self.user.is_authenticated:
+            return
+        handler = {
+            'chat.message': self._handle_chat_message,
+            'chat.like': self._handle_chat_like,
+            'qa.question': self._handle_question,
+            'qa.answer': self._handle_answer,
+            'qa.upvote': self._handle_upvote,
+        }.get(message_type)
+        if handler is not None:
+            payload = await handler(content)
+            if payload is not None:
+                await self._group_send(payload)
 
     # --- Рассылка по группе комнаты ---
     async def room_broadcast(self, event):
@@ -144,3 +163,114 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
         )
         names = [p.display_name for p in online]
         return {'type': 'room.participants', 'count': len(names), 'viewers': names}
+
+    # --- Чат и Q&A ---
+    @database_sync_to_async
+    def _handle_chat_message(self, content):
+        from chat.models import ChatMessage
+        from chat.serializers import message_payload
+
+        text = (content.get('text') or '').strip()[:2000]
+        if not text:
+            return None
+        message = ChatMessage.objects.create(
+            room_id=self.room_id,
+            author=self.user,
+            display_name=self.user.display_name,
+            text=text,
+        )
+        return {'type': 'chat.message', 'message': message_payload(message)}
+
+    @database_sync_to_async
+    def _handle_chat_like(self, content):
+        from django.db.models import F
+
+        from chat.models import ChatMessage, MessageLike
+
+        message = ChatMessage.objects.filter(
+            pk=content.get('message_id'), room_id=self.room_id
+        ).first()
+        if message is None:
+            return None
+        like, created = MessageLike.objects.get_or_create(message=message, user=self.user)
+        delta = 1
+        if not created:
+            like.delete()
+            delta = -1
+        ChatMessage.objects.filter(pk=message.pk).update(likes_count=F('likes_count') + delta)
+        message.refresh_from_db(fields=['likes_count'])
+        return {
+            'type': 'chat.like',
+            'message_id': str(message.id),
+            'likes_count': message.likes_count,
+        }
+
+    @database_sync_to_async
+    def _handle_question(self, content):
+        from chat.models import Question
+        from chat.serializers import question_payload
+
+        text = (content.get('text') or '').strip()[:1000]
+        if not text:
+            return None
+        question = Question.objects.create(
+            room_id=self.room_id,
+            author=self.user,
+            display_name=self.user.display_name,
+            text=text,
+        )
+        return {'type': 'qa.question', 'question': question_payload(question)}
+
+    @database_sync_to_async
+    def _handle_answer(self, content):
+        from chat.models import Answer, Question
+        from chat.serializers import answer_payload
+
+        text = (content.get('text') or '').strip()[:1000]
+        question = Question.objects.filter(
+            pk=content.get('question_id'), room_id=self.room_id
+        ).first()
+        if question is None or not text:
+            return None
+        answer = Answer.objects.create(
+            question=question,
+            author=self.user,
+            display_name=self.user.display_name,
+            text=text,
+        )
+        if not question.is_answered:
+            question.is_answered = True
+            question.save(update_fields=['is_answered', 'updated_at'])
+        return {
+            'type': 'qa.answer',
+            'question_id': str(question.id),
+            'answer': answer_payload(answer),
+        }
+
+    @database_sync_to_async
+    def _handle_upvote(self, content):
+        from django.db.models import F
+
+        from chat.models import Question, QuestionUpvote
+
+        question = Question.objects.filter(
+            pk=content.get('question_id'), room_id=self.room_id
+        ).first()
+        if question is None:
+            return None
+        upvote, created = QuestionUpvote.objects.get_or_create(
+            question=question, user=self.user
+        )
+        delta = 1
+        if not created:
+            upvote.delete()
+            delta = -1
+        Question.objects.filter(pk=question.pk).update(
+            upvotes_count=F('upvotes_count') + delta
+        )
+        question.refresh_from_db(fields=['upvotes_count'])
+        return {
+            'type': 'qa.upvote',
+            'question_id': str(question.id),
+            'upvotes_count': question.upvotes_count,
+        }

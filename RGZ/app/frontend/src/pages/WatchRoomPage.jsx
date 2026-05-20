@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useRoomSync } from '../hooks/useRoomSync.js'
 import RoomSocket from '../ws/roomSocket.js'
 import VideoPlayer from '../components/player/VideoPlayer.jsx'
-import Button from '../components/ui/Button.jsx'
+import RoomSidePanel from '../components/room/RoomSidePanel.jsx'
 import './WatchRoomPage.css'
 
 // Страница комнаты совместного просмотра: синхронный плеер и боковая панель.
@@ -108,23 +108,15 @@ export default function WatchRoomPage() {
         </p>
       </div>
 
-      <aside className="room__panel">
-        <div className="room__panel-head">
-          <span className={`room__dot${online ? ' room__dot--on' : ''}`} />
-          {online ? 'В эфире' : 'Соединение…'}
-        </div>
-        <div className="room__participants">
-          <h2 className="room__panel-title">Зрители · {participants.count}</h2>
-          <ul className="room__viewers">
-            {participants.viewers.map((name, index) => (
-              <li key={`${name}-${index}`}>{name}</li>
-            ))}
-          </ul>
-        </div>
-        <Button variant="secondary" fullWidth onClick={copyLink}>
-          {copied ? 'Ссылка скопирована' : 'Скопировать ссылку-приглашение'}
-        </Button>
-      </aside>
+      <RoomSidePanel
+        socket={socket}
+        roomId={roomId}
+        participants={participants}
+        online={online}
+        canPost={isAuthenticated}
+        onCopyLink={copyLink}
+        copied={copied}
+      />
     </div>
   )
 }

@@ -12,25 +12,44 @@ export default function HomePage() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
 
-  const load = async (nextPage) => {
-    setLoading(true)
+  // Первая страница ленты при открытии.
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { data } = await listVideos({ page: 1 })
+        if (cancelled) return
+        setVideos(data.results)
+        setHasMore(Boolean(data.next))
+      } catch {
+        if (!cancelled) setError('Не удалось загрузить ленту видео.')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Подгрузка следующих страниц по кнопке.
+  const loadMore = async () => {
+    setLoadingMore(true)
     try {
-      const { data } = await listVideos({ page: nextPage })
-      setVideos((prev) => (nextPage === 1 ? data.results : [...prev, ...data.results]))
+      const next = page + 1
+      const { data } = await listVideos({ page: next })
+      setVideos((prev) => [...prev, ...data.results])
       setHasMore(Boolean(data.next))
-      setPage(nextPage)
+      setPage(next)
     } catch {
       setError('Не удалось загрузить ленту видео.')
     } finally {
-      setLoading(false)
+      setLoadingMore(false)
     }
   }
-
-  useEffect(() => {
-    load(1)
-  }, [])
 
   return (
     <div>
@@ -38,7 +57,7 @@ export default function HomePage() {
 
       {error && <p className="page-state">{error}</p>}
 
-      {!error && videos.length === 0 && !loading && (
+      {!error && !loading && videos.length === 0 && (
         <p className="page-state">
           Пока нет ни одного видео.{' '}
           {isAuthenticated ? (
@@ -50,13 +69,13 @@ export default function HomePage() {
         </p>
       )}
 
-      {videos.length > 0 && <VideoGrid videos={videos} />}
+      {loading && <p className="page-state">Загрузка…</p>}
 
-      {loading && videos.length === 0 && <p className="page-state">Загрузка…</p>}
+      {videos.length > 0 && <VideoGrid videos={videos} />}
 
       {hasMore && (
         <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
-          <Button variant="secondary" loading={loading} onClick={() => load(page + 1)}>
+          <Button variant="secondary" loading={loadingMore} onClick={loadMore}>
             Показать ещё
           </Button>
         </div>

@@ -35,9 +35,9 @@ export function useRoomSync({ socket, playerRef, isHost }) {
   // Периодическая коррекция дрейфа у зрителя.
   useEffect(() => {
     if (isHost || !socket) return undefined
+    const player = playerRef.current
     const timer = setInterval(() => {
       const base = baseRef.current
-      const player = playerRef.current
       if (!base || !player || !base.isPlaying) return
       const expected = expectedPosition(base, Date.now() / 1000)
       const decision = syncDecision(player.getTime() - expected)
@@ -46,7 +46,7 @@ export function useRoomSync({ socket, playerRef, isHost }) {
     }, SYNC_INTERVAL_MS)
     return () => {
       clearInterval(timer)
-      playerRef.current?.setPlaybackRate(1)
+      if (player) player.setPlaybackRate(1)
     }
   }, [socket, isHost, playerRef])
 

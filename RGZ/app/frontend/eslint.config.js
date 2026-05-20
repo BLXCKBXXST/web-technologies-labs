@@ -17,5 +17,10 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Модуль контекста намеренно экспортирует и провайдер, и хук useAuth —
+      // это правило про удобство hot-reload, на корректность не влияет.
+      'react-refresh/only-export-components': 'off',
+    },
   },
 ])

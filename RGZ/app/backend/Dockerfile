@@ -7,7 +7,11 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # ffmpeg нужен для ffprobe — определения длительности загруженного видео.
-RUN apt-get update \
+# deb.debian.org (Fastly CDN) недоступен с сервера развёртывания — apt берёт
+# пакеты с зеркала Яндекса.
+RUN { grep -rlZ 'deb.debian.org' /etc/apt/ || true; } \
+        | xargs -0 -r sed -i 's|deb.debian.org/debian|mirror.yandex.ru/debian|g' \
+    && apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
