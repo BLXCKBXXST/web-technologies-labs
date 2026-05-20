@@ -1,0 +1,28 @@
+import { NavLink } from 'react-router-dom'
+import './AuthLayout.css'
+
+const tabClass = ({ isActive }) =>
+  isActive ? 'auth__tab auth__tab--active' : 'auth__tab'
+
+// Общий каркас экранов авторизации: фон, логотип, вкладки и карточка с формой.
+export default function AuthLayout({ children }) {
+  return (
+    <div className="auth">
+      <div className="auth__backdrop" aria-hidden="true" />
+      <div className="auth__inner">
+        <div className="auth__brand">
+          blxck<span>.hub</span>
+        </div>
+        <nav className="auth__tabs">
+          <NavLink to="/register" className={tabClass}>
+            Регистрация
+          </NavLink>
+          <NavLink to="/login" className={tabClass}>
+            Код доступа
+          </NavLink>
+        </nav>
+        <div className="auth__card">{children}</div>
+      </div>
+    </div>
+  )
+}

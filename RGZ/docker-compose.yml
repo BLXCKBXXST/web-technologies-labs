@@ -1,0 +1,56 @@
+# Самодостаточный стек blxck.hub: `docker compose up --build` поднимает всё
+# приложение целиком (БД, Redis, бэкенд, фронтенд) и публикует его на :8080.
+#
+# Локальная разработка ведётся нативно (venv + npm run dev). Этот compose —
+# для демонстрации, проверки «как на сервере» и как образец прод-развёртывания.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: blxckhub
+      POSTGRES_USER: blxckhub
+      POSTGRES_PASSWORD: blxckhub
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U blxckhub']
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+
+  backend:
+    build: ./app/backend
+    environment:
+      DJANGO_SECRET_KEY: compose-demo-secret-key
+      DJANGO_DEBUG: 'False'
+      DJANGO_ALLOWED_HOSTS: '*'
+      DATABASE_URL: postgres://blxckhub:blxckhub@db:5432/blxckhub
+      REDIS_URL: redis://redis:6379/0
+      CORS_ALLOWED_ORIGINS: http://localhost:8080
+      EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+    volumes:
+      - media:/app/media
+      - static:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build: ./app/frontend
+    ports:
+      - '8080:80'
+    volumes:
+      - media:/srv/media:ro
+      - static:/srv/static:ro
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  media:
+  static:
