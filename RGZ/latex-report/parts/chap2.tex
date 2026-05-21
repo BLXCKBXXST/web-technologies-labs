@@ -7,12 +7,20 @@
 обратного прокси, клиентского приложения, серверного приложения и
 хранилищ данных. Запрос пользователя проходит следующий путь:
 
-\begin{lstlisting}
-[Браузер] --HTTPS--> [Caddy] --> [nginx: SPA + /media + /static]
-                                      |
-                                      +--> /api/*, /ws/*  -->  [Django + Daphne]
-                                                                  |        |
-                                                          [PostgreSQL]  [Redis]
+\begin{lstlisting}[breaklines=false]
+            [ Browser ]
+                 |  HTTPS
+                 v
+            [ Caddy ]   <-- reverse proxy + TLS
+                 |
+                 v
+            [ nginx ]   <-- SPA, /media, /static
+                 |  /api/*  /ws/*
+                 v
+        [ Django + Daphne ]
+             |           |
+             v           v
+      [ PostgreSQL ]   [ Redis ]
 \end{lstlisting}
 
 \textbf{Caddy} принимает внешние HTTPS-запросы и автоматически выпускает
