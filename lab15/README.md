@@ -1835,3 +1835,519 @@ A = [[lst_in[i][j] for i in range(len(lst_in))] for j in range(len(lst_in[0]))]
 for row in A:
     print(*row)
 ```
+
+---
+
+## 6.1 Введение в словари
+
+**Подвиг 1.** Правильные объявления:
+- `{"river": "река", 'road': 'Дорога', 'one': 1}`
+- `dict(you='ты', we='мы', they='они', us='нам')`
+- `{}`
+- `dict()`
+- `dict([[1, 'one'], [2, 'two'], [3, 'three']])`
+
+**Подвиг 2.** Правильные ключи:
+- `d[1] = 'one'`
+- `d[True] = 'истина'`
+- `d["house"] = ['дом', 'жилище', 'хижина']`
+- `d[5.6] = 5.6`
+- `d['dict'] = {'one': 1, 'two': 2}`
+
+**Подвиг 3.**
+```python
+d = dict()
+for item in input().split():
+    k, v = item.split("=")
+    d[k] = int(v)
+print(*sorted(d.items()))
+```
+
+**Подвиг 4.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+d = {}
+for item in lst_in:
+    k, v = item.split("=")
+    d[int(k)] = v
+print(*sorted(d.items()))
+```
+
+**Подвиг 5.**
+```python
+data = input().split()
+d = dict(item.split("=") for item in data)
+if "house" in d and "True" in d and "5" in d:
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+**Подвиг 6.**
+```python
+data = input().split()
+d = dict(item.split("=") for item in data)
+if "False" in d:
+    del d["False"]
+if "3" in d:
+    del d["3"]
+print(*sorted(d.items()))
+```
+
+**Подвиг 7.**
+```python
+numbers = input().split()
+d = {}
+for num in numbers:
+    code = num[:2]
+    if code not in d:
+        d[code] = []
+    d[code].append(num)
+print(*sorted(d.items()))
+```
+
+**Подвиг 8.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+d = {}
+for item in lst_in:
+    number, name = item.split()
+    if name not in d:
+        d[name] = []
+    d[name].append(number)
+print(*sorted(d.items()))
+```
+
+**Подвиг 9.**
+```python
+import math
+cache = {}
+while True:
+    n = int(input())
+    if n == 0:
+        break
+    if n in cache:
+        print(f"значение из кэша: {cache[n]}")
+    else:
+        result = round(math.sqrt(n), 2)
+        cache[n] = result
+        print(result)
+```
+
+**Подвиг 10.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+cache = {}
+for url in lst_in:
+    if url in cache:
+        print("Взято из кэша: " + cache[url])
+    else:
+        page = "HTML-страница для адреса " + url
+        cache[url] = page
+        print(page)
+```
+
+---
+
+## 6.2 Методы словаря. Перебор его элементов в цикле
+
+**Подвиг 1.** `d.copy()`; `dict(d)`
+
+**Подвиг 2.** Соответствия методов:
+- `fromkeys` — формирует словарь с ключами, указанными в списке
+- `clear` — очищает словарь (удаляет все его элементы)
+- `copy` — создает копию словаря
+- `get` — возвращает значение по ключу
+- `pop` — удаляет элемент словаря по ключу и возвращает удаленное значение
+- `keys` — возвращает коллекцию из ключей словаря
+- `values` — возвращает коллекцию из значений словаря
+- `items` — возвращает записи в виде кортежей (ключ, значение)
+
+**Подвиг 3.**
+```python
+lst = list(map(int, input().split()))
+d = {}
+for x in lst:
+    d[x] = None
+print(*d.keys())
+```
+
+**Подвиг 4.**
+```python
+morse = {
+    'А': '.-', 'Б': '-...', 'В': '.--', 'Г': '--.', 'Д': '-..',
+    'Е': '.', 'Ж': '...-', 'З': '--..', 'И': '..', 'Й': '.---',
+    'К': '-.-', 'Л': '.-..', 'М': '--', 'Н': '-.', 'О': '---',
+    'П': '.--.', 'Р': '.-.', 'С': '...', 'Т': '-', 'У': '..-',
+    'Ф': '..-.', 'Х': '....', 'Ц': '-.-.', 'Ч': '---.', 'Ш': '----',
+    'Щ': '--.-', 'Ъ': '--.--', 'Ы': '-.--', 'Ь': '-..-', 'Э': '..-..',
+    'Ю': '..--', 'Я': '.-.-', ' ': '-...-'
+}
+s = input().upper().replace('Ё', 'Е')
+res = [morse[ch] for ch in s]
+print(" ".join(res))
+```
+
+**Подвиг 5.**
+```python
+morse = {
+    'а': '.-', 'б': '-...', 'в': '.--', 'г': '--.', 'д': '-..',
+    'е': '.', 'ж': '...-', 'з': '--..', 'и': '..', 'й': '.---',
+    'к': '-.-', 'л': '.-..', 'м': '--', 'н': '-.', 'о': '---',
+    'п': '.--.', 'р': '.-.', 'с': '...', 'т': '-', 'у': '..-',
+    'ф': '..-.', 'х': '....', 'ц': '-.-.', 'ч': '---.', 'ш': '----',
+    'щ': '--.-', 'ъ': '--.--', 'ы': '-.--', 'ь': '-..-', 'э': '..-..',
+    'ю': '..--', 'я': '.-.-', ' ': '-...-'
+}
+decode = {v: k for k, v in morse.items()}
+codes = input().split(" ")
+res = ""
+for c in codes:
+    res += decode[c]
+print(res)
+```
+
+**Подвиг 6.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+d = {}
+for item in lst_in:
+    bday, name = item.split()
+    bday = int(bday)
+    if bday not in d:
+        d[bday] = []
+    d[bday].append(name)
+for bday in d:
+    print(f"{bday}: {', '.join(d[bday])}")
+```
+
+**Подвиг 7.**
+```python
+things = {'карандаш': 20, 'зеркальце': 100, 'зонт': 500, 'рубашка': 300, 
+          'брюки': 1000, 'бумага': 200, 'молоток': 600, 'пила': 400, 'удочка': 1200,
+          'расческа': 40, 'котелок': 820, 'палатка': 5240, 'брезент': 2130, 'спички': 10}
+n = int(input()) * 1000
+items = sorted(things.items(), key=lambda x: x[1], reverse=True)
+total = 0
+res = []
+for name, weight in items:
+    if total + weight <= n:
+        res.append(name)
+        total += weight
+print(*res)
+```
+
+---
+
+## 6.3 Кортежи (tuple) и их методы
+
+**Подвиг 1.** `(False,)`; `(1, 2, True, False)`; `tuple("python")`
+
+**Подвиг 2.** упорядоченная коллекция данных; неизменяемый тип данных; расходует меньше памяти, чем списки
+
+**Подвиг 3.**
+```python
+t = (3.4, -56.7)
+t += tuple(map(int, input().split()))
+print(t)
+```
+
+**Подвиг 4.**
+```python
+cities = tuple(input().split())
+if "Москва" not in cities:
+    cities += ("Москва",)
+print(*cities)
+```
+
+**Подвиг 5.**
+```python
+cities = tuple(input().split())
+if "Ульяновск" in cities:
+    cities = tuple(c for c in cities if c != "Ульяновск")
+print(*cities)
+```
+
+**Подвиг 6.**
+```python
+names = tuple(input().split())
+res = [name.lower() for name in names if "ва" in name.lower()]
+print(*res)
+```
+
+**Подвиг 7.**
+```python
+t = tuple(map(int, input().split()))
+res = []
+for x in t:
+    if x not in res:
+        res.append(x)
+print(*res)
+```
+
+**Подвиг 8.**
+```python
+t = tuple(map(int, input().split()))
+res = []
+for i in range(len(t)):
+    if t.count(t[i]) > 1:
+        res.append(i)
+print(*res)
+```
+
+**Подвиг 9.**
+```python
+t = ((1, 0, 0, 0, 0),
+     (0, 1, 0, 0, 0),
+     (0, 0, 1, 0, 0),
+     (0, 0, 0, 1, 0),
+     (0, 0, 0, 0, 1))
+n = int(input())
+t2 = tuple(row[:n] for row in t[:n])
+for row in t2:
+    print(*row)
+```
+
+**Подвиг 10.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+menu = tuple(tuple(item.split()) for item in lst_in)
+print(menu)
+```
+
+---
+
+## 6.4 Множества (set) и их методы
+
+**Подвиг 1.** `{1, 1, 5, 5, True, 1}`; `set([1, 2, 3, 2, 1])`; `set()`
+
+**Подвиг 2.** может хранить только данные неизменяемых типов; относится к изменяемому типу данных
+
+**Подвиг 3.**
+```python
+s = set(map(float, input().split()))
+print(*sorted(s))
+```
+
+**Подвиг 4.**
+```python
+words = input().lower().split()
+print(len(set(words)))
+```
+
+**Подвиг 5.**
+```python
+s = input()
+digits = set(ch for ch in s if ch.isdigit())
+if digits:
+    print(*sorted(digits))
+else:
+    print("НЕТ")
+```
+
+**Подвиг 6.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+print(len(set(lst_in)))
+```
+
+**Подвиг 7.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+names = set()
+for item in lst_in:
+    name = item.split(":")[0]
+    names.add(name)
+print(len(names))
+```
+
+**Подвиг 8.**
+```python
+cities = set()
+while True:
+    city = input()
+    if city == "q":
+        break
+    cities.add(city)
+print(len(cities))
+```
+
+---
+
+## 6.5 Операции над множествами. Сравнение множеств
+
+**Подвиг 1.**
+```python
+a = set(map(int, input().split()))
+b = set(map(int, input().split()))
+s = a & b
+print(*sorted(s))
+```
+
+**Подвиг 2.**
+```python
+a = set(map(int, input().split()))
+b = set(map(int, input().split()))
+s = a - b
+print(*sorted(s))
+```
+
+**Подвиг 3.**
+```python
+a = set(map(int, input().split()))
+b = set(map(int, input().split()))
+s = a ^ b
+print(*sorted(s))
+```
+
+**Подвиг 4.**
+```python
+a = set(input().split())
+b = set(input().split())
+if a == b:
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+**Подвиг 5.**
+```python
+marks = set(map(int, input().split()))
+if 2 in marks:
+    print("НЕ ДОПУЩЕН")
+else:
+    print("ДОПУЩЕН")
+```
+
+**Подвиг 6.**
+```python
+a = set(input().split())
+b = set(input().split())
+if a <= b:
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+**Подвиг 7.**
+```python
+n = int(input())
+factors = set()
+for p in (2, 3, 5, 7):
+    while n % p == 0:
+        factors.add(p)
+        n //= p
+if {2, 3, 5} <= factors:
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+---
+
+## 6.6 Генераторы множеств и словарей
+
+**Подвиг 1.** генератор списков; генератор множеств; генератор словарей; генератор целых чисел в виде арифметической прогрессии
+
+**Подвиг 2.**
+```python
+data = input().split()
+start = int(data[0])
+words = data[1:]
+d = {start + i: words[i] for i in range(len(words))}
+print(d[4])
+```
+
+**Подвиг 3.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+unique = {car for car in lst_in}
+print(len(unique))
+```
+
+**Подвиг 4.**
+```python
+words = input().split()
+s = {w.lower() for w in words if len(w) >= 3}
+print(len(s))
+```
+
+**Подвиг 5.**
+```python
+words = input().lower().split()
+d = {w: words.count(w) for w in set(words)}
+print(d.get("и", 0))
+```
+
+**Подвиг 6.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+authors = {line.split(": ", 1)[0] for line in lst_in}
+d = {a: {line.split(": ", 1)[1] for line in lst_in if line.split(": ", 1)[0] == a} for a in authors}
+```
+
+---
+
+## 6.7 Моржовая операция присваивания
+
+**Подвиг 1.** Верные утверждения:
+- моржовая операция может быть использована только в составе другого оператора языка Python
+- моржовая операция создает переменную, если ее ранее не было
+- моржовая операция имеет один из самых низких приоритетов (выполняется в последнюю очередь)
+
+**Подвиг 2.** Рабочие определения:
+- `d = [1, 2, tr := 3, 6, 3]`
+- `while (t := float(input())) > 0: print(t)`
+- `print(a := 5, a := a + 1)`
+
+**Подвиг 3.** Верные утверждения:
+- цикл while будет работать пока пользователь не введет отрицательное число (включая 0)
+- при вводе положительных чисел переменная t будет принимать булево значение True
+
+**Подвиг 4.** Верное утверждение:
+- чтобы поменять местами первую и последнюю строки списка lst следует воспользоваться командой: lst[0], lst[-1] = row3, row1
+
+**Подвиг 5.**
+```python
+t = tuple(map(int, input().split()))
+s = 0
+lst = [s := s + x for x in t]
+print(*lst)
+```
+
+**Подвиг 6.**
+```python
+s = 0
+while (x := int(input())) != 0:
+    if x % 2 == 0:
+        s += x
+print(s)
+```
+
+**Подвиг 7.**
+```python
+def f(x):
+    return abs(x) ** 0.5 + 3.2 + x
+
+
+t = tuple(map(float, input().split()))
+lst = [[(v := f(x)), v ** 2, v ** 3] for x in t]
+```
+
+**Подвиг 8.**
+```python
+p = 1
+while (x := int(input())) > 0:
+    if x % 3 == 0:
+        p *= x
+print(p)
+```
