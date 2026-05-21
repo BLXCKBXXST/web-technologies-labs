@@ -11,67 +11,64 @@
 
 ## Аутентификация
 
-Платформа не использует пароли: вход выполняется по одноразовому коду,
-отправленному на e-mail. После проверки кода выдаётся пара JWT-токенов.
+Вход выполняется по имени пользователя и паролю. Регистрация и вход сразу
+возвращают пару JWT-токенов; есть также гостевой вход без пароля.
 
 ### POST /api/auth/register/ — регистрация
 
-Создаёт пользователя и отправляет код подтверждения на e-mail.
+Создаёт пользователя и сразу выполняет вход.
 
-Тело: `email`, `first_name`, `last_name`.
+Тело: `username`, `password`, `chat_display_name` (необязательно).
 
 ```bash
 curl -X POST http://localhost:8000/api/auth/register/ \
   -H 'Content-Type: application/json' \
-  -d '{"email":"ivan@example.com","first_name":"Иван","last_name":"Петров"}'
+  -d '{"username":"ivan","password":"strong-pass-9","chat_display_name":"Ванёк"}'
 ```
 
-Ответ `202 Accepted`:
-
-```json
-{ "detail": "Код отправлен на ваш e-mail." }
-```
-
-### POST /api/auth/request-code/ — запрос кода для входа
-
-Отправляет одноразовый код уже зарегистрированному пользователю. Ответ всегда
-`200` и не раскрывает, существует ли такой e-mail.
-
-```bash
-curl -X POST http://localhost:8000/api/auth/request-code/ \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"ivan@example.com"}'
-```
-
-```json
-{ "detail": "Если e-mail зарегистрирован, код отправлен." }
-```
-
-### POST /api/auth/verify/ — проверка кода, выдача токенов
-
-Тело: `email`, `code` (6 цифр). При успехе возвращает JWT-пару и профиль.
-
-```bash
-curl -X POST http://localhost:8000/api/auth/verify/ \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"ivan@example.com","code":"480913"}'
-```
-
-Ответ `200`:
+Ответ `201 Created` — пара токенов и профиль:
 
 ```json
 {
   "access": "eyJhbGciOiJIUzI1NiI...",
   "refresh": "eyJhbGciOiJIUzI1NiI...",
   "user": {
-    "id": 1, "email": "ivan@example.com",
-    "first_name": "Иван", "last_name": "Петров",
-    "chat_display_name": "", "display_name": "Иван"
+    "id": 1, "username": "ivan", "email": "",
+    "first_name": "", "last_name": "",
+    "chat_display_name": "Ванёк", "display_name": "Ванёк",
+    "is_guest": false
   }
 }
 ```
 
-Ошибки: `400` — неверный, просроченный или использованный код.
+Ошибки: `400` — имя пользователя занято или пароль не прошёл проверки
+(минимальная длина, непохожесть на имя, отсутствие в словаре частых паролей).
+
+### POST /api/auth/login/ — вход по паролю
+
+Тело: `username`, `password`. При успехе возвращает JWT-пару и профиль
+(как у `register`).
+
+```bash
+curl -X POST http://localhost:8000/api/auth/login/ \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"ivan","password":"strong-pass-9"}'
+```
+
+Ошибки: `400` — неверное имя пользователя или пароль.
+
+### POST /api/auth/guest/ — гостевой вход
+
+Создаёт временный гостевой аккаунт без пароля и сразу выполняет вход. Тело
+не требуется. Гостевой аккаунт автоматически удаляется после 24 часов
+простоя вместе со всем содержимым (видео, комнаты, сообщения).
+
+```bash
+curl -X POST http://localhost:8000/api/auth/guest/
+```
+
+Ответ `201 Created` — пара токенов и профиль с `"is_guest": true` и
+сгенерированным именем вида `guest_1a2b3c4d`.
 
 ### POST /api/auth/refresh/ — обновление access-токена
 
