@@ -2351,3 +2351,2243 @@ while (x := int(input())) > 0:
         p *= x
 print(p)
 ```
+
+<!-- AUTOGEN: модули 7+ (автосдача Stepik) -->
+
+---
+
+## 7.1 Что такое функции. Их объявление и вызов
+
+**Подвиг 1.** len("123"); print(); dp = print; fl = len; len; print
+
+**Подвиг 2.** имя функции - это ссылка на объект-функцию; оператор вызова функции - это (); функция выполняет фрагмент программы, записанный в теле функции; функция может быть вызвана в любом (допустимом) месте программы произвольное число раз; функция служит для устранения дублирования кода; именами функций следует выбирать глаголы (например, go, set, get и т.п.)
+
+**Подвиг 3.**
+```python
+def my_function():
+    print("It's my first function")
+
+
+my_function()
+```
+
+**Подвиг 4.**
+```python
+def greet():
+    name, surname = input().split()
+    print(f"Уважаемый, {name} {surname}! Вы верно выполнили это задание!")
+
+
+greet()
+```
+
+**Подвиг 5.**
+```python
+def show_weight(x):
+    print(f"Предмет имеет вес: {x} кг.")
+
+
+w = float(input())
+show_weight(w)
+```
+
+**Подвиг 6.**
+```python
+def stats(lst):
+    print(f"Min = {min(lst)}, max = {max(lst)}, sum = {sum(lst)}")
+
+
+data = list(map(int, input().split()))
+stats(data)
+```
+
+**Подвиг 7.**
+```python
+def perimeter(width, height):
+    print(f"Периметр прямоугольника, равен {2 * (width + height)}")
+
+
+w, h = map(int, input().split())
+perimeter(w, h)
+```
+
+**Подвиг 8.**
+```python
+def check_email(email):
+    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_@."
+    if "@" in email and "." in email and all(ch in allowed for ch in email):
+        print("ДА")
+    else:
+        print("НЕТ")
+
+
+check_email(input())
+```
+
+---
+
+## 7.2 Оператор return
+
+**Подвиг 1.**
+```python
+def get_sq(x):
+    return x ** 2
+
+
+n = float(input())
+print(get_sq(n))
+```
+
+**Подвиг 2.**
+```python
+def is_triangle(a, b, c):
+    return a < b + c and b < a + c and c < a + b
+```
+
+**Подвиг 3.**
+```python
+def is_large(s):
+    return len(s) >= 3
+```
+
+**Подвиг 4.**
+```python
+def is_even(n):
+    return n % 2 == 0
+
+
+x = int(input())
+while x != 1:
+    if is_even(x):
+        print(x)
+    x = int(input())
+```
+
+**Подвиг 5.**
+```python
+def is_odd(n):
+    return n % 2 != 0
+
+
+lst_d = list(map(int, input().split()))
+lst = [x for x in lst_d if is_odd(x)]
+print(*lst)
+```
+
+**Подвиг 6.**
+```python
+tp = input().strip()
+if tp == "RECT":
+    def get_sq(length, width):
+        return length * width
+else:
+    def get_sq(a):
+        return a * a
+```
+
+**Подвиг 7.**
+```python
+def is_long(s):
+    return len(s) >= 6
+
+
+cities = input().split()
+lst = [c for c in cities if is_long(c)]
+print(*lst)
+```
+
+**Подвиг 8.**
+```python
+def str_len(s):
+    return s, len(s)
+
+
+cities = input().split()
+d = {k: v for k, v in (str_len(c) for c in cities)}
+a = sorted(d, key=d.get)
+print(*a)
+```
+
+**Подвиг 9.**
+```python
+def multiply(a, b):
+    return a * b
+
+
+digs = list(map(int, input().split()))
+print(multiply(min(digs), max(digs)))
+```
+
+---
+
+## 7.3 Алгоритм Евклида для нахождения НОД
+
+**Большой подвиг 1.**
+```python
+def get_nod(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+```
+
+---
+
+## 7.4 Позиционные и именованные аргументы. Параметры со значениями
+
+**Подвиг 1.** позиционные аргументы - это передаваемые функции значения, записанные через запятую; именованные аргументы - это значения с дополнительным указанием имени параметра функции; функция - это фрагмент программного кода, который можно вызвать из другого места программы по имени функции
+
+**Подвиг 2.**
+```python
+def get_rect_value(length, width, tp=0):
+    if tp == 0:
+        return 2 * (length + width)
+    return length * width
+```
+
+**Подвиг 3.**
+```python
+def check_password(password, chars="$%!?@#"):
+    return len(password) >= 8 and any(c in chars for c in password)
+```
+
+**Подвиг 4.**
+```python
+def translit(s, sep="-"):
+    t = {'ё': 'yo', 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+         'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+         'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh',
+         'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'}
+    s = s.lower()
+    res = ""
+    for ch in s:
+        if ch == " ":
+            res += sep
+        elif ch in t:
+            res += t[ch]
+        else:
+            res += ch
+    return res
+
+
+line = input()
+print(translit(line))
+print(translit(line, sep="+"))
+```
+
+**Подвиг 5.**
+```python
+def wrap_tag(s, tag="h1"):
+    return f"<{tag}>{s}</{tag}>"
+
+
+line = input()
+print(wrap_tag(line))
+print(wrap_tag(line, tag="div"))
+```
+
+**Подвиг 6. В функцию из предыдущего подвига 5 добавьте в конец еще один третий параметр up с начальным булевым значением True.**
+```python
+def wrap_tag(s, tag="h1", up=True):
+    tag = tag.upper() if up else tag.lower()
+    return f"<{tag}>{s}</{tag}>"
+
+
+line = input()
+print(wrap_tag(line, tag="div"))
+print(wrap_tag(line, tag="div", up=False))
+```
+
+---
+
+## 7.5 Функции с произвольным числом параметров
+
+**Подвиг 1.** def func(*args): pass; def func(x, y, *args): pass; def func(*args, **kwargs): pass; def func(x, *args, type=True, **kwargs): pass; def func(*args, type=True, **kwargs): pass
+
+**Подвиг 2.**
+```python
+def get_even(*args):
+    return [x for x in args if x % 2 == 0]
+```
+
+**Подвиг 3.**
+```python
+def get_biggest_city(*cities):
+    biggest = cities[0]
+    for city in cities:
+        if len(city) > len(biggest):
+            biggest = city
+    return biggest
+```
+
+**Подвиг 4.**
+```python
+def get_data_fig(*sides, **kwargs):
+    result = [sum(sides)]
+    for name in ("tp", "color", "closed", "width"):
+        if name in kwargs:
+            result.append(kwargs[name])
+    return tuple(result)
+```
+
+**Большой подвиг 5.**
+```python
+import sys
+
+
+def is_isolate(lst2D, i, j):
+    n = len(lst2D)
+    for di in (-1, 0, 1):
+        for dj in (-1, 0, 1):
+            if di == 0 and dj == 0:
+                continue
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n and lst2D[ni][nj] == 1:
+                return False
+    return True
+
+
+def verify(lst2D):
+    n = len(lst2D)
+    for i in range(n):
+        for j in range(n):
+            if lst2D[i][j] == 1 and not is_isolate(lst2D, i, j):
+                return False
+    return True
+
+
+lines = [s for s in sys.stdin.readlines() if s.strip()]
+lst2D = [list(map(int, s.split())) for s in lines]
+```
+
+**Значимый подвиг 6.**
+```python
+def str_min(s1, s2):
+    return s1 if s1 < s2 else s2
+
+
+def str_min3(s1, s2, s3):
+    return str_min(str_min(s1, s2), s3)
+
+
+def str_min4(s1, s2, s3, s4):
+    return str_min(str_min3(s1, s2, s3), s4)
+```
+
+---
+
+## 7.6 Операторы упаковки и распаковки коллекций
+
+**Подвиг 1.** [2, 3, 4]
+
+**Подвиг 2.** print(1, 2, 3)
+
+**Подвиг 3. На вход программе подаются семь целых чисел, записанных в одну строчку через пробел.**
+```python
+*lst, x, y, z = map(int, input().split())
+print(*lst)
+```
+
+**Подвиг 4. На вход программе подается строка с названиями городов, записанных в одну строчку через пробел.**
+```python
+cities = input().split()
+lst_c = (*cities,)
+print(lst_c)
+```
+
+**Подвиг 5.**
+```python
+a, b = map(int, input().split())
+lst = [*range(a, b + 1)]
+print(*lst)
+```
+
+**Подвиг 6.**
+```python
+nums = input().split()
+cities = input().split()
+lst = [*nums, *cities]
+print(*lst)
+```
+
+**Подвиг 7.**
+```python
+import sys
+
+menu = {'Главная': 'home', 'Архив': 'archive', 'Новости': 'news'}
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+extra = {}
+for item in lst_in:
+    name, url = item.split("=")
+    extra[name] = url
+menu = {**menu, **extra}
+```
+
+---
+
+## 7.7 Символ звездочка (*) параметрах функции
+
+**Подвиг 1.** в параметры s1, s2 функции compare_str можно передавать как позиционные, так и именованные аргументы; вызов функции compare_str("Java", "java", False) приведет к ошибке, т.к. в параметр ignore_case можно передавать только именованный аргумент; если вместо * в параметрах функции прописать *args, то в параметр ignore_case значение, по-прежнему, нужно будет передавать только с помощью именованного аргумента
+
+**Подвиг 2.**
+```python
+def most_popular(people, *, case_sens=False):
+    items = list(people) if case_sens else [p.lower() for p in people]
+    best_name = items[0]
+    best_count = 0
+    for name in items:
+        c = items.count(name)
+        if c > best_count:
+            best_count = c
+            best_name = name
+    return best_name, best_count
+
+
+writers = input().split()
+result = most_popular(writers, case_sens=True)
+```
+
+**Подвиг 3.**
+```python
+def count_chars(s, chars, *, return_type=tuple, ignore_case=True):
+    txt = s.lower() if ignore_case else s
+    target = chars.lower() if ignore_case else chars
+    freqs = [txt.count(ch) for ch in target]
+    return return_type(freqs)
+
+
+text = input()
+symbols = input()
+result = count_chars(text, symbols, return_type=set, ignore_case=False)
+```
+
+**Подвиг 4.**
+```python
+def merge_dicts(dict1, *dicts, ignored_keys=None):
+    ignored = set(ignored_keys) if ignored_keys else set()
+    result = {}
+    for d in (dict1, *dicts):
+        for k, v in d.items():
+            if k not in ignored:
+                result[k] = v
+    return result
+
+
+goods = merge_dicts(goods1, goods2, goods3, goods4, ignored_keys=('id', 'date', 'cat_id'))
+```
+
+**Подвиг 5.** третий вызов функции symbol_upper с формированием значения res3 приведет к ошибке; переменная res2 будет ссылаться на строку "PyThon is the best language."
+
+**Подвиг 6.**
+```python
+def filter_by_length(*strings, min_length=0, max_length):
+    return [s for s in strings if min_length <= len(s) <= max_length]
+
+
+names_initial = input().split()
+names_result = filter_by_length(*names_initial, min_length=5, max_length=9)
+```
+
+**Подвиг 7.**
+```python
+def are_anagrams(s1, s2, *, start=0, end=-1, ignore_case=True):
+    a = s1.lower() if ignore_case else s1
+    b = s2.lower() if ignore_case else s2
+    if end == -1:
+        a, b = a[start:], b[start:]
+    else:
+        a, b = a[start:end], b[start:end]
+    return sorted(a) == sorted(b)
+
+
+words = input().split()
+result = are_anagrams(*words, ignore_case=False)
+```
+
+---
+
+## 7.8 Символ слэш (/) в параметрах функции
+
+**Подвиг 1.** в параметры x и w функции model можно передавать только позиционные аргументы
+
+**Подвиг 2.**
+```python
+def is_right_tr(a, b, c, /, precision=0.001):
+    return (abs(c ** 2 - (a ** 2 + b ** 2)) < precision
+            or abs(a ** 2 - (b ** 2 + c ** 2)) < precision
+            or abs(b ** 2 - (a ** 2 + c ** 2)) < precision)
+
+
+side_a, side_b, side_c = map(float, input().split())
+result = is_right_tr(side_a, side_b, side_c)
+```
+
+**Подвиг 3.**
+```python
+def verify_password(psw, /, chars="@#!*", min_length=8):
+    rus = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя"
+    if len(psw) < min_length:
+        return False
+    if not any(c in chars for c in psw):
+        return False
+    if any(c.lower() in rus for c in psw):
+        return False
+    return True
+
+
+password = input()
+result = verify_password(password, chars="0123456789", min_length=10)
+```
+
+**Подвиг 4.**
+```python
+def check_phone(phone, format_phone="8(xxx)xxx-xx-xx", /, format_symbol='x'):
+    if len(phone) != len(format_phone):
+        return False
+    for ph, fc in zip(phone, format_phone):
+        if fc == format_symbol:
+            if not ph.isdigit():
+                return False
+        elif ph != fc:
+            return False
+    return True
+
+
+phone_number = input()
+result = check_phone(phone_number, "+7(***)*** ****", format_symbol='*')
+```
+
+**Подвиг 5.**
+```python
+DEBUG = 10, 'DEBUG'
+INFO = 20, 'INFO'
+WARNING = 30, 'WARNING'
+ERROR = 40, 'ERROR'
+CRITICAL = 50, 'CRITICAL'
+
+
+def log_event(timestamp, message, /, *, level=INFO, format_log="[%(time)] %(levelname) - %(message)"):
+    if level[0] < INFO[0]:
+        return None
+    text = format_log
+    text = text.replace('%(time)', str(timestamp))
+    text = text.replace('%(message)', message)
+    text = text.replace('%(levelname)', level[1])
+    text = text.replace('%(levelno)', str(level[0]))
+    return text
+
+
+log_time = int(input())
+log_msg = input()
+log_item = log_event(log_time, log_msg, level=WARNING,
+                     format_log="%(levelname) - (%(time)) %(message)")
+print(log_item)
+```
+
+**Подвиг 6.**
+```python
+def parser_data(text, /, max_count=0, *, ignore_sign=False):
+    result = []
+    i = 0
+    n = len(text)
+    while i < n:
+        if text[i].isdigit():
+            start = i
+            while i < n and text[i].isdigit():
+                i += 1
+            num = text[start:i]
+            if start > 0 and text[start - 1] in "+-":
+                num = text[start - 1] + num
+            if ignore_sign:
+                num = num.lstrip("+-")
+            result.append(num)
+            if max_count and len(result) >= max_count:
+                break
+        else:
+            i += 1
+    return result
+
+
+data_text = input()
+result = parser_data(data_text, max_count=5, ignore_sign=True)
+```
+
+**Вызов 7*.**
+```python
+def is_right_rect(a, b, c, d, /, *, precision=0.001):
+    d1 = ((a[0] - c[0]) ** 2 + (a[1] - c[1]) ** 2) ** 0.5
+    d2 = ((b[0] - d[0]) ** 2 + (b[1] - d[1]) ** 2) ** 0.5
+    return abs(d1 - d2) < precision
+
+
+rect_coords = [(float(x.split('=')[0]), float(x.split('=')[1])) for x in input().split()]
+result = is_right_rect(*rect_coords)
+```
+
+---
+
+## 7.9 Рекурсивные функции
+
+**Подвиг 1.** это функция, которая вызывает саму себя
+
+**Подвиг 2. На вход программе подается целое положительное число N.**
+```python
+def get_rec_N(n):
+    if n > 1:
+        get_rec_N(n - 1)
+    print(n)
+
+
+N = int(input())
+get_rec_N(N)
+```
+
+**Подвиг 3. На вход программе подаются целые числа, записанные через пробел.**
+```python
+def get_rec_sum(lst, i=0):
+    if i == len(lst):
+        return 0
+    return lst[i] + get_rec_sum(lst, i + 1)
+
+
+nums = list(map(int, input().split()))
+print(get_rec_sum(nums))
+```
+
+**Подвиг 4. На вход программе подается натуральное число N (N >= 2), которое читается с помощью команды:.**
+```python
+def fib_rec(N, f):
+    if len(f) >= N:
+        return f[:N]
+    f.append(f[-1] + f[-2])
+    return fib_rec(N, f)
+
+
+N = int(input())
+result = fib_rec(N, [1, 1])
+```
+
+**Подвиг 5.**
+```python
+def fact_rec(n):
+    if n <= 1:
+        return 1
+    return n * fact_rec(n - 1)
+
+
+n = int(input())
+```
+
+**Подвиг 6. В программе объявлен следующий многомерный список:.**
+```python
+d = [1, 2, [True, False], ["Москва", "Уфа", [100, 101], ['True', [-2, -1]]], 7.89]
+
+
+def get_line_list(d, a=None):
+    if a is None:
+        a = []
+    for x in d:
+        if isinstance(x, list):
+            get_line_list(x, a)
+        else:
+            a.append(x)
+    return a
+```
+
+**Подвиг 7.**
+```python
+def get_path(n):
+    if n == 1:
+        return 1
+    if n == 2:
+        return 2
+    return get_path(n - 1) + get_path(n - 2)
+
+
+N = int(input())
+print(get_path(N))
+```
+
+**Великий подвиг 8.**
+```python
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+
+def merge_sort(lst):
+    if len(lst) <= 1:
+        return lst
+    mid = len(lst) // 2
+    return merge(merge_sort(lst[:mid]), merge_sort(lst[mid:]))
+
+
+nums = list(map(int, input().split()))
+print(*merge_sort(nums))
+```
+
+---
+
+## 7.10 Анонимные (lambda) функции
+
+**Подвиг 1.** lambda x: x; lambda x, y: x+y; lambda a: -a; lambda: "hello lambda"
+
+**Подвиг 2.**
+```python
+get_sq = lambda x: x ** 2
+```
+
+**Подвиг 3.**
+```python
+get_div = lambda a, b: None if b == 0 else a / b
+```
+
+**Подвиг 4.**
+```python
+get_abs = lambda n: -n if n < 0 else n
+x = float(input())
+print(get_abs(x))
+```
+
+**Подвиг 5.**
+```python
+check = lambda st: "ra" in st
+s = input()
+print(check(s))
+```
+
+**Подвиг 6.**
+```python
+def filter_lst(it, key):
+    return tuple(x for x in it if key(x))
+
+
+digs = list(map(int, input().split()))
+print(*filter_lst(digs, lambda x: True))
+print(*filter_lst(digs, lambda x: x < 0))
+print(*filter_lst(digs, lambda x: x >= 0))
+print(*filter_lst(digs, lambda x: 3 <= x <= 5))
+```
+
+---
+
+## 7.11 Области видимости. Ключевые слова global и nonlocal
+
+**Подвиг 1.** чтобы менять глобальные переменные в локальном окружении (например, внутри функций)
+
+**Подвиг 2.** чтобы из одной локальной области обращаться к локальной переменной из внешней локальной области для ее изменения
+
+**Подвиг 3.**
+```python
+WIDTH = int(input())
+
+
+def func1():
+    global WIDTH
+    WIDTH += 1
+
+
+func1()
+print(WIDTH)
+```
+
+**Подвиг 4.**
+```python
+def func1():
+    msg = input()
+
+    def func2():
+        nonlocal msg
+        msg = input()
+
+    func2()
+    print(msg)
+    print(msg)
+
+
+func1()
+```
+
+**Подвиг 5.**
+```python
+def create_global(x):
+    global TOTAL
+    TOTAL = x
+```
+
+---
+
+## 7.12 Замыкания в Python. Вложенные функции
+
+**Подвиг 1.**
+```python
+def counter_add():
+    def inner(x):
+        return x + 5
+    return inner
+
+
+cnt = counter_add()
+k = int(input())
+print(cnt(k))
+```
+
+**Подвиг 2.**
+```python
+def counter_add(n):
+    def inner(x):
+        return x + n
+    return inner
+
+
+cnt = counter_add(2)
+k = int(input())
+print(cnt(k))
+```
+
+**Подвиг 3. Реализуйте в программе следующее замыкание функций.**
+```python
+def outer():
+    def inner(s):
+        return f"<h1>{s}</h1>"
+    return inner
+
+
+s = input()
+f = outer()
+print(f(s))
+```
+
+**Подвиг 4. Реализуйте в программе следующее замыкание функций. Объявите внешнюю функцию с одним параметром tag, в который будет передаваться тег (строка).**
+```python
+def outer(tag):
+    def inner(s):
+        return f"<{tag}>{s}</{tag}>"
+    return inner
+
+
+tag = input()
+content = input()
+f = outer(tag)
+print(f(content))
+```
+
+**Подвиг 5. Реализуйте в программе следующее замыкание функций. Объявите внешнюю функцию с одним параметром tp, в который будет передаваться тип коллекции (строка).**
+```python
+def outer(tp):
+    def inner(s):
+        nums = list(map(int, s.split()))
+        return nums if tp == 'list' else tuple(nums)
+    return inner
+
+
+tp = input()
+data = input()
+f = outer(tp)
+lst = f(data)
+print(lst)
+```
+
+---
+
+## 7.13 Декораторы функций
+
+**Подвиг 1.**
+```python
+def get_sq(width, height):
+    return width * height
+
+
+def func_show(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        print(f"Площадь прямоугольника: {result}")
+        return result
+    return wrapper
+```
+
+**Подвиг 2.**
+```python
+menu = input()
+
+
+def show_menu(func):
+    def wrapper(*args, **kwargs):
+        lst = func(*args, **kwargs)
+        for i, item in enumerate(lst, 1):
+            print(f"{i}. {item}")
+        return lst
+    return wrapper
+
+
+@show_menu
+def get_menu(s):
+    return s.split()
+```
+
+**Подвиг 3.**
+```python
+data = input()
+
+
+def sort_dec(func):
+    def wrapper(*args, **kwargs):
+        return sorted(func(*args, **kwargs))
+    return wrapper
+
+
+@sort_dec
+def get_list(s):
+    return list(map(int, s.split()))
+
+
+lst = get_list(data)
+print(*lst)
+```
+
+**Подвиг 4. На вход программе поступают две строки.**
+```python
+s1 = input()
+s2 = input()
+
+
+def to_dict(func):
+    def wrapper(*args, **kwargs):
+        lst1, lst2 = func(*args, **kwargs)
+        return dict(zip(lst1, lst2))
+    return wrapper
+
+
+@to_dict
+def make_lists(x, y):
+    return x.split(), y.split()
+
+
+d = make_lists(s1, s2)
+print(*sorted(d.items()))
+```
+
+**Подвиг 5.**
+```python
+def collapse_dec(func):
+    def wrapper(*args, **kwargs):
+        s = func(*args, **kwargs)
+        while "--" in s:
+            s = s.replace("--", "-")
+        return s
+    return wrapper
+
+
+@collapse_dec
+def translit(s):
+    t = {'ё': 'yo', 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+         'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+         'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh',
+         'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'}
+    s = s.lower()
+    res = ""
+    for ch in s:
+        if ch in " :;.,_":
+            res += "-"
+        elif ch in t:
+            res += t[ch]
+        else:
+            res += ch
+    return res
+
+
+s = input()
+print(translit(s))
+```
+
+---
+
+## 7.14 Передача аргументов декораторам
+
+**Подвиг 1.**
+```python
+data = input()
+
+
+def start_dec(start):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs) + start
+        return wrapper
+    return decorator
+
+
+@start_dec(start=5)
+def get_sum(s):
+    return sum(map(int, s.split()))
+
+
+print(get_sum(data))
+```
+
+**Подвиг 2.**
+```python
+def tag_dec(tag="h1"):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            s = func(*args, **kwargs)
+            return f"<{tag}>{s}</{tag}>"
+        return wrapper
+    return decorator
+
+
+@tag_dec(tag="div")
+def to_lower(s):
+    return s.lower()
+
+
+s = input()
+print(to_lower(s))
+```
+
+**Подвиг 3.**
+```python
+def chars_dec(chars=" !?"):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            s = func(*args, **kwargs)
+            for ch in chars:
+                s = s.replace(ch, "-")
+            while "--" in s:
+                s = s.replace("--", "-")
+            return s
+        return wrapper
+    return decorator
+
+
+@chars_dec(chars="?!:;,. ")
+def translit(s):
+    t = {'ё': 'yo', 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+         'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+         'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh',
+         'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'}
+    s = s.lower()
+    res = ""
+    for ch in s:
+        res += t.get(ch, ch)
+    return res
+
+
+s = input()
+print(translit(s))
+```
+
+**Подвиг 4.**
+```python
+from functools import wraps
+
+
+def sum_dec(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return sum(func(*args, **kwargs))
+    return wrapper
+
+
+@sum_dec
+def get_list(s):
+    '''Функция для формирования списка целых значений'''
+    return list(map(int, s.split()))
+```
+
+---
+
+## 7.15 Промежуточные испытания
+
+**Вызов 1.**
+```python
+words = ['вино', 'сука', 'срок', 'арка', 'тура', 'сова', 'жара', 'день', 'жгут', 'урна', 'заяц', 'зона', 'звук', 'гора', 'гусь', 'руна', 'суша', 'тара', 'враг', 'арба', 'кара', 'поза', 'бобр', 'икра', 'слон', 'доза', 'знак', 'груз', 'глаз', 'жаба', 'база', 'дока', 'губа', 'блин', 'жена', 'доля', 'роса', 'бита', 'каюк', 'друг', 'вера', 'заря', 'дыра', 'буря', 'дача', 'вода', 'кафр', 'дума', 'драп', 'баян', 'суха', 'диво', 'грач', 'дочь', 'брат', 'дуга', 'каюр', 'крюк', 'звон', 'пола', 'вата', 'град', 'банк', 'рука', 'сока', 'урюк', 'иней', 'дека', 'борт', 'бокс', 'сухо', 'мура', 'балл', 'врач', 'долг', 'урок', 'стон', 'мука', 'азот', 'лука', 'кафе', 'жест', 'вход', 'волк', 'муха', 'блок', 'гриф', 'жбан', 'двор', 'дело', 'зима', 'ваза', 'рана', 'сток', 'змея', 'каре', 'горе', 'полк', 'роза', 'арфа', 'игра']
+
+
+def find_chain_words(words, start_word, end_word, chain=None):
+    def diff_one(w1, w2):
+        return sum(c1 != c2 for c1, c2 in zip(w1, w2)) == 1
+
+    queue = [[start_word]]
+    visited = {start_word}
+    while queue:
+        path = queue.pop(0)
+        if path[-1] == end_word:
+            return path
+        for w in words:
+            if w not in visited and diff_one(path[-1], w):
+                visited.add(w)
+                queue.append(path + [w])
+    return []
+
+
+start_word = 'тара'
+end_word = 'сухо'
+chain_result = find_chain_words(words, start_word, end_word)
+```
+
+**Вызов 2.**
+```python
+import random
+
+N = 10
+size_ships = (4, 3, 3, 2, 2, 2, 1, 1, 1, 1)
+
+
+def try_fill():
+    board = [[0] * N for _ in range(N)]
+    for ship in size_ships:
+        for _ in range(3000):
+            horizontal = random.randint(0, 1)
+            r = random.randint(0, N - 1)
+            c = random.randint(0, N - 1)
+            cells = []
+            ok = True
+            for k in range(ship):
+                rr = r if horizontal else r + k
+                cc = c + k if horizontal else c
+                if rr >= N or cc >= N:
+                    ok = False
+                    break
+                cells.append((rr, cc))
+            if not ok:
+                continue
+            for rr, cc in cells:
+                for dr in (-1, 0, 1):
+                    for dc in (-1, 0, 1):
+                        nr, nc = rr + dr, cc + dc
+                        if 0 <= nr < N and 0 <= nc < N and board[nr][nc]:
+                            ok = False
+            if not ok:
+                continue
+            for rr, cc in cells:
+                board[rr][cc] = 1
+            break
+        else:
+            return None
+    return board
+
+
+game_board = None
+while game_board is None:
+    game_board = try_fill()
+```
+
+---
+
+## 8.1 Импорт стандартных модулей. Команды import и from
+
+**Подвиг 1.** import time; import time as tm; from time import *
+
+**Подвиг 2.**
+```python
+import math
+x = float(input())
+print(math.ceil(x))
+```
+
+**Подвиг 3.**
+```python
+from math import floor
+x = float(input())
+print(floor(x))
+```
+
+**Подвиг 4.**
+```python
+from math import factorial as fact
+
+
+def factorial(n):
+    p = 1
+    for i in range(2, n+1):
+        p *= i
+
+    print("my factorial")
+    return p
+```
+
+**Подвиг 5.**
+```python
+from random import seed, randint
+seed(1)
+print(randint(10, 50))
+```
+
+**Подвиг 6.**
+```python
+from random import seed, random as rnd
+seed(10)
+print(round(rnd(), 2))
+```
+
+**Подвиг 7.** Каждый с новой строки: import random    import math    import time; from math import floor, ceil, pi; from math import floor as fl, ceil as cl, pi
+
+---
+
+## 8.2 Импорт собственных модулей
+
+**Подвиг 1.** import panda; from panda import *
+
+**Подвиг 2.** import libs.panda; from libs.panda import *
+
+**Подвиг 3.** import panda; from panda import *
+
+**Подвиг 4.** import panda; from panda import PND, panda_say
+
+**Подвиг 5.** модуль panda импортируется только один (первый) раз
+
+**Подвиг 6.** модуль импортируется и строчка с функцией print будет выполнена
+
+**Подвиг 7.** panda.kungfu.KUNGFU
+
+**Подвиг 8.** __name__ == "__main__"
+
+**Подвиг 9.** позволяет повторно импортировать модули
+
+---
+
+## 8.3 Установка сторонних модулей. Пакетная установка
+
+**Подвиг 1.** отображает список установленных модулей для текущего интерпретатора
+
+**Подвиг 2.** pip install Django; pip install Django==2.1.2; pip install -r requirements.txt
+
+**Подвиг 3.** создает текстовый файл со списком установленных модулей и номерами их версий
+
+**Подвиг 4.** для поиска сторонних модулей (для их последующей установки)
+
+---
+
+## 8.4 Пакеты (package) в Python
+
+**Подвиг 1.** пакет - это каталог с набором модулей и обязательным файлом __init__.py
+
+**Подвиг 2.** import panda_pack; from panda_pack import *
+
+**Подвиг 3.** он исполняется при импорте пакета
+
+**Подвиг 4.** import panda_pack.panda; from panda_pack.panda import *; from .panda import *
+
+**Подвиг 5.** panda_pack.panda.PND
+
+**Подвиг 7.** импортируется только модуль panda1
+
+---
+
+## 8.5 Функция open. Чтение данных из файла
+
+**Подвиг 1.** в текущем рабочем каталоге открывается файловый поток на чтение данных из файла 'my_file.txt'; переменная head будет содержать первые три прочитанных символа; переменная v будет хранить размер файла 'my_file.txt' в байтах
+
+**Подвиг 2.**
+```python
+f_log = open('log.dat', encoding='utf-8')
+data = f_log.readlines()
+f_log.close()
+header = data[0]
+last_data = data[-1]
+```
+
+**Подвиг 3.** Соответствия:
+- `read()` — выполняет чтение данных от текущей позиции либо до конца файла, либо на заданное количество символов
+- `readline()` — выполняет чтение данных от текущей позиции и до конца строки или файла
+- `readlines()` — выполняет чтение строк из файла, начиная с текущей позиции
+- `seek()` — позволяет менять значение файловой позиции (без чтения данных)
+- `tell()` — возвращает значение текущей файловой позиции
+
+**Подвиг 4.**
+```python
+f_inp = open('sites/links.txt', encoding='windows-1251')
+f_inp.seek(0, 2)
+size_file = f_inp.tell()
+f_inp.close()
+```
+
+**Подвиг 5.**
+```python
+f_text = open('course.new.dat', encoding='utf-8')
+data = f_text.read()
+f_text.close()
+start_5 = data[:5]
+end_5 = data[-5:]
+```
+
+**Подвиг 6.**
+```python
+fp = open('projects/python/works.my', encoding='utf-8')
+data = fp.read()
+fp.close()
+fragment = data[9:20]
+```
+
+**Подвиг 7.**
+```python
+fp = open('stuff/persons.dat', encoding='utf-8')
+lines = fp.readlines()
+fp.close()
+num_person = 0
+for i, line in enumerate(lines, 1):
+    parts = line.split()
+    if len(parts) >= 3 and parts[0] == "Сергей" and parts[2] == "Балакирев":
+        num_person = i
+        break
+```
+
+**Подвиг 8.** для освобождения ресурсов, связанных с этим файлом; чтобы не потерялись записанные данные в файл
+
+---
+
+## 8.6 Обработка исключения FileNotFoundError и менеджер контекста
+
+**Подвиг 1. Выберите все верные утверждения, касающиеся следующей программы:.** менеджер контекста with автоматически закрывает файловое соединение; файл students.db открывается только на чтение данных
+
+**Подвиг 2.**
+```python
+try:
+    with open('diagnostics.csv', encoding='utf-8') as f:
+        success_open_file = True
+        header = f.readline()
+        row = f.readline()
+except FileNotFoundError:
+    success_open_file = False
+```
+
+**Подвиг 3.**
+```python
+success_open_file = True
+success_file_operations = True
+try:
+    with open('images/targets.dat', encoding='utf-8') as f:
+        last_row = f.readlines()[-1]
+except FileNotFoundError:
+    success_open_file = False
+except Exception:
+    success_file_operations = False
+```
+
+**Подвиг 4.**
+```python
+try:
+    with open('bank.csv', encoding='utf-8') as f:
+        header = f.readline().strip()
+        values = f.readline().strip()
+    row_data = dict(zip(header.split(','), values.split(',')))
+except FileNotFoundError:
+    pass
+```
+
+**Подвиг 5.**
+```python
+try:
+    with open('logs/01-01-2025/log_app.txt', encoding='utf-8') as f:
+        log_errors = [line.strip() for line in f if '[ERROR]' in line]
+except FileNotFoundError:
+    pass
+```
+
+**Подвиг 6.**
+```python
+try:
+    with open('python/course_text.txt', encoding='windows-1251') as f:
+        text = f.read()
+        idx = text.lower().find('python')
+        f.seek(0)
+        if idx != -1:
+            f.read(idx)
+except FileNotFoundError:
+    pass
+```
+
+---
+
+## 8.7 Запись данных в файл
+
+**Подвиг 1.** если файл files.txt существует, то его открытие в режиме 'w' приведет к потере всего его содержимого
+
+**Подвиг 2.** Соответствия:
+- `r` — только чтение данных в текстовом режиме доступа
+- `w` — только запись данных в текстовом режиме доступа
+- `a` — только на дозапись данных в текстовом режиме доступа
+- `r+` — чтение и запись данных; генерация ошибки FileNotFoundError, если файл не существует
+- `w+` — чтение и запись данных; если файл не существует, то он создается; если файл существовал, то его содержимое очищается
+- `a+` — чтение и дозапись данных; данные читаются целиком (во всем файле), а записываются только после имеющегося содержимого
+
+**Подвиг 3.**
+```python
+msg = input()
+with open('letter.txt', mode='w', encoding='utf-8') as f:
+    f.write(msg)
+```
+
+**Подвиг 4.**
+```python
+msg = input()
+with open('work_data/log_stats.txt', mode='a+', encoding='utf-8') as f:
+    f.write(msg)
+    f.seek(0)
+    header = f.readline()
+```
+
+**Подвиг 5.** некоторые записываемые данные могут быть потеряны
+
+**Подвиг 6.**
+```python
+try:
+    with open('lib/text_1', encoding='utf-8') as f1, open('lib/text_2', encoding='utf-8') as f2:
+        f1.readline()
+        data1 = f1.read()
+        f2.readline()
+        data2 = f2.read()
+    with open('text_all.txt', mode='w', encoding='windows-1251') as out:
+        out.write(data1 + '\n' + data2)
+except FileNotFoundError:
+    pass
+```
+
+**Подвиг 7.**
+```python
+try:
+    with open('lang_doc/python_base.dat', encoding='utf-8') as f1:
+        data1 = f1.read()
+    with open('lang_doc/java_base.dat', encoding='utf-8') as f2:
+        data2 = f2.read()
+    with open('lang_doc/python_base.dat', mode='w', encoding='utf-8') as f1:
+        f1.write(data2)
+    with open('lang_doc/java_base.dat', mode='w', encoding='utf-8') as f2:
+        f2.write(data1)
+except FileNotFoundError:
+    pass
+```
+
+**Подвиг 8.** функции модуля pickle позволяют преобразовывать объекты разных типов в набор байтовых данных; модуль pickle небезопасен в своей работе, с точки зрения уязвимости программного кода
+
+**Подвиг 9.** Соответствия:
+- `dumps()` — кодирует объект в байтовую строку
+- `loads()` — декодирует (восстанавливает) объект по байтовой строке
+- `dump()` — кодирует объект с передачей байтовых данных в указанный поток
+- `load()` — декодирует (восстанавливает) объект из указанного байтового потока
+
+---
+
+## 9.1 Выражения-генераторы
+
+**Подвиг 1.**
+```python
+gen = (x for x in range(2, 10001))
+```
+
+**Подвиг 2.**
+```python
+a, b = map(int, input().split())
+tp = tuple(x ** 2 for x in range(a, b + 1))
+```
+
+**Подвиг 3.**
+```python
+a, b = map(int, input().split())
+gen = (abs(x) for x in range(a, b + 1))
+for _ in range(5):
+    print(next(gen))
+```
+
+**Подвиг 4.** sum(gen); max(gen); min(gen); list(gen); set(gen); tuple(gen)
+
+**Подвиг 5.** меньший расход памяти; возможность оперировать очень большими объемами данных
+
+**Подвиг 6.**
+```python
+a = int(input())
+g1 = (abs(x) for x in range(-a, a + 1))
+g2 = (x ** 3 for x in g1)
+result = [next(g2) for _ in range(4)]
+print(*result)
+```
+
+**Подвиг 7.**
+```python
+from string import ascii_lowercase
+gen = (c1 + c2 for c1 in ascii_lowercase for c2 in ascii_lowercase)
+result = [next(gen) for _ in range(50)]
+print(*result)
+```
+
+**Подвиг 8.**
+```python
+cities = ["Москва", "Ульяновск", "Самара", "Уфа", "Омск", "Тула"]
+gen = (cities[i % len(cities)] for i in range(1000000))
+result = [next(gen) for _ in range(20)]
+print(*result)
+```
+
+**Подвиг 9.**
+```python
+a, b = map(int, input().split())
+gen = (round(0.5 * pow(a + i * 0.01, 2) - 2.0, 2) for i in range(2000))
+result = [next(gen) for _ in range(20)]
+print(*result)
+```
+
+---
+
+## 9.2 Функция-генератор. Оператор yield
+
+**Подвиг 1.**
+```python
+N = int(input())
+
+
+def get_sum(total):
+    s = 0
+    for i in range(1, total + 1):
+        s += i
+        yield s
+```
+
+**Подвиг 2.**
+```python
+N = int(input())
+
+
+def balak_seq(max_len):
+    a = b = c = 1
+    count = 0
+    while count < max_len:
+        if count < 3:
+            yield 1
+        else:
+            nxt = a + b + c
+            a, b, c = b, c, nxt
+            yield nxt
+        count += 1
+
+
+g = balak_seq(N)
+print(*[next(g) for _ in range(N)])
+```
+
+**Подвиг 3.**
+```python
+from string import ascii_lowercase, ascii_uppercase
+import random
+
+N = int(input())
+chars = ascii_lowercase + ascii_uppercase + "0123456789!?@#$*"
+random.seed(1)
+
+
+def gen_password(n):
+    while True:
+        yield "".join(chars[random.randint(0, len(chars) - 1)] for _ in range(n))
+
+
+g = gen_password(N)
+for _ in range(5):
+    print(next(g))
+```
+
+**Подвиг 4.**
+```python
+from string import ascii_lowercase, ascii_uppercase
+import random
+
+N = int(input())
+chars = ascii_lowercase + ascii_uppercase
+random.seed(1)
+
+
+def gen_email(max_size):
+    while True:
+        name = "".join(chars[random.randint(0, len(chars) - 1)] for _ in range(max_size))
+        yield name + "@mail.ru"
+
+
+g = gen_email(N)
+for _ in range(5):
+    print(next(g))
+```
+
+**Подвиг 5.**
+```python
+def gen_primes():
+    n = 2
+    while True:
+        is_p = True
+        for d in range(2, int(n ** 0.5) + 1):
+            if n % d == 0:
+                is_p = False
+                break
+        if is_p:
+            yield n
+        n += 1
+
+
+g = gen_primes()
+print(*[next(g) for _ in range(20)])
+```
+
+---
+
+## 9.3 Функция map
+
+**Подвиг 1.**
+```python
+data = input().split()
+m = map(float, data)
+print(next(m), next(m), next(m))
+```
+
+**Подвиг 2.**
+```python
+lst = list(map(abs, map(int, input().split())))
+print(*lst)
+```
+
+**Подвиг 3.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+lst2D = [list(map(int, row.split())) for row in lst_in]
+```
+
+**Подвиг 4.**
+```python
+s = input()
+tp = tuple(map(lambda x: tuple(x.split("=")), s.split()))
+```
+
+**Подвиг 5.**
+```python
+t = {'ё': 'yo', 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh',
+     'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+     'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh',
+     'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'}
+s = input().lower()
+print("".join(map(lambda ch: t.get(ch, "-"), s)))
+```
+
+**Подвиг 6. На вход программе подается строка с названиями городов, записанных в одну строчку через пробел.**
+```python
+print(*map(lambda c: c if len(c) > 5 else "-", input().split()))
+```
+
+---
+
+## 9.4 Функция filter
+
+**Подвиг 1.**
+```python
+f = filter(lambda c: len(c) > 5, input().split())
+print(next(f), next(f), next(f))
+```
+
+**Подвиг 2.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+tp = tuple(map(lambda x: tuple(x.split("=")), lst_in))
+result = filter(lambda p: int(p[1]) >= 500, tp)
+print(*[p[0] for p in result])
+```
+
+**Подвиг 3.**
+```python
+nums = list(map(int, input().split()))
+print(*filter(lambda x: 10 <= abs(x) <= 99, nums))
+```
+
+**Подвиг 4.**
+```python
+a = set(map(int, input().split()))
+b = set(map(int, input().split()))
+result = sorted(filter(lambda x: x % 2 == 0, a & b))
+print(*result)
+```
+
+**Подвиг 5.**
+```python
+def valid(e):
+    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_@."
+    if not all(c in allowed for c in e):
+        return False
+    if "@" not in e:
+        return False
+    return "." in e[e.index("@"):]
+
+
+print(*filter(valid, input().split()))
+```
+
+---
+
+## 9.5 Функция zip
+
+**Подвиг 1.**
+```python
+a = list(map(int, input().split()))
+b = list(map(int, input().split()))
+m = map(lambda p: p[0] * p[1], zip(a, b))
+print(next(m), next(m), next(m))
+```
+
+**Подвиг 2. На вход программе подается неравномерная таблица целых чисел.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+rows = [row.split() for row in lst_in]
+for r in zip(*zip(*rows)):
+    print(*r)
+```
+
+**Подвиг 3.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+lst2D = [list(map(int, row.split())) for row in lst_in]
+for col in zip(*lst2D):
+    print(*col)
+```
+
+**Подвиг 4.**
+```python
+words = input().split()
+for row in zip(words[0::3], words[1::3], words[2::3]):
+    print(*row)
+```
+
+**Подвиг 5.**
+```python
+s = input()
+lst = list(zip(s, range(10)))
+```
+
+---
+
+## 9.6 Сортировка с помощью sort и sorted
+
+**Подвиг 1.** метод sort применим только к спискам (среди базовых типов данных); метод sort сортирует список, для которого вызывается; функция sorted возвращает отсортированный список для итерируемого объекта
+
+**Подвиг 2.**
+```python
+s = input()
+data = list(map(int, s.split()))
+lst = list(data)
+lst.sort()
+tp = tuple(data)
+tp_lst = tuple(sorted(tp))
+```
+
+**Подвиг 3. Объявите в программе функцию со следующей сигнатурой:.**
+```python
+def get_sort(d):
+    return [d[k] for k in sorted(d, reverse=True)]
+```
+
+**Подвиг 4.**
+```python
+nums = set(map(int, input().split()))
+print(*sorted(nums, reverse=True)[:4])
+```
+
+**Подвиг 5.**
+```python
+a = sorted(map(int, input().split()))
+b = sorted(map(int, input().split()), reverse=True)
+print(*[x + y for x, y in zip(a, b)])
+```
+
+**Подвиг 6.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+d = {}
+for item in lst_in:
+    name, price = item.rsplit(":", 1)
+    d[int(price)] = name
+
+
+def cheapest3(dct):
+    return [dct[p] for p in sorted(dct)[:3]]
+
+
+print(*cheapest3(d))
+```
+
+---
+
+## 9.7 Аргумент key для сортировки по ключу
+
+**Подвиг 1.**
+```python
+rivers = input().split()
+print(*sorted(rivers, key=len, reverse=True))
+```
+
+**Подвиг 2.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+d = {}
+for item in lst_in:
+    name, weight = item.split("=")
+    d[name] = int(weight)
+print(*sorted(d, key=lambda k: d[k], reverse=True))
+```
+
+**Подвиг 3.**
+```python
+order = {'до': 0, 'ре': 1, 'ми': 2, 'фа': 3, 'соль': 4, 'ля': 5, 'си': 6}
+notes = input().split()
+print(*sorted(notes, key=lambda n: order[n]))
+```
+
+**Значимый подвиг 4.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+
+
+def conv(c):
+    return int(c) if c.lstrip("-").isdigit() else c
+
+
+rows = [tuple(conv(c) for c in line.split(";")) for line in lst_in]
+header = rows[0]
+desired = ['Имя', 'Зачет', 'Оценка', 'Номер']
+col_order = sorted(range(len(header)), key=lambda i: desired.index(header[i]))
+t_sorted = tuple(tuple(row[i] for i in col_order) for row in rows)
+```
+
+**Подвиг 5.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+ranks = ['рядовой', 'сержант', 'старшина', 'прапорщик', 'лейтенант',
+         'капитан', 'майор', 'подполковник', 'полковник']
+lst = [list(item.split("=")) for item in lst_in]
+lst.sort(key=lambda x: ranks.index(x[1]))
+```
+
+---
+
+## 9.8 Функция isinstance для проверки типов данных
+
+**Подвиг 1.** функция isinstance выполняет проверку типов с учетом их наследования; функция type возвращает фактический тип для переданного ей аргумента (без учета наследования); пример вызова функции: isinstance(x, float); пример вызова функции: isinstance(x, (str, float)); пример вызова функции: type(x) == bool; пример вызова функции: type(x) is int; пример вызова функции: type(x) in (float, int)
+
+**Подвиг 2.**
+```python
+def get_add(a, b):
+    def is_num(x):
+        return isinstance(x, (int, float)) and not isinstance(x, bool)
+    if is_num(a) and is_num(b):
+        return a + b
+    if isinstance(a, str) and isinstance(b, str):
+        return a + b
+    return None
+```
+
+**Подвиг 3.**
+```python
+def get_sum(it):
+    s = 0
+    for x in it:
+        if isinstance(x, int) and not isinstance(x, bool):
+            s += x
+    return s
+```
+
+**Подвиг 4.**
+```python
+def get_even_sum(it):
+    s = 0
+    for x in it:
+        if isinstance(x, int) and not isinstance(x, bool) and x % 2 == 0:
+            s += x
+    return s
+```
+
+**Подвиг 5. Объявите в программе функцию с именем get_list_digследующей сигнатуры:.**
+```python
+def get_list_dig(lst):
+    return [x for x in lst if isinstance(x, (int, float)) and not isinstance(x, bool)]
+```
+
+---
+
+## 9.9 Функции all и any
+
+**Подвиг 1.**
+```python
+nums = list(map(int, input().split()))
+print(all(x % 2 == 0 for x in nums))
+```
+
+**Подвиг 2.**
+```python
+nums = list(map(float, input().split()))
+print(any(x < 0 for x in nums))
+```
+
+**Подвиг 3. В программе объявите функцию с именем is_string следующей сигнатуры:.**
+```python
+def is_string(lst):
+    return all(isinstance(x, str) for x in lst)
+```
+
+**Подвиг 4.**
+```python
+marks = list(map(int, input().split()))
+print("отчислен" if any(m < 3 for m in marks) else "учится")
+```
+
+**Подвиг 5. На вход программе подается текущее игровое поле для игры "Крестики-нолики" в виде следующей таблицы (списка строк):.**
+```python
+import sys
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+pole = [row.split() for row in lst_in]
+
+
+def is_free(lst):
+    return any('#' in row for row in lst)
+```
+
+---
+
+## 10.1 Расширенное представление чисел
+
+**Подвиг 1.** `0.01`
+
+**Подвиг 2.** `780`
+
+**Подвиг 3.** `10`
+
+**Подвиг 4.** `45`
+
+**Подвиг 5.** 45.6; 1e4; 0b111; -0b1101; 0xff; -0xa9f; 0o45
+
+**Подвиг 6.** `169`
+
+**Подвиг 7.** `207`
+
+**Подвиг 8.** `8`
+
+**Подвиг 9.** `44`
+
+---
+
+## 10.2 Битовые операции И, ИЛИ, НЕ, XOR
+
+**Подвиг 1.** Соответствия:
+- `~` — битовое НЕ
+- `|` — битовое ИЛИ
+- `&` — битовое И
+- `^` — исключающее ИЛИ (XOR)
+- `>>` — сдвиг бит вправо
+- `<<` — сдвиг бит влево
+
+**Подвиг 2.**
+```python
+n = int(input())
+print(n | (1 << 3))
+```
+
+**Подвиг 3.**
+```python
+n = int(input())
+print(n & ~(1 << 4) & ~(1 << 1))
+```
+
+**Подвиг 4.**
+```python
+n = int(input())
+print(n ^ (1 << 3) ^ (1 << 0))
+```
+
+**Подвиг 5.**
+```python
+n = int(input())
+print(n << 2)
+```
+
+**Подвиг 6.**
+```python
+n = int(input())
+print(n >> 1)
+```
+
+**Подвиг 7. На вход программе подается зашифрованное слово.**
+```python
+key = 123
+s = input()
+print("".join(chr(ord(ch) ^ key) for ch in s))
+```
+
+**Подвиг 8.**
+```python
+n = int(input())
+if n & (1 << 6) and n & (1 << 3):
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+**Подвиг 9.**
+```python
+n = int(input())
+if n & (1 << 5) or n & (1 << 1):
+    print("ДА")
+else:
+    print("НЕТ")
+```
+
+---
+
+## 10.3 Модуль random стандартной библиотеки
+
+**Подвиг 1.** Соответствия:
+- `seed` — установка "зерна" датчика случайных чисел
+- `random` — генерация вещественных случайных величин в диапазоне [0; 1)
+- `randint` — генерация целочисленных случайных величин в диапазоне [a; b]
+- `gauss` — генерация гауссовских случайных величин
+- `choice` — выбор случайного элемента из последовательности
+- `shuffle` — перемешивание элементов последовательности
+- `sample` — выбор случайной подпоследовательности из последовательности
+
+**Подвиг 2.**
+```python
+import random
+random.seed(1)
+a, b = map(int, input().split())
+print(round(a + random.random() * (b - a), 2))
+```
+
+**Подвиг 3.**
+```python
+import random
+random.seed(1)
+a, b = map(int, input().split())
+print(random.randint(a, b))
+```
+
+**Подвиг 4. На вход программе подается строка с названиями городов, записанных через пробел.**
+```python
+import random
+random.seed(1)
+cities = input().split()
+print(random.choice(cities))
+```
+
+**Подвиг 5.**
+```python
+import sys
+import random
+random.seed(1)
+lst_in = list(map(str.strip, sys.stdin.readlines()))
+lst2D = [list(map(int, row.split())) for row in lst_in]
+cols = list(zip(*lst2D))
+random.shuffle(cols)
+for row in zip(*cols):
+    print(*row)
+```
+
+**Подвиг 6. На вход программе подается строка с именами студентов, записанными через пробел.**
+```python
+import random
+random.seed(1)
+names = input().split()
+print(*random.sample(names, 3))
+```
+
+**Значимый подвиг 7.**
+```python
+import random
+
+N = int(input())
+
+
+def fill():
+    P = [[0] * N for i in range(N)]
+    placed = 0
+    attempts = 0
+    while placed < 10:
+        attempts += 1
+        if attempts > 100000:
+            return None
+        r = random.randint(0, N - 1)
+        c = random.randint(0, N - 1)
+        if P[r][c] == 1:
+            continue
+        ok = True
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < N and 0 <= nc < N and P[nr][nc] == 1:
+                    ok = False
+        if ok:
+            P[r][c] = 1
+            placed += 1
+    return P
+
+
+P = None
+while P is None:
+    P = fill()
+```
+
+---
+
+## 10.4 Конструкция match/case. Первое знакомство
+
+**Подвиг 1.** Выбран пункт номер 5
+
+**Подвиг 2.** Неподдерживаемый тип запроса
+
+**Подвиг 3.** POST-запрос
+
+**Подвиг 4.** Ошибка загрузки страницы
+
+**Подвиг 5.**
+```python
+cmd = input()
+match cmd.lower():
+    case "top":
+        print("Команда top")
+    case "bottom":
+        print("Команда bottom")
+    case "right":
+        print("Команда right")
+    case "left":
+        print("Команда left")
+    case _:
+        print("Неверная команда")
+```
+
+**Подвиг 6.**
+```python
+def get_data(value):
+    match value:
+        case int():
+            res = value
+            return res
+        case float():
+            res = value
+            return res
+        case str():
+            res = value
+            return res
+
+    return None
+```
+
+**Подвиг 7.**
+```python
+def get_data(value):
+    match value:
+        case int() if value > 0:
+            return value
+        case float() if -100 <= value <= 100:
+            return value
+        case str():
+            return value
+
+    return None
+```
+
+---
+
+## 10.5 Конструкция match/case с кортежами и списками
+
+**Подвиг 1.** Петр, Иванович, Сидоров
+
+**Подвиг 2.** 2
+
+**Подвиг 3.** 5
+
+**Подвиг 4.**
+```python
+t = (int, str, str, float, int)
+book = [t[i](x) if t[i] != str else x.strip() for i, x in enumerate(input().split(","))]
+
+match book:
+    case [_, author, title]:
+        print("Yes")
+    case [_, author, title, price]:
+        print("Yes")
+    case [_, author, title, price, year]:
+        print("Yes")
+    case _:
+        print("No")
+```
+
+**Подвиг 5.**
+```python
+t = (int, str, str, float, int)
+book = [t[i](x) if t[i] != str else x.strip() for i, x in enumerate(input().split(","))]
+
+match book:
+    case [_, author, title] if len(author) >= 6 and len(title) >= 10:
+        print("Yes")
+    case [_, author, title, price] if len(author) >= 6 and price > 0:
+        print("Yes")
+    case [_, author, title, year] if year >= 2020:
+        print("Yes")
+    case [_, author, title, price, year] if price > 0 and year >= 2020:
+        print("Yes")
+    case _:
+        print("No")
+```
+
+---
+
+## 10.6 Конструкция match/case со словарями и множествами
+
+**Подвиг 1.** 1
+
+**Подвиг 2.** case {'marks': ms, 'age': age, 'fio': fio} if age == 22: ...; case {'marks': ms, 'age': age} if age == 22: ...; case {'marks': m, 'age': 22}: ...
+
+**Подвиг 3.** case {'marks': ms, 'age': age, 'fio': fio} if ms.count(2) > 1: ...; case {'marks': ms, 'age': age} if ms.count(2) > 1: ...; case {'marks': ms, 'age': int() | float() as age, 'fio': fio} if ms.count(2) > 1: ...; case {'marks': ms, 'fio': str(fio)} if ms.count(2) > 1: ...
+
+**Подвиг 4.**
+```python
+def parse_json(data):
+    match data:
+        case {'access': bool() as access, 'data': list() as lst} if lst:
+            return access, lst[0]
+        case {'id': ids, 'data': [_, {'login': login}, _, _]}:
+            return ids, login
+
+    return None
+
+
+json_data = {'id': 2, 'access': False, 'data': ['26.05.2023', {'login': '1234', 'email': 'xxx@mail.com'}, 2000, 56.4]}
+```
+
+**Подвиг 5.**
+```python
+def parse_json(data):
+    match data:
+        case {'access': True, 'data': [_, {'login': str() as login, 'email': str() as email}, *_]}:
+            return login, email
+        case {'id': ids, 'data': [_, {'login': login}, _, _]}:
+            return ids, login
+
+    return None
+
+
+json_data = {'id': 2, 'access': True, 'data': ['26.05.2023', {'login': '1234', 'email': 'xxx@mail.com'}, 2000, 56.4]}
+```
+
+---
+
+## 10.8 Итоговое испытание
+
+**Итоговое испытание.** Продолжить изучение ООП языка Python на курсе "Добрый, добрый Python ООП"
+
