@@ -164,3 +164,163 @@ async def test_guest_cannot_control_playback(host_user, video):
     assert state['is_playing'] is False
     assert state['position'] == 0.0
     await communicator.disconnect()
+
+
+# --- Внешние видео (yt-dlp) -------------------------------------------------
+
+@pytest.mark.django_db
+def test_create_room_requires_video_or_url(auth):
+    resp = auth.post('/api/rooms/', {}, format='json')
+    assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_create_room_rejects_both_video_and_url(auth, video):
+    resp = auth.post(
+        '/api/rooms/',
+        {'video': str(video.id), 'external_url': 'https://example.com/v'},
+        format='json',
+    )
+    assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_create_room_with_external_url_uses_resolver(auth, monkeypatch):
+    fake = {
+        'url': 'https://cdn.example.com/stream.mp4',
+        'kind': 'youtube',
+        'title': 'Тестовое внешнее видео',
+        'duration': 123.4,
+        'thumbnail': 'https://example.com/poster.jpg',
+    }
+    monkeypatch.setattr('rooms.serializers.resolve_external', lambda _url: fake)
+
+    resp = auth.post(
+        '/api/rooms/',
+        {'external_url': 'https://www.youtube.com/watch?v=abc'},
+        format='json',
+    )
+    assert resp.status_code == 201, resp.content
+    body = resp.json()
+    assert body['is_external'] is True
+    assert body['stream_url'] == fake['url']
+    assert body['external_title'] == fake['title']
+    assert body['external_thumbnail_url'] == fake['thumbnail']
+    assert body['display_title'] == fake['title']
+
+
+# --- Передача роли ведущего -------------------------------------------------
+
+@pytest.fixture
+def viewer_user():
+    return User.objects.create_user(username='viewer', password='viewpass123')
+
+
+@pytest.mark.django_db(transaction=True)
+async def test_host_can_transfer_role_to_viewer(host_user, viewer_user, video):
+    room = await _make_room(video, host_user)
+    host_token = str(RefreshToken.for_user(host_user).access_token)
+    viewer_token = str(RefreshToken.for_user(viewer_user).access_token)
+
+    host_comm = WebsocketCommunicator(application, _ws_url(room.id, host_token))
+    await host_comm.connect()
+    await host_comm.receive_json_from()  # state
+    await host_comm.receive_json_from()  # participants
+
+    viewer_comm = WebsocketCommunicator(application, _ws_url(room.id, viewer_token))
+    await viewer_comm.connect()
+    await viewer_comm.receive_json_from()  # state (initial для зрителя)
+    # host получает рассылку нового participants после подключения viewer.
+    participants_event = await host_comm.receive_json_from()
+    assert participants_event['type'] == 'room.participants'
+    viewer_participant = next(
+        v for v in participants_event['viewers'] if v['user_id'] == viewer_user.id
+    )
+    viewer_participant_id = viewer_participant['id']
+
+    # viewer на своей стороне тоже видит participants
+    await viewer_comm.receive_json_from()
+
+    # Host передаёт роль
+    await host_comm.send_json_to(
+        {'type': 'room.transfer_host', 'participant_id': viewer_participant_id}
+    )
+    # Обе стороны получают новый state и новый participants.
+    state_host = await host_comm.receive_json_from()
+    assert state_host['type'] == 'room.state'
+    assert state_host['host']['id'] == viewer_user.id
+    participants_after = await host_comm.receive_json_from()
+    new_host_record = next(
+        v for v in participants_after['viewers'] if v['user_id'] == viewer_user.id
+    )
+    assert new_host_record['is_host'] is True
+
+    # В БД отражена смена.
+    refreshed = await database_sync_to_async(WatchRoom.objects.get)(pk=room.id)
+    assert refreshed.host_id == viewer_user.id
+
+    await viewer_comm.disconnect()
+    await host_comm.disconnect()
+
+
+@pytest.mark.django_db(transaction=True)
+async def test_viewer_cannot_transfer_host(host_user, viewer_user, video):
+    room = await _make_room(video, host_user)
+    host_token = str(RefreshToken.for_user(host_user).access_token)
+    viewer_token = str(RefreshToken.for_user(viewer_user).access_token)
+
+    host_comm = WebsocketCommunicator(application, _ws_url(room.id, host_token))
+    await host_comm.connect()
+    await host_comm.receive_json_from()  # state
+    await host_comm.receive_json_from()  # participants
+    viewer_comm = WebsocketCommunicator(application, _ws_url(room.id, viewer_token))
+    await viewer_comm.connect()
+    await viewer_comm.receive_json_from()  # state
+    await viewer_comm.receive_json_from()  # participants
+    # Стянем из host'а событие о новом подключении viewer'а (нужны id).
+    participants_event = await host_comm.receive_json_from()
+    host_participant_id = next(
+        v for v in participants_event['viewers'] if v['user_id'] == host_user.id
+    )['id']
+
+    # viewer пытается «забрать» хоста — команда должна быть проигнорирована.
+    await viewer_comm.send_json_to(
+        {'type': 'room.transfer_host', 'participant_id': host_participant_id}
+    )
+
+    refreshed = await database_sync_to_async(WatchRoom.objects.get)(pk=room.id)
+    assert refreshed.host_id == host_user.id
+
+    await viewer_comm.disconnect()
+    await host_comm.disconnect()
+
+
+@pytest.mark.django_db(transaction=True)
+async def test_host_disconnect_auto_handoff(host_user, viewer_user, video):
+    room = await _make_room(video, host_user)
+    host_token = str(RefreshToken.for_user(host_user).access_token)
+    viewer_token = str(RefreshToken.for_user(viewer_user).access_token)
+
+    host_comm = WebsocketCommunicator(application, _ws_url(room.id, host_token))
+    await host_comm.connect()
+    await host_comm.receive_json_from()
+    await host_comm.receive_json_from()
+
+    viewer_comm = WebsocketCommunicator(application, _ws_url(room.id, viewer_token))
+    await viewer_comm.connect()
+    await viewer_comm.receive_json_from()  # state
+    await viewer_comm.receive_json_from()  # participants
+
+    await host_comm.disconnect()
+
+    # На стороне viewer прилетает новый state и новый participants.
+    msg = await viewer_comm.receive_json_from()
+    # Порядок (state и participants) может варьироваться — читаем оба.
+    msgs = [msg, await viewer_comm.receive_json_from()]
+    state = next(m for m in msgs if m['type'] == 'room.state')
+    assert state['host']['id'] == viewer_user.id
+
+    refreshed = await database_sync_to_async(WatchRoom.objects.get)(pk=room.id)
+    assert refreshed.host_id == viewer_user.id
+
+    await viewer_comm.disconnect()

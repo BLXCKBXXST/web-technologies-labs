@@ -23,6 +23,9 @@ export default function Header() {
         <nav className="header__nav">
           {isAuthenticated ? (
             <>
+              <Link to="/rooms/new">
+                <Button variant="ghost">Сеанс по ссылке</Button>
+              </Link>
               <Link to="/upload">
                 <Button variant="secondary">Загрузить видео</Button>
               </Link>

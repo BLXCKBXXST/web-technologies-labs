@@ -15,9 +15,24 @@ class WatchRoom(UUIDModel, TimeStampedModel):
     является ведущий (host). UUID комнаты служит токеном ссылки-приглашения.
     """
 
+    # Источник видео — либо загруженное в платформу, либо ссылка на страницу
+    # с произвольного сайта (резолвится yt-dlp в прямой поток).
     video = models.ForeignKey(
-        Video, on_delete=models.CASCADE, related_name='rooms', verbose_name='видео'
+        Video,
+        on_delete=models.CASCADE,
+        related_name='rooms',
+        verbose_name='видео',
+        null=True,
+        blank=True,
     )
+    external_url = models.CharField('страница внешнего видео', max_length=2048, blank=True)
+    external_kind = models.CharField('тип внешнего источника', max_length=32, blank=True)
+    stream_url = models.CharField('извлечённый прямой поток', max_length=4096, blank=True)
+    external_title = models.CharField('название внешнего ролика', max_length=300, blank=True)
+    external_duration = models.FloatField('длительность, с', null=True, blank=True)
+    external_thumbnail_url = models.URLField('обложка', max_length=2048, blank=True)
+    external_resolved_at = models.DateTimeField('поток обновлён', null=True, blank=True)
+
     host = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -39,6 +54,18 @@ class WatchRoom(UUIDModel, TimeStampedModel):
 
     def __str__(self):
         return self.title or f'Комната {self.pk}'
+
+    @property
+    def is_external(self):
+        return bool(self.external_url)
+
+    @property
+    def display_title(self):
+        if self.title:
+            return self.title
+        if self.is_external:
+            return self.external_title or self.external_url
+        return self.video.title if self.video_id else 'Комната'
 
 
 class RoomParticipant(TimeStampedModel):

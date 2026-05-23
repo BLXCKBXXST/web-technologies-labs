@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage.jsx'
 import WatchPage from './pages/WatchPage.jsx'
 import WatchRoomPage from './pages/WatchRoomPage.jsx'
 import UploadPage from './pages/UploadPage.jsx'
+import CreateExternalRoomPage from './pages/CreateExternalRoomPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
@@ -31,6 +32,14 @@ function App() {
           element={
             <ProtectedRoute>
               <UploadPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rooms/new"
+          element={
+            <ProtectedRoute>
+              <CreateExternalRoomPage />
             </ProtectedRoute>
           }
         />

@@ -11,6 +11,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
 
+from .host_transfer import find_handoff_candidate, transfer_host
 from .models import RoomParticipant, WatchRoom
 from .sync import effective_position
 
@@ -26,6 +27,7 @@ def state_payload(room):
         'is_playing': room.is_playing,
         'position': round(position, 3),
         'server_time': now.timestamp(),
+        'host': {'id': room.host_id, 'display_name': room.host.display_name},
     }
 
 
@@ -63,6 +65,15 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
         if not getattr(self, 'joined', False):
             return
         await self._leave_participant()
+        # Если ведущий покидает комнату — автоматически передаём роль первому
+        # по «стажу» из оставшихся подключённых пользователей.
+        if self.is_host:
+            new_host = await self._auto_handoff_host()
+            if new_host is not None:
+                self.is_host = False
+                room = await self._get_room()
+                if room is not None:
+                    await self._group_send(state_payload(room))
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
         await self._broadcast_participants()
 
@@ -79,6 +90,18 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
             room = await self._get_room()
             if room is not None:
                 await self.send_json(state_payload(room))
+            return
+
+        # --- Передача роли ведущего ---
+        if message_type == 'room.transfer_host':
+            if self.is_host:
+                result = await self._transfer_host(content.get('participant_id'))
+                if result is not None:
+                    room, new_host_user_id = result
+                    # У текущего сокета бывшего хоста снимаем флаг.
+                    self.is_host = (self.user.id == new_host_user_id)
+                    await self._group_send(state_payload(room))
+                    await self._broadcast_participants()
             return
 
         # --- Чат и Q&A: отправлять может только авторизованный участник ---
@@ -119,7 +142,12 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
     # --- Доступ к БД (синхронный код в отдельном потоке) ---
     @database_sync_to_async
     def _get_room(self):
-        return WatchRoom.objects.filter(pk=self.room_id, is_active=True).first()
+        return (
+            WatchRoom.objects
+            .select_related('host')
+            .filter(pk=self.room_id, is_active=True)
+            .first()
+        )
 
     @database_sync_to_async
     def _touch_last_seen(self):
@@ -130,7 +158,7 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def _update_room_state(self, position, is_playing):
-        room = WatchRoom.objects.get(pk=self.room_id)
+        room = WatchRoom.objects.select_related('host').get(pk=self.room_id)
         room.playback_position = max(0.0, position)
         room.is_playing = is_playing
         room.state_updated_at = timezone.now()
@@ -166,13 +194,78 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def _participants_payload(self):
-        online = (
+        online = list(
             RoomParticipant.objects
             .filter(room_id=self.room_id, is_online=True)
-            .select_related('user')
+            .select_related('user', 'room')
+            .order_by('joined_at')
         )
-        names = [p.display_name for p in online]
-        return {'type': 'room.participants', 'count': len(names), 'viewers': names}
+        host_user_id = online[0].room.host_id if online else None
+        viewers = [
+            {
+                'id': p.pk,
+                'user_id': p.user_id,
+                'display_name': p.display_name,
+                'is_host': p.user_id is not None and p.user_id == host_user_id,
+                'is_guest': p.user_id is None,
+                'joined_at': p.joined_at.isoformat(),
+            }
+            for p in online
+        ]
+        return {
+            'type': 'room.participants',
+            'count': len(viewers),
+            'viewers': viewers,
+        }
+
+    @database_sync_to_async
+    def _transfer_host(self, participant_id):
+        """Передаёт роль ведущего по запросу действующего хоста.
+
+        Возвращает (room, new_host_user_id) при успехе, None при ошибке —
+        ошибка тихо игнорируется (UI откатит локальное состояние).
+        """
+        if not participant_id:
+            return None
+        try:
+            target = (
+                RoomParticipant.objects
+                .select_related('user')
+                .get(pk=participant_id, room_id=self.room_id, is_online=True)
+            )
+        except RoomParticipant.DoesNotExist:
+            return None
+        if not target.user_id or target.user_id == self.user.id:
+            return None
+        room = WatchRoom.objects.select_related('host').get(pk=self.room_id)
+        transfer_host(room, target)
+        room.refresh_from_db()
+        room.host = target.user  # для безотказного state_payload
+        return room, target.user_id
+
+    @database_sync_to_async
+    def _auto_handoff_host(self):
+        """При выходе хоста — передаёт роль следующему по стажу.
+
+        Возвращает user_id нового хоста или None если кандидата нет.
+        """
+        room = WatchRoom.objects.select_related('host').filter(pk=self.room_id).first()
+        if room is None:
+            return None
+        leaving_user_id = self.user.id if self.user.is_authenticated else None
+        if room.host_id != leaving_user_id:
+            return None
+        candidate = find_handoff_candidate(room, leaving_user_id)
+        if candidate is None:
+            # Никого не осталось — ставим плеер на паузу и оставляем host'а
+            # за последним держателем (следующий вошедший станет хостом
+            # при «реактивации» через UI; либо комната будет молчать).
+            room.is_playing = False
+            room.state_updated_at = timezone.now()
+            room.save(update_fields=['is_playing', 'state_updated_at', 'updated_at'])
+            return None
+        transfer_host(room, candidate)
+        return candidate.user_id
 
     # --- Чат и Q&A ---
     @database_sync_to_async

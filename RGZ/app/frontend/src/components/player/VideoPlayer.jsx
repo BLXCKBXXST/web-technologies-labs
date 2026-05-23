@@ -1,8 +1,10 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import './VideoPlayer.css'
 
 // Плеер-обёртка над <video>. Через ref наружу выдаёт императивное управление —
-// это нужно для синхронизации в комнатах совместного просмотра (этап M3).
+// нужно для синхронизации в комнатах совместного просмотра. Поддерживает
+// HLS (.m3u8) через динамический импорт hls.js — на сайтах без нативного HLS
+// (всё кроме Safari).
 const VideoPlayer = forwardRef(function VideoPlayer(
   {
     src,
@@ -15,6 +17,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     onSeeked,
     onTimeUpdate,
     onEnded,
+    onError,
   },
   ref,
 ) {
@@ -38,11 +41,38 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     [],
   )
 
+  // Подключение hls.js, если поток m3u8 и нативно не играется (вне Safari).
+  useEffect(() => {
+    const videoEl = videoRef.current
+    if (!videoEl || !src) return undefined
+    const isHls = /\.m3u8(\?|#|$)/i.test(src)
+    const canNative = videoEl.canPlayType('application/vnd.apple.mpegurl')
+    if (!isHls || canNative) {
+      videoEl.src = src
+      return undefined
+    }
+    let hls
+    let cancelled = false
+    import('hls.js').then(({ default: Hls }) => {
+      if (cancelled || !videoRef.current) return
+      if (!Hls.isSupported()) {
+        videoRef.current.src = src
+        return
+      }
+      hls = new Hls({ enableWorker: true })
+      hls.loadSource(src)
+      hls.attachMedia(videoRef.current)
+    })
+    return () => {
+      cancelled = true
+      if (hls) hls.destroy()
+    }
+  }, [src])
+
   return (
     <div className={`player ${className}`.trim()}>
       <video
         ref={videoRef}
-        src={src}
         poster={poster}
         controls={controls}
         autoPlay={autoPlay}
@@ -53,6 +83,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         onSeeked={onSeeked}
         onTimeUpdate={onTimeUpdate}
         onEnded={onEnded}
+        onError={onError}
       />
     </div>
   )
