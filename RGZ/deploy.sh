@@ -101,6 +101,7 @@ POSTGRES_USER=blxckhub
 POSTGRES_PASSWORD=${db_pass}
 REDIS_URL=redis://blxckhub-redis:6379/0
 CORS_ALLOWED_ORIGINS=https://${DOMAIN}
+CSRF_TRUSTED_ORIGINS=https://${DOMAIN}
 EOF
     else
         echo "==> ${ENV_FILE} уже существует — оставляю без изменений."

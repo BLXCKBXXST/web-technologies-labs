@@ -18,6 +18,7 @@ env = environ.Env(
     DJANGO_DEBUG=(bool, True),
     DJANGO_ALLOWED_HOSTS=(list, ['*']),
     CORS_ALLOWED_ORIGINS=(list, ['http://localhost:5173', 'http://127.0.0.1:5173']),
+    CSRF_TRUSTED_ORIGINS=(list, []),
 )
 # .env читается, если присутствует рядом с manage.py (на сервере). Локально не обязателен.
 _env_file = BASE_DIR / '.env'
@@ -143,6 +144,13 @@ SIMPLE_JWT = {
 
 # --- CORS --------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = env('CORS_ALLOWED_ORIGINS')
+
+# --- CSRF и проксирование за nginx/Caddy -------------------------------------
+# При работе за обратным прокси Django должен знать, что снаружи https —
+# иначе админка отвергает POST-запросы из-за несовпадения Origin.
+CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # --- Интернационализация -----------------------------------------------------
 LANGUAGE_CODE = 'ru-ru'
