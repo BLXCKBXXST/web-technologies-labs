@@ -57,7 +57,9 @@ class WatchRoom(UUIDModel, TimeStampedModel):
 
     @property
     def is_external(self):
-        return bool(self.external_url)
+        # Комната считается внешней, если у неё есть сохранённый stream_url
+        # (загруженное видео отдаётся через video.file, у него stream_url пуст).
+        return bool(self.stream_url)
 
     @property
     def display_title(self):

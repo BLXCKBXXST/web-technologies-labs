@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'videos',
     'rooms',
     'chat',
+    'catalog',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,19 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # выше — во временный файл на диске
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- Каталог внешних источников (kinogo, Zona) -------------------------------
+# Базовый домен kinogo. Меняется через env при блокировке зеркала
+# (актуальная ссылка приходит из Telegram-бота @kinogobiz_bot).
+KINOGO_BASE = env('KINOGO_BASE', default='https://kinogo.la')
+KINOGO_USERNAME = env('KINOGO_USERNAME', default='')
+KINOGO_PASSWORD = env('KINOGO_PASSWORD', default='')
+
+# Базовый JSON-API Zona. У сервиса несколько доменов мигрируют — переопределяется через env.
+ZONA_BASE = env('ZONA_BASE', default='https://zona.plus')
+
+# TTL для разных типов запросов к каталогу (секунды).
+CATALOG_CACHE_FEED_TTL = env.int('CATALOG_CACHE_FEED_TTL', default=15 * 60)
+CATALOG_CACHE_SEARCH_TTL = env.int('CATALOG_CACHE_SEARCH_TTL', default=10 * 60)
+CATALOG_CACHE_TITLE_TTL = env.int('CATALOG_CACHE_TITLE_TTL', default=2 * 60 * 60)
+CATALOG_CACHE_STREAM_TTL = env.int('CATALOG_CACHE_STREAM_TTL', default=20 * 60)

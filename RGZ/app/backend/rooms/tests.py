@@ -185,6 +185,40 @@ def test_create_room_rejects_both_video_and_url(auth, video):
 
 
 @pytest.mark.django_db
+def test_create_room_from_catalog_resolves_via_parser(auth, monkeypatch):
+    from catalog.dataclasses import KIND_MOVIE, Stream, TitleDetails
+    from catalog.parsers import _PARSERS
+    from catalog.parsers.base import CatalogParser
+
+    class _Stub(CatalogParser):
+        id = 'kinogo'
+        label = 'Kinogo'
+
+        def feed(self, page=1, kind=None): ...
+        def search(self, query, page=1): ...
+        def title(self, external_id):
+            return TitleDetails(id=external_id, title='Тестовый каталожный фильм', year=2024,
+                                kind=KIND_MOVIE, poster='http://p/x.jpg')
+
+        def stream(self, external_id, season=None, episode=None):
+            return Stream(url='https://cdn.example.com/k.m3u8', kind='hls',
+                          title='Тестовый каталожный фильм', thumbnail='http://p/x.jpg')
+
+    monkeypatch.setitem(_PARSERS, 'kinogo', _Stub())
+
+    resp = auth.post(
+        '/api/rooms/',
+        {'catalog_source': 'kinogo', 'catalog_external_id': '42'},
+        format='json',
+    )
+    assert resp.status_code == 201, resp.content
+    body = resp.json()
+    assert body['is_external'] is True
+    assert body['stream_url'].endswith('.m3u8')
+    assert body['external_title'] == 'Тестовый каталожный фильм'
+
+
+@pytest.mark.django_db
 def test_create_room_with_external_url_uses_resolver(auth, monkeypatch):
     fake = {
         'url': 'https://cdn.example.com/stream.mp4',

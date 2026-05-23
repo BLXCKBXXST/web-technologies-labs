@@ -1,0 +1,110 @@
+.catalog-title {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+}
+
+.catalog-title__head {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .catalog-title__head {
+    grid-template-columns: 1fr;
+  }
+}
+
+.catalog-title__poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.catalog-title__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.catalog-title__poster-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--color-text-faint);
+}
+
+.catalog-title__name {
+  margin: 0 0 var(--space-3);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.catalog-title__year {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.catalog-title__descr {
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+}
+
+.catalog-title__series {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.catalog-title__series select {
+  margin-left: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.catalog-title__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.catalog-title__source {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.catalog-title__player {
+  margin-top: var(--space-5);
+}
+
+.catalog-title__embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 0;
+  border-radius: var(--radius-md);
+}
+
+.catalog-title__embed-note {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
