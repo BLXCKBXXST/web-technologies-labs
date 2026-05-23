@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { deleteVideo, myVideos } from '../api/videos.js'
 import { updateMe } from '../api/auth.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 import VideoGrid from '../components/video/VideoGrid.jsx'
 import Button from '../components/ui/Button.jsx'
 import TextField from '../components/ui/TextField.jsx'
@@ -10,6 +11,7 @@ import './ProfilePage.css'
 // Профиль пользователя: данные, имя в чате и управление своими видео.
 export default function ProfilePage() {
   const { user, isGuest, updateUser } = useAuth()
+  const { toggle: toggleTheme } = useTheme()
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingName, setEditingName] = useState(false)
@@ -55,7 +57,17 @@ export default function ProfilePage() {
         </div>
         <div>
           <h1 className="profile__name">{user.display_name}</h1>
-          <p className="profile__email">@{user.username}</p>
+          <p className="profile__email">
+            @{user.username}
+            <button
+              type="button"
+              className="profile__star"
+              aria-label=""
+              onClick={toggleTheme}
+            >
+              ★
+            </button>
+          </p>
         </div>
       </div>
 

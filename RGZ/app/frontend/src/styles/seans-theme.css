@@ -1,0 +1,45 @@
+/* Скрытая альтернативная тема blxck.hub — советский ретрофутуризм
+   (Atomic Heart). Переключается из профиля. Значения перенесены 1-в-1 из
+   проекта СЕАНС: пергаментный фон, багряный акцент, латунно-золотой,
+   рубленые углы. */
+
+:root[data-theme='seans'] {
+  /* Поверхности — выгоревшая бумага/пергамент */
+  --color-bg: #e7decb;
+  --color-surface: #f2ecda;
+  --color-surface-2: #e0d5b9;
+  --color-surface-3: #d2c39f;
+  --color-border: #bfae84;
+  --color-border-strong: #9a8a5e;
+
+  /* Текст — тёмная сепия */
+  --color-text: #221b10;
+  --color-text-muted: #6b5d42;
+  --color-text-faint: #9a8a66;
+
+  /* Акцент — багряно-красный */
+  --color-accent: #b21f1d;
+  --color-accent-hover: #8f1714;
+  --color-accent-soft: rgba(178, 31, 29, 0.13);
+  --color-on-accent: #f6efd9;
+
+  /* Статусы */
+  --color-danger: #a3231b;
+  --color-danger-soft: rgba(163, 35, 27, 0.13);
+  --color-success: #4c6a2a;
+  --color-like: #b21f1d;
+
+  /* Рубленые скругления — конструктивизм */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+
+  /* Тёплые «печатные» тени */
+  --shadow-card: 0 3px 0 rgba(58, 40, 14, 0.16), 0 10px 26px rgba(58, 40, 14, 0.14);
+  --shadow-pop: 0 14px 40px rgba(58, 40, 14, 0.3);
+
+  /* Семантические токены — пергаментная шапка и багряное свечение auth */
+  --color-header-bg: rgba(231, 222, 203, 0.94);
+  --color-auth-glow-1: rgba(178, 31, 29, 0.22);
+  --color-auth-glow-2: rgba(178, 31, 29, 0.14);
+}
