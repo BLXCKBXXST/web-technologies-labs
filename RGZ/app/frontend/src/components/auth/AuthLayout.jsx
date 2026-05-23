@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useTheme } from '../../context/ThemeContext.jsx'
 import './AuthLayout.css'
 
 const tabClass = ({ isActive }) =>
@@ -6,12 +7,17 @@ const tabClass = ({ isActive }) =>
 
 // Общий каркас экранов авторизации: фон, логотип, вкладки и карточка с формой.
 export default function AuthLayout({ children }) {
+  const { theme } = useTheme()
   return (
     <div className="auth">
       <div className="auth__backdrop" aria-hidden="true" />
       <div className="auth__inner">
         <div className="auth__brand">
-          blxck<span>.hub</span>
+          {theme === 'seans' ? (
+            <>СЕ<span>АНС</span></>
+          ) : (
+            <>blxck<span>.hub</span></>
+          )}
         </div>
         <nav className="auth__tabs">
           <NavLink to="/register" className={tabClass}>

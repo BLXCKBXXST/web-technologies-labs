@@ -1,17 +1,23 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 import Button from './ui/Button.jsx'
 import './Header.css'
 
 // Шапка приложения: логотип, кнопка загрузки, профиль и выход.
 export default function Header() {
   const { user, isAuthenticated, isGuest, logout } = useAuth()
+  const { theme } = useTheme()
 
   return (
     <header className="header">
       <div className="header__inner">
         <Link to="/" className="header__brand">
-          blxck<span>.hub</span>
+          {theme === 'seans' ? (
+            <>СЕ<span>АНС</span></>
+          ) : (
+            <>blxck<span>.hub</span></>
+          )}
         </Link>
 
         <nav className="header__nav">
