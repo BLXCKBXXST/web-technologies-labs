@@ -330,6 +330,82 @@ async def test_viewer_cannot_transfer_host(host_user, viewer_user, video):
 
 
 @pytest.mark.django_db(transaction=True)
+async def test_new_host_can_play_after_transfer(host_user, viewer_user, video):
+    """После передачи прав новый хост должен мочь стартовать плеер.
+
+    Регрессия: сокеты других участников не пересчитывали self.is_host,
+    поэтому новый хост на своём сокете оставался зрителем и его
+    player.play игнорировался.
+    """
+    room = await _make_room(video, host_user)
+    host_token = str(RefreshToken.for_user(host_user).access_token)
+    viewer_token = str(RefreshToken.for_user(viewer_user).access_token)
+
+    host_comm = WebsocketCommunicator(application, _ws_url(room.id, host_token))
+    await host_comm.connect()
+    await host_comm.receive_json_from()  # state
+    await host_comm.receive_json_from()  # participants
+
+    viewer_comm = WebsocketCommunicator(application, _ws_url(room.id, viewer_token))
+    await viewer_comm.connect()
+    await viewer_comm.receive_json_from()  # state
+    participants_event = await host_comm.receive_json_from()
+    viewer_participant_id = next(
+        v for v in participants_event['viewers'] if v['user_id'] == viewer_user.id
+    )['id']
+    await viewer_comm.receive_json_from()  # participants на стороне viewer
+
+    # Хост передаёт роль.
+    await host_comm.send_json_to(
+        {'type': 'room.transfer_host', 'participant_id': viewer_participant_id}
+    )
+    # Обе стороны получают новый state (с новым host) и новый participants.
+    await host_comm.receive_json_from()    # state
+    await host_comm.receive_json_from()    # participants
+    await viewer_comm.receive_json_from()  # state — здесь viewer-сокет должен
+    await viewer_comm.receive_json_from()  # participants    обновить self.is_host
+
+    # Теперь новый хост (viewer-сокет) пробует включить плеер.
+    await viewer_comm.send_json_to(
+        {'type': 'player.play', 'position': 5.0, 'is_playing': True}
+    )
+    # Должен прийти room.state с is_playing=True (рассылка хост-действия).
+    msg = await viewer_comm.receive_json_from()
+    assert msg['type'] == 'room.state'
+    assert msg['is_playing'] is True
+    assert msg['position'] == pytest.approx(5.0, abs=0.5)
+
+    await viewer_comm.disconnect()
+    await host_comm.disconnect()
+
+
+@pytest.mark.django_db(transaction=True)
+async def test_lone_joiner_becomes_host_when_room_orphaned(host_user, viewer_user, video):
+    """Если хост ушёл и в комнате никого нет, следующий вошедший становится хостом."""
+    room = await _make_room(video, host_user)
+    # Хост подключился и сразу ушёл — комната пустая, host_id остался за ним.
+    host_token = str(RefreshToken.for_user(host_user).access_token)
+    host_comm = WebsocketCommunicator(application, _ws_url(room.id, host_token))
+    await host_comm.connect()
+    await host_comm.receive_json_from()
+    await host_comm.receive_json_from()
+    await host_comm.disconnect()
+
+    # Заходит viewer — должен стать хостом автоматически.
+    viewer_token = str(RefreshToken.for_user(viewer_user).access_token)
+    viewer_comm = WebsocketCommunicator(application, _ws_url(room.id, viewer_token))
+    await viewer_comm.connect()
+    state = await viewer_comm.receive_json_from()
+    assert state['type'] == 'room.state'
+    assert state['host']['id'] == viewer_user.id
+
+    refreshed = await database_sync_to_async(WatchRoom.objects.get)(pk=room.id)
+    assert refreshed.host_id == viewer_user.id
+
+    await viewer_comm.disconnect()
+
+
+@pytest.mark.django_db(transaction=True)
 async def test_host_disconnect_auto_handoff(host_user, viewer_user, video):
     room = await _make_room(video, host_user)
     host_token = str(RefreshToken.for_user(host_user).access_token)

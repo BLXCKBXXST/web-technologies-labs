@@ -121,8 +121,19 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
 
     # --- Рассылка по группе комнаты ---
     async def room_broadcast(self, event):
-        """Обработчик group_send: пересылает готовый payload клиенту."""
-        await self.send_json(event['payload'])
+        """Обработчик group_send: пересылает готовый payload клиенту.
+
+        Заодно пересчитывает `self.is_host` по hostу из room.state — без
+        этого после передачи прав/auto-handoff новый хост на своём
+        сокете остаётся «зрителем» и не может управлять плеером.
+        """
+        payload = event['payload']
+        if payload.get('type') == 'room.state' and self.user.is_authenticated:
+            host = payload.get('host') or {}
+            host_id = host.get('id')
+            if host_id is not None:
+                self.is_host = (self.user.id == host_id)
+        await self.send_json(payload)
 
     async def _group_send(self, payload):
         await self.channel_layer.group_send(
@@ -183,6 +194,26 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
                 room=room, role=role, is_online=True, guest_label='Гость'
             )
         self.participant_id = participant.pk
+
+        # Если фактический host оффлайн и в комнате нет других подключённых
+        # пользователей — авто-передаём роль вошедшему. Иначе комната
+        # «зависает» без управления: предыдущий хост ушёл последним,
+        # а у новичков нет UI для назначения себя.
+        if self.user.is_authenticated and room.host_id != self.user.id:
+            has_other_user_online = (
+                RoomParticipant.objects
+                .filter(room=room, is_online=True, user__isnull=False)
+                .exclude(pk=participant.pk)
+                .exists()
+            )
+            if not has_other_user_online:
+                transfer_host(room, participant)
+                # Обновляем кешированные значения в Python-объекте, чтобы
+                # последующий state_payload(room) видел новый host без
+                # повторного SELECT'а.
+                room.host_id = self.user.id
+                room.host = self.user
+                self.is_host = True
 
     @database_sync_to_async
     def _leave_participant(self):
