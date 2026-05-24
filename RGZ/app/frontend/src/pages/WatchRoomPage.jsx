@@ -38,9 +38,11 @@ export default function WatchRoomPage() {
     }
   }, [roomId])
 
-  // Открытие WebSocket-соединения после загрузки комнаты.
+  // Открытие WebSocket-соединения. Зависит ТОЛЬКО от roomId/isAuthenticated:
+  // обработчик room.state ниже обновляет room через setRoom — если бы room
+  // входил в deps, любое обновление пересоздавало бы сокет в цикле.
   useEffect(() => {
-    if (!room) return undefined
+    if (!roomId) return undefined
     let cancelled = false
     let activeSocket = null
     ;(async () => {
@@ -68,7 +70,7 @@ export default function WatchRoomPage() {
       cancelled = true
       if (activeSocket) activeSocket.close()
     }
-  }, [room, roomId, isAuthenticated])
+  }, [roomId, isAuthenticated])
 
   const isHost = Boolean(room?.is_host)
   const { hostHandlers } = useRoomSync({ socket, playerRef, isHost })
