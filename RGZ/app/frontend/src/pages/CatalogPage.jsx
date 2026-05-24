@@ -6,11 +6,11 @@ import Button from '../components/ui/Button.jsx'
 import TextField from '../components/ui/TextField.jsx'
 import './CatalogPage.css'
 
-const SOURCE = 'tmdb'
+const SOURCE = 'kinopoiskdev'
 
-// Каталог-справочник на базе TMDB: метаданные о фильмах и сериалах. Сами
-// потоки не отдаются — пользователь копирует название и открывает «Сеанс
-// по ссылке» с нужным URL.
+// Каталог-справочник на базе Кинопоиска: метаданные о фильмах и сериалах.
+// Сами потоки не отдаются — пользователь копирует название и открывает
+// «Сеанс по ссылке» с нужным URL.
 export default function CatalogPage() {
   const [items, setItems] = useState([])
   const [page, setPage] = useState(1)
@@ -37,7 +37,7 @@ export default function CatalogPage() {
         setError(
           extractError(
             err,
-            'Каталог временно недоступен. Возможно, не настроен API-ключ TMDB в админке.',
+            'Каталог временно недоступен. Возможно, не настроен токен Кинопоиска в админке (получить — у @kinopoiskdev_bot в Telegram).',
           ),
         )
         if (nextPage === 1) setItems([])

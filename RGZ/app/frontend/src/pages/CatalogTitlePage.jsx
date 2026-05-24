@@ -104,7 +104,7 @@ export default function CatalogTitlePage() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Открыть на TMDB
+                Открыть на Кинопоиске
               </a>
             )}
           </div>

@@ -30,11 +30,11 @@ _lock = Lock()
 
 
 def _defaults(source_id: str) -> SourceSettings:
-    if source_id == 'tmdb':
+    if source_id == 'kinopoiskdev':
         return SourceSettings(
-            base_url=getattr(settings, 'TMDB_BASE', 'https://api.themoviedb.org/3').rstrip('/'),
+            base_url=getattr(settings, 'KINOPOISKDEV_BASE', 'https://api.kinopoisk.dev').rstrip('/'),
             username='',
-            password=getattr(settings, 'TMDB_API_KEY', '') or '',
+            password=getattr(settings, 'KINOPOISKDEV_API_KEY', '') or '',
             is_active=True,
         )
     return SourceSettings(base_url='', username='', password='', is_active=False)

@@ -11,9 +11,9 @@ from django.db import models
 class SourceConfig(models.Model):
     """Конфигурация одного источника каталога."""
 
-    SOURCE_TMDB = 'tmdb'
+    SOURCE_KINOPOISKDEV = 'kinopoiskdev'
     SOURCE_CHOICES = (
-        (SOURCE_TMDB, 'TMDB'),
+        (SOURCE_KINOPOISKDEV, 'Кинопоиск'),
     )
 
     source_id = models.CharField(
@@ -25,7 +25,7 @@ class SourceConfig(models.Model):
     base_url = models.URLField(
         'базовый URL API',
         max_length=255,
-        help_text='Для TMDB: https://api.themoviedb.org/3',
+        help_text='Для Кинопоиска: https://api.kinopoisk.dev',
     )
     username = models.CharField(
         'логин (если требуется)',
@@ -36,7 +36,7 @@ class SourceConfig(models.Model):
         'API key',
         max_length=255,
         blank=True,
-        help_text='Для TMDB — v3 API key с https://www.themoviedb.org/settings/api',
+        help_text='Для Кинопоиска — токен от @kinopoiskdev_bot в Telegram',
     )
     is_active = models.BooleanField('включён', default=True)
     notes = models.TextField('заметки', blank=True)

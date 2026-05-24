@@ -1,4 +1,5 @@
-"""Тесты каталога: API endpoint'ы с мок-парсером + TMDBParser через httpx mock."""
+"""Тесты каталога: API endpoint'ы с мок-парсером + KinopoiskDevParser
+через httpx MockTransport."""
 
 import httpx
 import pytest
@@ -11,28 +12,31 @@ from catalog.dataclasses import KIND_MOVIE, KIND_SERIES, Page, Stream, Title, Ti
 from catalog.errors import ParserUnavailableError, StreamUnavailableError
 from catalog.parsers import _PARSERS
 from catalog.parsers.base import CatalogParser
-from catalog.parsers.tmdb import TMDBParser
+from catalog.parsers.kinopoiskdev import KinopoiskDevParser
+
+
+SOURCE = 'kinopoiskdev'
 
 
 class _MockParser(CatalogParser):
-    id = 'tmdb'
-    label = 'TMDB'
+    id = SOURCE
+    label = 'Кинопоиск'
 
     def __init__(self, *, raise_unavail=False):
         self._raise = raise_unavail
 
     def feed(self, page=1, kind=None):
         if self._raise:
-            raise ParserUnavailableError('TMDB недоступен')
+            raise ParserUnavailableError('Кинопоиск недоступен')
         return Page(
-            items=[Title(id='m1', title='Тестовый фильм', year=2024, kind=KIND_MOVIE)],
+            items=[Title(id='123', title='Тестовый фильм', year=2024, kind=KIND_MOVIE)],
             page=page,
             has_next=False,
         )
 
     def search(self, query, page=1):
         return Page(
-            items=[Title(id='m2', title=f'Search {query}', year=2024, kind=KIND_MOVIE)],
+            items=[Title(id='456', title=f'Search {query}', year=2024, kind=KIND_MOVIE)],
             page=page,
         )
 
@@ -40,7 +44,7 @@ class _MockParser(CatalogParser):
         return TitleDetails(id=external_id, title='Подробности', year=2024, kind=KIND_MOVIE)
 
     def stream(self, external_id, season=None, episode=None):
-        raise StreamUnavailableError('TMDB — справочник без потоков')
+        raise StreamUnavailableError('Кинопоиск — справочник без потоков')
 
 
 @pytest.fixture(autouse=True)
@@ -51,25 +55,25 @@ def clear_cache():
 
 
 @pytest.fixture
-def mock_tmdb(monkeypatch):
+def mock_parser(monkeypatch):
     parser = _MockParser()
-    monkeypatch.setitem(_PARSERS, 'tmdb', parser)
+    monkeypatch.setitem(_PARSERS, SOURCE, parser)
     return parser
 
 
 # --- API endpoints ----------------------------------------------------------
 
 @pytest.mark.django_db
-def test_sources_endpoint_lists_tmdb(mock_tmdb):
+def test_sources_endpoint_lists_kinopoiskdev(mock_parser):
     resp = APIClient().get('/api/catalog/sources/')
     assert resp.status_code == 200
     ids = {s['id'] for s in resp.json()['sources']}
-    assert ids == {'tmdb'}
+    assert ids == {SOURCE}
 
 
 @pytest.mark.django_db
-def test_feed_returns_titles(mock_tmdb):
-    resp = APIClient().get('/api/catalog/tmdb/feed/')
+def test_feed_returns_titles(mock_parser):
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/feed/')
     assert resp.status_code == 200
     body = resp.json()
     assert body['items'][0]['title'] == 'Тестовый фильм'
@@ -77,121 +81,166 @@ def test_feed_returns_titles(mock_tmdb):
 
 @pytest.mark.django_db
 def test_feed_503_when_parser_unavailable(monkeypatch):
-    monkeypatch.setitem(_PARSERS, 'tmdb', _MockParser(raise_unavail=True))
-    resp = APIClient().get('/api/catalog/tmdb/feed/')
+    monkeypatch.setitem(_PARSERS, SOURCE, _MockParser(raise_unavail=True))
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/feed/')
     assert resp.status_code == 503
 
 
 @pytest.mark.django_db
-def test_search_requires_q(mock_tmdb):
-    resp = APIClient().get('/api/catalog/tmdb/search/')
+def test_search_requires_q(mock_parser):
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/search/')
     assert resp.status_code == 400
 
 
 @pytest.mark.django_db
-def test_search_returns_results(mock_tmdb):
-    resp = APIClient().get('/api/catalog/tmdb/search/?q=batman')
+def test_search_returns_results(mock_parser):
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/search/?q=batman')
     assert resp.status_code == 200
     assert resp.json()['items'][0]['title'] == 'Search batman'
 
 
 @pytest.mark.django_db
-def test_title_returns_details(mock_tmdb):
-    resp = APIClient().get('/api/catalog/tmdb/title/m42/')
+def test_title_returns_details(mock_parser):
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/title/777/')
     assert resp.status_code == 200
-    assert resp.json()['id'] == 'm42'
+    assert resp.json()['id'] == '777'
 
 
 @pytest.mark.django_db
-def test_stream_502_for_tmdb(mock_tmdb):
-    resp = APIClient().get('/api/catalog/tmdb/stream/m42/')
+def test_stream_502_for_kinopoisk(mock_parser):
+    resp = APIClient().get(f'/api/catalog/{SOURCE}/stream/777/')
     assert resp.status_code == 502
 
 
 @pytest.mark.django_db
-def test_unknown_source_404(mock_tmdb):
-    resp = APIClient().get('/api/catalog/qwe/feed/')
+def test_unknown_source_404(mock_parser):
+    resp = APIClient().get('/api/catalog/tmdb/feed/')
     assert resp.status_code == 404
 
 
-# --- TMDBParser изолированно (через httpx MockTransport) --------------------
+# --- KinopoiskDevParser изолированно (через httpx MockTransport) -----------
 
-def _make_tmdb(monkeypatch, handler):
-    """Подменяет httpx-клиент TMDBParser и SourceSettings (есть API-ключ)."""
+def _make_parser(monkeypatch, handler, api_key='test-key'):
     monkeypatch.setattr(
         config_loader, 'get',
         lambda _id: SourceSettings(
-            base_url='https://api.themoviedb.org/3', username='',
-            password='test-key', is_active=True,
+            base_url='https://api.kinopoisk.dev', username='',
+            password=api_key, is_active=True,
         ),
     )
-    parser = TMDBParser()
+    parser = KinopoiskDevParser()
     transport = httpx.MockTransport(handler)
     parser._client = httpx.Client(transport=transport, timeout=5.0)
     return parser
 
 
-def test_tmdb_feed_parses_trending(monkeypatch):
+def test_kinopoisk_feed_parses_movies(monkeypatch):
     def handler(request):
-        assert request.url.path == '/3/trending/movie/week'
-        assert request.url.params['api_key'] == 'test-key'
+        assert request.url.path == '/v1.4/movie'
+        assert request.headers['X-API-KEY'] == 'test-key'
         return httpx.Response(200, json={
-            'page': 1, 'total_pages': 5,
-            'results': [
-                {'id': 100, 'title': 'Фильм A', 'release_date': '2024-05-01',
-                 'poster_path': '/a.jpg', 'vote_average': 7.4},
-                {'id': 101, 'title': 'Фильм B', 'release_date': '',
-                 'poster_path': None, 'vote_average': 0},
+            'docs': [
+                {'id': 535341, 'name': 'Зелёная миля', 'year': 1999,
+                 'type': 'movie',
+                 'poster': {'url': 'https://kp.ru/p/535341.jpg'},
+                 'rating': {'kp': 9.122}},
+                {'id': 250227, 'name': 'Сериал', 'year': 2023,
+                 'type': 'tv-series', 'poster': {}, 'rating': {'kp': 0}},
             ],
+            'pages': 5, 'page': 1,
         })
-    parser = _make_tmdb(monkeypatch, handler)
+    parser = _make_parser(monkeypatch, handler)
     page = parser.feed(page=1)
     assert page.has_next is True
     assert len(page.items) == 2
-    assert page.items[0].id == 'm100'
-    assert page.items[0].title == 'Фильм A'
-    assert page.items[0].year == 2024
-    assert page.items[0].rating == 7.4
-    assert page.items[0].poster.startswith('https://image.tmdb.org/t/p/w500/a.jpg')
-    assert page.items[1].rating is None
-    assert page.items[1].year is None
-
-
-def test_tmdb_search_filters_persons(monkeypatch):
-    def handler(request):
-        assert request.url.path == '/3/search/multi'
-        return httpx.Response(200, json={
-            'page': 1, 'total_pages': 1,
-            'results': [
-                {'id': 1, 'title': 'Кино', 'media_type': 'movie',
-                 'release_date': '2024-01-01', 'poster_path': '/x.jpg', 'vote_average': 6},
-                {'id': 2, 'name': 'Сериал', 'media_type': 'tv',
-                 'first_air_date': '2023-01-01', 'poster_path': '/y.jpg', 'vote_average': 8},
-                {'id': 3, 'name': 'Артист', 'media_type': 'person'},
-            ],
-        })
-    parser = _make_tmdb(monkeypatch, handler)
-    page = parser.search('test')
-    assert [t.id for t in page.items] == ['m1', 't2']
+    assert page.items[0].id == '535341'
+    assert page.items[0].title == 'Зелёная миля'
+    assert page.items[0].rating == 9.1
+    assert page.items[0].poster.endswith('535341.jpg')
     assert page.items[1].kind == KIND_SERIES
+    assert page.items[1].rating is None
 
 
-def test_tmdb_stream_unavailable(monkeypatch):
+def test_kinopoisk_search(monkeypatch):
+    def handler(request):
+        assert request.url.path == '/v1.4/movie/search'
+        return httpx.Response(200, json={
+            'docs': [
+                {'id': 1, 'name': 'Зеленый', 'type': 'movie', 'year': 2024,
+                 'poster': {}, 'rating': {'kp': 7}},
+            ],
+            'pages': 1, 'page': 1,
+        })
+    parser = _make_parser(monkeypatch, handler)
+    page = parser.search('зелён', page=1)
+    assert page.has_next is False
+    assert page.items[0].title == 'Зеленый'
+
+
+def test_kinopoisk_title_movie(monkeypatch):
+    def handler(request):
+        assert request.url.path == '/v1.4/movie/535341'
+        return httpx.Response(200, json={
+            'id': 535341, 'name': 'Зелёная миля', 'year': 1999,
+            'type': 'movie', 'movieLength': 189,
+            'description': 'Описание',
+            'genres': [{'name': 'драма'}, {'name': 'фэнтези'}],
+            'poster': {'url': 'p.jpg'},
+            'rating': {'kp': 9.1},
+        })
+    parser = _make_parser(monkeypatch, handler)
+    details = parser.title('535341')
+    assert details.title == 'Зелёная миля'
+    assert details.duration_minutes == 189
+    assert 'драма' in details.genres
+    assert details.seasons == []
+
+
+def test_kinopoisk_title_series_with_seasons(monkeypatch):
+    def handler(request):
+        if request.url.path == '/v1.4/movie/250227':
+            return httpx.Response(200, json={
+                'id': 250227, 'name': 'Сериал', 'year': 2023,
+                'type': 'tv-series',
+                'description': 'Про сериал',
+                'genres': [], 'poster': {}, 'rating': {'kp': 8},
+            })
+        if request.url.path == '/v1.4/season':
+            assert request.url.params['movieId'] == '250227'
+            return httpx.Response(200, json={
+                'docs': [
+                    {'number': 1, 'episodes': [
+                        {'number': 1, 'name': 'Пилот'},
+                        {'number': 2, 'name': 'Вторая'},
+                    ]},
+                    {'number': 0, 'episodes': []},  # «специальные» — отброс
+                ],
+            })
+        return httpx.Response(404)
+    parser = _make_parser(monkeypatch, handler)
+    details = parser.title('250227')
+    assert details.kind == KIND_SERIES
+    assert len(details.seasons) == 1
+    assert details.seasons[0].number == 1
+    assert [ep.title for ep in details.seasons[0].episodes] == ['Пилот', 'Вторая']
+
+
+def test_kinopoisk_stream_unavailable(monkeypatch):
     def handler(request):
         return httpx.Response(200, json={})
-    parser = _make_tmdb(monkeypatch, handler)
+    parser = _make_parser(monkeypatch, handler)
     with pytest.raises(StreamUnavailableError):
-        parser.stream('m1')
+        parser.stream('1')
 
 
-def test_tmdb_missing_api_key(monkeypatch):
+def test_kinopoisk_missing_api_key(monkeypatch):
     monkeypatch.setattr(
         config_loader, 'get',
         lambda _id: SourceSettings(
-            base_url='https://api.themoviedb.org/3', username='',
+            base_url='https://api.kinopoisk.dev', username='',
             password='', is_active=True,
         ),
     )
-    parser = TMDBParser()
+    parser = KinopoiskDevParser()
     with pytest.raises(ParserUnavailableError):
         parser.feed()
