@@ -1,8 +1,8 @@
-"""Парсер kinopoisk.dev — каталог-справочник по Кинопоиску без потоков.
+"""Парсер kinopoisk.dev — каталог-справочник по poiskkino.devу без потоков.
 
 Неофициальный, но активно поддерживаемый REST API:
 https://kinopoiskdev.readme.io/. Аутентификация — заголовок
-`X-API-KEY` (бесплатный токен через Telegram-бот @kinopoiskdev_bot).
+`X-API-KEY` (бесплатный токен через Telegram-бот @poiskkinodev_bot).
 
 Потоки kinopoisk.dev не отдаёт — `stream()` бросает понятную ошибку,
 фронт показывает действия «скопировать название» и «создать сеанс
@@ -37,9 +37,9 @@ from .base import CatalogParser
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BASE = 'https://api.kinopoisk.dev'
+DEFAULT_BASE = 'https://api.poiskkino.dev'
 
-# Кинопоиск различает много типов; всё нерекламное мапим в movie/series.
+# poiskkino.dev различает много типов; всё нерекламное мапим в movie/series.
 TYPE_MOVIE = {'movie', 'cartoon', 'anime'}
 TYPE_SERIES = {'tv-series', 'animated-series', 'tv-show'}
 
@@ -69,14 +69,9 @@ def _rating(item: dict) -> Optional[float]:
 
 
 def _kp_url(item: dict) -> str:
-    kid = item.get('id')
-    if not kid:
-        return ''
-    return (
-        f'https://www.kinopoisk.ru/series/{kid}/'
-        if _kind(item.get('type')) == KIND_SERIES
-        else f'https://www.kinopoisk.ru/film/{kid}/'
-    )
+    # У источника теперь нет своей публичной страницы тайтла — оставляем
+    # пустую ссылку, чтобы UI не рисовал кнопку «Открыть на …».
+    return ''
 
 
 def _doc_to_title(item: dict) -> Title:
@@ -93,7 +88,7 @@ def _doc_to_title(item: dict) -> Title:
 
 class KinopoiskDevParser(CatalogParser):
     id = 'kinopoiskdev'
-    label = 'Кинопоиск'
+    label = 'poiskkino.dev'
 
     def __init__(self):
         self._client: Optional[httpx.Client] = None
@@ -118,6 +113,7 @@ class KinopoiskDevParser(CatalogParser):
             if self._client is None:
                 self._client = httpx.Client(
                     timeout=10.0,
+                    follow_redirects=True,
                     headers={'Accept': 'application/json'},
                 )
             return self._client
@@ -125,7 +121,7 @@ class KinopoiskDevParser(CatalogParser):
     def _get(self, path: str, params: Optional[dict] = None) -> dict:
         if not self.api_key:
             raise ParserUnavailableError(
-                'Кинопоиск API-ключ не задан. Возьмите его у @kinopoiskdev_bot '
+                'poiskkino.dev API-ключ не задан. Возьмите его у @poiskkinodev_bot '
                 'в Telegram и добавьте в /admin/ → Источники каталога.'
             )
         url = f'{self.base}{path}'
@@ -134,19 +130,19 @@ class KinopoiskDevParser(CatalogParser):
                 url, params=params or {}, headers={'X-API-KEY': self.api_key}
             )
         except Exception as exc:
-            raise ParserUnavailableError(f'Кинопоиск не отвечает: {exc}') from exc
+            raise ParserUnavailableError(f'poiskkino.dev не отвечает: {exc}') from exc
         if r.status_code == 401 or r.status_code == 403:
             raise ParserUnavailableError(
-                f'Кинопоиск отверг ключ ({r.status_code}) — проверьте API-токен'
+                f'poiskkino.dev отверг ключ ({r.status_code}) — проверьте API-токен'
             )
         if r.status_code == 404:
-            raise TitleNotFoundError('Тайтл не найден в Кинопоиске')
+            raise TitleNotFoundError('Тайтл не найден в poiskkino.devе')
         if r.status_code == 429:
             raise ParserUnavailableError(
-                'Лимит запросов Кинопоиска исчерпан. Попробуйте позже.'
+                'Лимит запросов poiskkino.devа исчерпан. Попробуйте позже.'
             )
         if r.status_code >= 400:
-            raise ParserUnavailableError(f'Кинопоиск вернул {r.status_code}')
+            raise ParserUnavailableError(f'poiskkino.dev вернул {r.status_code}')
         return r.json()
 
     # -- Публичные методы --------------------------------------------------
@@ -230,6 +226,6 @@ class KinopoiskDevParser(CatalogParser):
 
     def stream(self, external_id, season=None, episode=None) -> Stream:
         raise StreamUnavailableError(
-            'Кинопоиск — справочник без потоков. Скопируйте название и '
+            'poiskkino.dev — справочник без потоков. Скопируйте название и '
             'создайте «Сеанс по ссылке» с нужного источника.'
         )

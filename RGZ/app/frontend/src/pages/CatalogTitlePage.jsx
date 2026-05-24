@@ -104,7 +104,7 @@ export default function CatalogTitlePage() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Открыть на Кинопоиске
+                Открыть в источнике
               </a>
             )}
           </div>

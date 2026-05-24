@@ -1,8 +1,8 @@
 """Настройки источников каталога.
 
-Одна запись на источник (kinogo/zona). Меняется через `/admin/` без редеплоя:
-зеркало упало — берёшь актуальное у @kinogobiz_bot, открываешь админку и
-правишь поле base_url. Парсер подхватит изменение в течение 30 секунд.
+Одна запись на источник. Меняется через `/admin/` без редеплоя: токен
+выдан — открываешь админку и вставляешь в поле API key. Парсер
+подхватит изменение в течение 30 секунд.
 """
 
 from django.db import models
@@ -13,7 +13,7 @@ class SourceConfig(models.Model):
 
     SOURCE_KINOPOISKDEV = 'kinopoiskdev'
     SOURCE_CHOICES = (
-        (SOURCE_KINOPOISKDEV, 'Кинопоиск'),
+        (SOURCE_KINOPOISKDEV, 'poiskkino.dev'),
     )
 
     source_id = models.CharField(
@@ -25,7 +25,7 @@ class SourceConfig(models.Model):
     base_url = models.URLField(
         'базовый URL API',
         max_length=255,
-        help_text='Для Кинопоиска: https://api.kinopoisk.dev',
+        help_text='Для poiskkino.dev: https://api.poiskkino.dev',
     )
     username = models.CharField(
         'логин (если требуется)',
@@ -36,7 +36,7 @@ class SourceConfig(models.Model):
         'API key',
         max_length=255,
         blank=True,
-        help_text='Для Кинопоиска — токен от @kinopoiskdev_bot в Telegram',
+        help_text='Токен от @poiskkinodev_bot в Telegram',
     )
     is_active = models.BooleanField('включён', default=True)
     notes = models.TextField('заметки', blank=True)

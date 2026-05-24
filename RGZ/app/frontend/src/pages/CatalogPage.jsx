@@ -8,7 +8,7 @@ import './CatalogPage.css'
 
 const SOURCE = 'kinopoiskdev'
 
-// Каталог-справочник на базе Кинопоиска: метаданные о фильмах и сериалах.
+// Каталог-справочник: метаданные о фильмах и сериалах через poiskkino.dev.
 // Сами потоки не отдаются — пользователь копирует название и открывает
 // «Сеанс по ссылке» с нужным URL.
 export default function CatalogPage() {
@@ -37,7 +37,7 @@ export default function CatalogPage() {
         setError(
           extractError(
             err,
-            'Каталог временно недоступен. Возможно, не настроен токен Кинопоиска в админке (получить — у @kinopoiskdev_bot в Telegram).',
+            'Каталог временно недоступен. Возможно, не настроен токен в админке (получить — у @poiskkinodev_bot в Telegram).',
           ),
         )
         if (nextPage === 1) setItems([])

@@ -32,7 +32,7 @@ _lock = Lock()
 def _defaults(source_id: str) -> SourceSettings:
     if source_id == 'kinopoiskdev':
         return SourceSettings(
-            base_url=getattr(settings, 'KINOPOISKDEV_BASE', 'https://api.kinopoisk.dev').rstrip('/'),
+            base_url=getattr(settings, 'KINOPOISKDEV_BASE', 'https://api.poiskkino.dev').rstrip('/'),
             username='',
             password=getattr(settings, 'KINOPOISKDEV_API_KEY', '') or '',
             is_active=True,

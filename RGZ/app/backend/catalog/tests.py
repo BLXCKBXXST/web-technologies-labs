@@ -20,14 +20,14 @@ SOURCE = 'kinopoiskdev'
 
 class _MockParser(CatalogParser):
     id = SOURCE
-    label = 'Кинопоиск'
+    label = 'poiskkino.dev'
 
     def __init__(self, *, raise_unavail=False):
         self._raise = raise_unavail
 
     def feed(self, page=1, kind=None):
         if self._raise:
-            raise ParserUnavailableError('Кинопоиск недоступен')
+            raise ParserUnavailableError('poiskkino.dev недоступен')
         return Page(
             items=[Title(id='123', title='Тестовый фильм', year=2024, kind=KIND_MOVIE)],
             page=page,
@@ -44,7 +44,7 @@ class _MockParser(CatalogParser):
         return TitleDetails(id=external_id, title='Подробности', year=2024, kind=KIND_MOVIE)
 
     def stream(self, external_id, season=None, episode=None):
-        raise StreamUnavailableError('Кинопоиск — справочник без потоков')
+        raise StreamUnavailableError('poiskkino.dev — справочник без потоков')
 
 
 @pytest.fixture(autouse=True)
@@ -124,7 +124,7 @@ def _make_parser(monkeypatch, handler, api_key='test-key'):
     monkeypatch.setattr(
         config_loader, 'get',
         lambda _id: SourceSettings(
-            base_url='https://api.kinopoisk.dev', username='',
+            base_url='https://api.poiskkino.dev', username='',
             password=api_key, is_active=True,
         ),
     )
@@ -237,7 +237,7 @@ def test_kinopoisk_missing_api_key(monkeypatch):
     monkeypatch.setattr(
         config_loader, 'get',
         lambda _id: SourceSettings(
-            base_url='https://api.kinopoisk.dev', username='',
+            base_url='https://api.poiskkino.dev', username='',
             password='', is_active=True,
         ),
     )
