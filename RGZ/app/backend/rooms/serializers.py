@@ -9,13 +9,6 @@ from .external_video import resolve_external
 from .models import WatchRoom
 from .sync import effective_position
 
-try:
-    from catalog.errors import CatalogError
-    from catalog.parsers import get_parser
-except ImportError:  # pragma: no cover — каталог опционален
-    get_parser = None
-    CatalogError = None
-
 
 class WatchRoomSerializer(serializers.ModelSerializer):
     """Полное представление комнаты с вложенным видео и текущим состоянием."""
@@ -71,50 +64,32 @@ class WatchRoomSerializer(serializers.ModelSerializer):
 
 
 class RoomCreateSerializer(serializers.ModelSerializer):
-    """Создание комнаты под загруженное видео, внешний URL или тайтл из каталога."""
+    """Создание комнаты под загруженное видео или внешний URL."""
 
     external_url = serializers.CharField(required=False, allow_blank=True, max_length=2048)
-    catalog_source = serializers.CharField(required=False, allow_blank=True, max_length=32)
-    catalog_external_id = serializers.CharField(required=False, allow_blank=True, max_length=128)
-    catalog_season = serializers.IntegerField(required=False, allow_null=True)
-    catalog_episode = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = WatchRoom
-        fields = (
-            'id', 'video', 'external_url', 'title',
-            'catalog_source', 'catalog_external_id', 'catalog_season', 'catalog_episode',
-        )
+        fields = ('id', 'video', 'external_url', 'title')
         read_only_fields = ('id',)
         extra_kwargs = {'video': {'required': False, 'allow_null': True}}
 
     def validate(self, attrs):
         video = attrs.get('video')
         external_url = (attrs.get('external_url') or '').strip()
-        catalog_source = (attrs.get('catalog_source') or '').strip()
-        catalog_id = (attrs.get('catalog_external_id') or '').strip()
-        sources = [bool(video), bool(external_url), bool(catalog_source and catalog_id)]
-        if sum(sources) == 0:
+        if not video and not external_url:
             raise serializers.ValidationError(
-                'Нужно указать либо загруженное видео (video), либо внешний URL '
-                '(external_url), либо тайтл из каталога (catalog_source + catalog_external_id).'
+                'Нужно указать либо загруженное видео (video), либо внешний URL (external_url).'
             )
-        if sum(sources) > 1:
+        if video and external_url:
             raise serializers.ValidationError(
-                'Нельзя одновременно задавать несколько источников: video / external_url / catalog.'
+                'Нельзя одновременно задавать загруженное видео и внешний URL.'
             )
         attrs['external_url'] = external_url
-        attrs['catalog_source'] = catalog_source
-        attrs['catalog_external_id'] = catalog_id
         return attrs
 
     def create(self, validated_data):
         external_url = validated_data.pop('external_url', '')
-        catalog_source = validated_data.pop('catalog_source', '')
-        catalog_id = validated_data.pop('catalog_external_id', '')
-        catalog_season = validated_data.pop('catalog_season', None)
-        catalog_episode = validated_data.pop('catalog_episode', None)
-
         if external_url:
             info = resolve_external(external_url)
             validated_data.update({
@@ -124,22 +99,6 @@ class RoomCreateSerializer(serializers.ModelSerializer):
                 'external_title': info['title'],
                 'external_duration': info['duration'],
                 'external_thumbnail_url': info['thumbnail'],
-                'external_resolved_at': timezone.now(),
-            })
-        elif catalog_source and catalog_id and get_parser is not None:
-            try:
-                parser = get_parser(catalog_source)
-                details = parser.title(catalog_id)
-                stream = parser.stream(catalog_id, season=catalog_season, episode=catalog_episode)
-            except CatalogError as exc:  # type: ignore[misc]
-                raise serializers.ValidationError({'catalog_external_id': str(exc)}) from exc
-            validated_data.update({
-                'external_url': details.url or '',
-                'external_kind': f'catalog:{catalog_source}',
-                'stream_url': stream.url,
-                'external_title': stream.title or details.title,
-                'external_duration': stream.duration or details.duration_minutes,
-                'external_thumbnail_url': stream.thumbnail or details.poster,
                 'external_resolved_at': timezone.now(),
             })
         return super().create(validated_data)

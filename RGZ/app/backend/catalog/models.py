@@ -11,11 +11,9 @@ from django.db import models
 class SourceConfig(models.Model):
     """Конфигурация одного источника каталога."""
 
-    SOURCE_KINOGO = 'kinogo'
-    SOURCE_ZONA = 'zona'
+    SOURCE_TMDB = 'tmdb'
     SOURCE_CHOICES = (
-        (SOURCE_KINOGO, 'Kinogo'),
-        (SOURCE_ZONA, 'Zona'),
+        (SOURCE_TMDB, 'TMDB'),
     )
 
     source_id = models.CharField(
@@ -25,20 +23,20 @@ class SourceConfig(models.Model):
         unique=True,
     )
     base_url = models.URLField(
-        'базовый URL зеркала',
+        'базовый URL API',
         max_length=255,
-        help_text='Например, https://kinogo.la или личное зеркало от @kinogobiz_bot.',
+        help_text='Для TMDB: https://api.themoviedb.org/3',
     )
     username = models.CharField(
-        'логин (для входа на источнике)',
+        'логин (если требуется)',
         max_length=120,
         blank=True,
-        help_text='Если задан, парсер войдёт под этой учёткой — это убирает рекламу в плеере.',
     )
     password = models.CharField(
-        'пароль',
+        'API key',
         max_length=255,
         blank=True,
+        help_text='Для TMDB — v3 API key с https://www.themoviedb.org/settings/api',
     )
     is_active = models.BooleanField('включён', default=True)
     notes = models.TextField('заметки', blank=True)

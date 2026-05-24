@@ -30,18 +30,11 @@ _lock = Lock()
 
 
 def _defaults(source_id: str) -> SourceSettings:
-    if source_id == 'kinogo':
+    if source_id == 'tmdb':
         return SourceSettings(
-            base_url=getattr(settings, 'KINOGO_BASE', '').rstrip('/'),
-            username=getattr(settings, 'KINOGO_USERNAME', '') or '',
-            password=getattr(settings, 'KINOGO_PASSWORD', '') or '',
-            is_active=True,
-        )
-    if source_id == 'zona':
-        return SourceSettings(
-            base_url=getattr(settings, 'ZONA_BASE', '').rstrip('/'),
+            base_url=getattr(settings, 'TMDB_BASE', 'https://api.themoviedb.org/3').rstrip('/'),
             username='',
-            password='',
+            password=getattr(settings, 'TMDB_API_KEY', '') or '',
             is_active=True,
         )
     return SourceSettings(base_url='', username='', password='', is_active=False)

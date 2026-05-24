@@ -51,6 +51,14 @@ def resolve_external(url: str) -> dict:
             {'external_url': 'Ожидается http(s)://… URL страницы с видео'}
         )
 
+    host = parsed.netloc.lower()
+    if 'youtube.com' in host or 'youtu.be' in host:
+        raise drf_serializers.ValidationError(
+            {'external_url':
+             'YouTube не поддерживается. Используйте RuTube, VK Video, '
+             'Twitch или прямую ссылку на mp4/m3u8.'}
+        )
+
     # yt-dlp импортируем лениво — при первом обращении к комнатам с внешним
     # видео; в тестах подменяется моком, чтобы не лезть в сеть.
     import yt_dlp

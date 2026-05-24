@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
-import { fetchFeed, listSources, searchCatalog } from '../api/catalog.js'
+import { fetchFeed, searchCatalog } from '../api/catalog.js'
 import { extractError } from '../api/errors.js'
 import TitleCard from '../components/catalog/TitleCard.jsx'
 import Button from '../components/ui/Button.jsx'
 import TextField from '../components/ui/TextField.jsx'
 import './CatalogPage.css'
 
-// Лента каталога с переключателем источника и поиском.
+const SOURCE = 'tmdb'
+
+// Каталог-справочник на базе TMDB: метаданные о фильмах и сериалах. Сами
+// потоки не отдаются — пользователь копирует название и открывает «Сеанс
+// по ссылке» с нужным URL.
 export default function CatalogPage() {
-  const [sources, setSources] = useState([])
-  const [active, setActive] = useState('kinogo')
   const [items, setItems] = useState([])
   const [page, setPage] = useState(1)
   const [hasNext, setHasNext] = useState(false)
@@ -17,27 +19,27 @@ export default function CatalogPage() {
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
-
-  useEffect(() => {
-    listSources()
-      .then(({ data }) => setSources(data.sources))
-      .catch(() => {})
-  }, [])
+  const [kind, setKind] = useState('movie') // 'movie' | 'series'
 
   const load = useCallback(
-    async (source, nextPage, q) => {
+    async (nextPage, q, k) => {
       setLoading(true)
       setError('')
       try {
         const req = q
-          ? searchCatalog(source, q, nextPage)
-          : fetchFeed(source, { page: nextPage })
+          ? searchCatalog(SOURCE, q, nextPage)
+          : fetchFeed(SOURCE, { page: nextPage, kind: k })
         const { data } = await req
         setItems((prev) => (nextPage === 1 ? data.items : [...prev, ...data.items]))
         setHasNext(Boolean(data.has_next))
         setPage(nextPage)
       } catch (err) {
-        setError(extractError(err, 'Источник недоступен. Попробуйте позже или поменяйте зеркало в админке.'))
+        setError(
+          extractError(
+            err,
+            'Каталог временно недоступен. Возможно, не настроен API-ключ TMDB в админке.',
+          ),
+        )
         if (nextPage === 1) setItems([])
         setHasNext(false)
       } finally {
@@ -47,10 +49,9 @@ export default function CatalogPage() {
     [],
   )
 
-  // Загрузка ленты при смене источника или сбросе поиска.
   useEffect(() => {
-    load(active, 1, submittedQuery)
-  }, [active, submittedQuery, load])
+    load(1, submittedQuery, kind)
+  }, [submittedQuery, kind, load])
 
   const submitSearch = (e) => {
     e.preventDefault()
@@ -62,42 +63,41 @@ export default function CatalogPage() {
     setSubmittedQuery('')
   }
 
-  const sourceTabs = sources.length > 0 ? sources : [
-    { id: 'kinogo', label: 'Kinogo', available: true },
-    { id: 'zona', label: 'Zona', available: false },
-  ]
-
   return (
     <div className="catalog">
       <h1 className="page-title">Каталог</h1>
       <p className="catalog__hint">
-        Фильмы и сериалы с внешних источников. Один клик — и кино уже
-        играет в нашем плеере; ещё клик — и комната совместного просмотра
-        готова.
+        Справочник фильмов и сериалов. Выберите тайтл, скопируйте название —
+        и создайте «Сеанс по ссылке» с нужного источника.
       </p>
 
-      <div className="catalog__tabs">
-        {sourceTabs.map((s) => (
+      {!submittedQuery && (
+        <div className="catalog__chips">
           <button
-            key={s.id}
             type="button"
             className={
-              'catalog__tab' + (s.id === active ? ' catalog__tab--active' : '')
+              'catalog__chip' + (kind === 'movie' ? ' catalog__chip--active' : '')
             }
-            onClick={() => s.available && setActive(s.id)}
-            disabled={!s.available}
-            title={s.available ? '' : 'Источник временно недоступен'}
+            onClick={() => setKind('movie')}
           >
-            {s.label}
-            {!s.available && <span className="catalog__tab-off">недоступен</span>}
+            Фильмы
           </button>
-        ))}
-      </div>
+          <button
+            type="button"
+            className={
+              'catalog__chip' + (kind === 'series' ? ' catalog__chip--active' : '')
+            }
+            onClick={() => setKind('series')}
+          >
+            Сериалы
+          </button>
+        </div>
+      )}
 
       <form className="catalog__search" onSubmit={submitSearch}>
         <TextField
           name="q"
-          placeholder={`Поиск в ${sourceTabs.find((s) => s.id === active)?.label || ''}`}
+          placeholder="Поиск фильмов и сериалов"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -117,7 +117,7 @@ export default function CatalogPage() {
 
       <div className="catalog__grid">
         {items.map((t) => (
-          <TitleCard key={`${active}-${t.id}`} source={active} title={t} />
+          <TitleCard key={t.id} source={SOURCE} title={t} />
         ))}
       </div>
 
@@ -125,7 +125,7 @@ export default function CatalogPage() {
         <div className="catalog__more">
           <Button
             variant="secondary"
-            onClick={() => load(active, page + 1, submittedQuery)}
+            onClick={() => load(page + 1, submittedQuery, kind)}
             loading={loading}
           >
             Показать ещё

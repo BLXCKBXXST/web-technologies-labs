@@ -6,12 +6,10 @@ from typing import Iterable
 
 from ..errors import UnknownSourceError
 from .base import CatalogParser
-from .kinogo import KinogoParser
-from .zona import ZonaParser
+from .tmdb import TMDBParser
 
 _PARSERS: dict[str, CatalogParser] = {
-    KinogoParser.id: KinogoParser(),
-    ZonaParser.id: ZonaParser(),
+    TMDBParser.id: TMDBParser(),
 }
 
 

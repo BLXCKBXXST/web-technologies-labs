@@ -1,21 +1,27 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { createRoom } from '../api/rooms.js'
 import { extractError, extractFieldErrors } from '../api/errors.js'
 import TextField from '../components/ui/TextField.jsx'
 import Button from '../components/ui/Button.jsx'
 import './CreateExternalRoomPage.css'
 
-// Создание комнаты совместного просмотра с произвольной веб-страницей.
-// Бэк через yt-dlp извлекает прямой URL потока — для пользователя достаточно
-// дать ссылку на страницу с видео.
+// Создание комнаты совместного просмотра по ссылке на видео. Бэкенд через
+// yt-dlp извлекает прямой поток; YouTube не поддерживается (заблокирован
+// на стороне валидатора).
 export default function CreateExternalRoomPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const presetTitle = searchParams.get('title') || ''
   const [url, setUrl] = useState('')
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState(presetTitle)
   const [errors, setErrors] = useState({})
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    setTitle(presetTitle)
+  }, [presetTitle])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -43,16 +49,17 @@ export default function CreateExternalRoomPage() {
     <div className="ext-room">
       <h1 className="page-title">Сеанс по ссылке</h1>
       <p className="ext-room__hint">
-        Вставьте ссылку на страницу с видео — YouTube, RuTube, VK Video,
-        Dailymotion и многие другие. Сервер сам извлечёт прямой поток, а
-        участники комнаты будут смотреть синхронно с ведущим.
+        Вставьте ссылку на страницу с видео — RuTube, VK Video, Twitch VOD,
+        Dailymotion или прямую mp4/m3u8-ссылку. Сервер сам извлечёт поток,
+        а участники комнаты будут смотреть синхронно с ведущим.
       </p>
+      <p className="ext-room__note">YouTube не поддерживается.</p>
       <form className="ext-room__form" onSubmit={submit} noValidate>
         <TextField
           label="Ссылка на страницу или видео"
           name="external_url"
           type="url"
-          placeholder="https://www.youtube.com/watch?v=…"
+          placeholder="https://rutube.ru/video/… или прямая mp4/m3u8"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           error={errors.external_url}
