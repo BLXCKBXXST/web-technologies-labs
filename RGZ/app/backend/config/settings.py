@@ -1,9 +1,8 @@
-"""
-Настройки Django-проекта blxck.hub.
+"""Настройки Django-проекта.
 
-Конфигурация управляется переменными окружения (django-environ): локально без
-переменных используются SQLite и in-memory channel layer, на сервере через .env
-подключаются PostgreSQL и Redis. Один и тот же код работает в обоих режимах.
+Конфигурация управляется переменными окружения (django-environ): локально
+без переменных используется SQLite, на сервере через .env подключается
+PostgreSQL. Один и тот же код работает в обоих режимах.
 """
 
 from datetime import timedelta
@@ -31,7 +30,6 @@ ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS')
 
 # --- Приложения --------------------------------------------------------------
 INSTALLED_APPS = [
-    'daphne',  # ASGI-сервер; должен идти до staticfiles, чтобы runserver работал по ASGI
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,14 +39,10 @@ INSTALLED_APPS = [
     # Сторонние
     'rest_framework',
     'corsheaders',
-    'channels',
     # Приложения проекта
     'common',
     'accounts',
     'videos',
-    'rooms',
-    'chat',
-    'catalog',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +77,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-ASGI_APPLICATION = 'config.asgi.application'
 
 # --- База данных -------------------------------------------------------------
 # Локально (без DATABASE_URL) — SQLite. На сервере — PostgreSQL через DATABASE_URL.
@@ -93,22 +86,6 @@ DATABASES = {
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
     ),
 }
-
-# --- Channels: слой обмена сообщениями ---------------------------------------
-# Локально (без REDIS_URL) — in-memory (хватает для одного процесса daphne).
-# На сервере — Redis, чтобы несколько процессов видели общие группы комнат.
-REDIS_URL = env('REDIS_URL', default='')
-if REDIS_URL:
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {'hosts': [REDIS_URL]},
-        },
-    }
-else:
-    CHANNEL_LAYERS = {
-        'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'},
-    }
 
 # --- Аутентификация ----------------------------------------------------------
 AUTH_USER_MODEL = 'accounts.User'
@@ -170,15 +147,3 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # выше — во временный файл на диске
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# --- Каталог (poiskkino.dev справочник) --------------------------------------
-# Ключ можно задать через env (fallback), но боевая конфигурация — через
-# /admin/ → Источники каталога. Получить токен: @poiskkinodev_bot в Telegram.
-KINOPOISKDEV_BASE = env('KINOPOISKDEV_BASE', default='https://api.poiskkino.dev')
-KINOPOISKDEV_API_KEY = env('KINOPOISKDEV_API_KEY', default='')
-
-# TTL для разных типов запросов к каталогу (секунды).
-CATALOG_CACHE_FEED_TTL = env.int('CATALOG_CACHE_FEED_TTL', default=15 * 60)
-CATALOG_CACHE_SEARCH_TTL = env.int('CATALOG_CACHE_SEARCH_TTL', default=10 * 60)
-CATALOG_CACHE_TITLE_TTL = env.int('CATALOG_CACHE_TITLE_TTL', default=2 * 60 * 60)
-CATALOG_CACHE_STREAM_TTL = env.int('CATALOG_CACHE_STREAM_TTL', default=20 * 60)

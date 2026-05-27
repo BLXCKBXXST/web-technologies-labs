@@ -17,7 +17,7 @@ class TimeStampedModel(models.Model):
 
 
 class UUIDModel(models.Model):
-    """Первичный ключ — UUID (непредсказуемые ссылки на видео и комнаты)."""
+    """Первичный ключ — UUID (непредсказуемые ссылки на видео)."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 

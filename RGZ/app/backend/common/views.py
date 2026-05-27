@@ -9,4 +9,4 @@ from rest_framework.response import Response
 @permission_classes([AllowAny])
 def health(request):
     """Проверка живости сервиса (для мониторинга и деплой-скрипта)."""
-    return Response({'status': 'ok', 'service': 'blxck.hub'})
+    return Response({'status': 'ok'})
