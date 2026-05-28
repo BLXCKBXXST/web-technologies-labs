@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Точка входа контейнера бэкенда: миграции, сбор статики, запуск ASGI-сервера.
+# Точка входа контейнера бэкенда: миграции, сбор статики, запуск WSGI-сервера.
 set -e
 
 python manage.py migrate --noinput
@@ -15,4 +15,4 @@ python manage.py cleanup_guests || true
     done
 ) &
 
-exec daphne -b 0.0.0.0 -p 8000 config.asgi:application
+exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3

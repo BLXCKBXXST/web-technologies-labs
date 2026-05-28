@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# deploy.sh — развёртывание и снос платформы blxck.hub на собственном сервере
+# deploy.sh — развёртывание и снос видеохостинга на собственном сервере
 # за обратным прокси Caddy.
 #
 # Использование (запускать НА сервере):
-#   ./deploy.sh --install     # развернуть blxck.hub
-#   ./deploy.sh --uninstall   # снести blxck.hub
+#   ./deploy.sh --install     # развернуть
+#   ./deploy.sh --uninstall   # снести
 #
 # Требует уже установленного Caddy-стека (контейнер caddy в общем
-# /opt/stack/docker-compose.yml — см. home-server/scripts/50-install-caddy-proxy.sh).
-# Оба режима идемпотентны и могут быть запущены повторно.
+# /opt/stack/docker-compose.yml). Оба режима идемпотентны и могут быть
+# запущены повторно.
 set -euo pipefail
 
 STACK_DIR="/opt/stack"
 COMPOSE_FILE="${STACK_DIR}/docker-compose.yml"
 CADDY_FILE="${STACK_DIR}/caddy/Caddyfile"
-APP_DIR="${STACK_DIR}/blxckhub"
+APP_DIR="${STACK_DIR}/videohost"
 ENV_FILE="${APP_DIR}/.env"
 USER_NAME="$(id -un)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -23,11 +23,11 @@ usage() {
     cat <<EOF
 Usage: $(basename "$0") --install | --uninstall
 
-  --install     Развернуть blxck.hub: синхронизировать исходники в ${APP_DIR},
-                добавить сервисы blxckhub-db/redis/backend/frontend в общий
+  --install     Развернуть видеохостинг: синхронизировать исходники в ${APP_DIR},
+                добавить сервисы videohost-db/backend/frontend в общий
                 docker-compose.yml, дописать поддомен в Caddyfile, поднять стек.
 
-  --uninstall   Снести blxck.hub: остановить и удалить контейнеры, убрать сервисы
+  --uninstall   Снести: остановить и удалить контейнеры, убрать сервисы
                 из docker-compose.yml и блок поддомена из Caddyfile, удалить
                 ${APP_DIR}.
 
@@ -70,7 +70,7 @@ gen_secret() {
 action_install() {
     require_caddy_stack
 
-    prompt_default "Домен для blxck.hub" "blxckhub.server34.netcraze.club" DOMAIN
+    prompt_default "Домен для видеохостинга" "videohost.example.com" DOMAIN
 
     echo "==> Бэкаплю docker-compose.yml и Caddyfile..."
     local stamp; stamp="$(date +%Y%m%d-%H%M%S)"
@@ -95,11 +95,10 @@ action_install() {
 DJANGO_SECRET_KEY=$(gen_secret)
 DJANGO_DEBUG=False
 DJANGO_ALLOWED_HOSTS=${DOMAIN}
-DATABASE_URL=postgres://blxckhub:${db_pass}@blxckhub-db:5432/blxckhub
-POSTGRES_DB=blxckhub
-POSTGRES_USER=blxckhub
+DATABASE_URL=postgres://videohost:${db_pass}@videohost-db:5432/videohost
+POSTGRES_DB=videohost
+POSTGRES_USER=videohost
 POSTGRES_PASSWORD=${db_pass}
-REDIS_URL=redis://blxckhub-redis:6379/0
 CORS_ALLOWED_ORIGINS=https://${DOMAIN}
 CSRF_TRUSTED_ORIGINS=https://${DOMAIN}
 EOF
@@ -107,46 +106,40 @@ EOF
         echo "==> ${ENV_FILE} уже существует — оставляю без изменений."
     fi
 
-    if grep -qE '^[[:space:]]+blxckhub-backend:[[:space:]]*$' "${COMPOSE_FILE}"; then
-        echo "==> Сервисы blxck.hub уже описаны в ${COMPOSE_FILE} — пропускаю."
+    if grep -qE '^[[:space:]]+videohost-backend:[[:space:]]*$' "${COMPOSE_FILE}"; then
+        echo "==> Сервисы видеохостинга уже описаны в ${COMPOSE_FILE} — пропускаю."
     else
-        echo "==> Добавляю сервисы blxck.hub в ${COMPOSE_FILE}..."
+        echo "==> Добавляю сервисы видеохостинга в ${COMPOSE_FILE}..."
         cat >>"${COMPOSE_FILE}" <<'EOF'
 
-  blxckhub-db:
+  videohost-db:
     image: postgres:16-alpine
-    container_name: blxckhub-db
+    container_name: videohost-db
     restart: unless-stopped
-    env_file: ./blxckhub/.env
+    env_file: ./videohost/.env
     volumes:
-      - ./blxckhub/data/pg:/var/lib/postgresql/data
+      - ./videohost/data/pg:/var/lib/postgresql/data
 
-  blxckhub-redis:
-    image: redis:7-alpine
-    container_name: blxckhub-redis
+  videohost-backend:
+    build: ./videohost/app/backend
+    container_name: videohost-backend
     restart: unless-stopped
-
-  blxckhub-backend:
-    build: ./blxckhub/app/backend
-    container_name: blxckhub-backend
-    restart: unless-stopped
-    env_file: ./blxckhub/.env
+    env_file: ./videohost/.env
     depends_on:
-      - blxckhub-db
-      - blxckhub-redis
+      - videohost-db
     volumes:
-      - ./blxckhub/data/media:/app/media
-      - ./blxckhub/data/static:/app/staticfiles
+      - ./videohost/data/media:/app/media
+      - ./videohost/data/static:/app/staticfiles
 
-  blxckhub-frontend:
-    build: ./blxckhub/app/frontend
-    container_name: blxckhub-frontend
+  videohost-frontend:
+    build: ./videohost/app/frontend
+    container_name: videohost-frontend
     restart: unless-stopped
     depends_on:
-      - blxckhub-backend
+      - videohost-backend
     volumes:
-      - ./blxckhub/data/media:/srv/media:ro
-      - ./blxckhub/data/static:/srv/static:ro
+      - ./videohost/data/media:/srv/media:ro
+      - ./videohost/data/static:/srv/static:ro
 EOF
     fi
 
@@ -158,7 +151,7 @@ EOF
 
 ${DOMAIN} {
     encode gzip
-    reverse_proxy blxckhub-frontend:80
+    reverse_proxy videohost-frontend:80
 }
 EOF
     fi
@@ -168,17 +161,17 @@ EOF
 
     echo "==> docker compose up -d --build (сборка может занять пару минут)..."
     ( cd "${STACK_DIR}" && docker compose up -d --build \
-        blxckhub-db blxckhub-redis blxckhub-backend blxckhub-frontend )
+        videohost-db videohost-backend videohost-frontend )
 
     reload_caddy
 
     cat <<EOF
 
 ================================================================================
-blxck.hub развёрнут.
+Видеохостинг развёрнут.
 
 Публичный URL:
-  https://${DOMAIN}  -> blxckhub-frontend (nginx) -> blxckhub-backend (daphne)
+  https://${DOMAIN}  -> videohost-frontend (nginx) -> videohost-backend (gunicorn)
 
 Дальнейшие шаги:
   1. Убедитесь, что DNS A/CNAME ${DOMAIN} указывает на внешний IP сервера.
@@ -186,7 +179,7 @@ blxck.hub развёрнут.
      TLS-сертификат Let's Encrypt.
   3. Вход — по имени пользователя и паролю; есть кнопка «войти как гостем».
      Гостевые аккаунты автоматически удаляются после 24 ч простоя.
-  4. Логи: docker logs -f blxckhub-backend | blxckhub-frontend | caddy
+  4. Логи: docker logs -f videohost-backend | videohost-frontend | caddy
 
 Снести после демонстрации:
   ./deploy.sh --uninstall
@@ -197,34 +190,34 @@ EOF
 action_uninstall() {
     require_caddy_stack
 
-    prompt_default "Домен для удаления" "blxckhub.server34.netcraze.club" DOMAIN
+    prompt_default "Домен для удаления" "videohost.example.com" DOMAIN
 
     echo "==> Бэкаплю docker-compose.yml и Caddyfile..."
     local stamp; stamp="$(date +%Y%m%d-%H%M%S)"
     cp -a "${COMPOSE_FILE}" "${COMPOSE_FILE}.bak.${stamp}"
     cp -a "${CADDY_FILE}"   "${CADDY_FILE}.bak.${stamp}"
 
-    echo "==> Останавливаю и удаляю контейнеры blxck.hub..."
-    for svc in blxckhub-frontend blxckhub-backend blxckhub-redis blxckhub-db; do
+    echo "==> Останавливаю и удаляю контейнеры видеохостинга..."
+    for svc in videohost-frontend videohost-backend videohost-db; do
         if ( cd "${STACK_DIR}" && docker compose ps --services 2>/dev/null | grep -qx "${svc}" ); then
             ( cd "${STACK_DIR}" && docker compose stop "${svc}" && docker compose rm -f "${svc}" )
         fi
     done
 
-    if grep -qE '^[[:space:]]+blxckhub-db:[[:space:]]*$' "${COMPOSE_FILE}"; then
-        echo "==> Удаляю сервисы blxck.hub из ${COMPOSE_FILE}..."
-        # Удаляем блок от строки "  blxckhub-db:" до следующего НЕ-blxckhub
+    if grep -qE '^[[:space:]]+videohost-db:[[:space:]]*$' "${COMPOSE_FILE}"; then
+        echo "==> Удаляю сервисы видеохостинга из ${COMPOSE_FILE}..."
+        # Удаляем блок от строки "  videohost-db:" до следующего НЕ-videohost
         # сервиса (две ведущих пробела + слово) либо до конца файла.
         awk '
             BEGIN { skip = 0 }
-            /^[[:space:]]+blxckhub-db:[[:space:]]*$/ { skip = 1; next }
-            skip && /^[[:space:]]{2}[A-Za-z0-9_-]+:[[:space:]]*$/ && $0 !~ /blxckhub-/ { skip = 0 }
+            /^[[:space:]]+videohost-db:[[:space:]]*$/ { skip = 1; next }
+            skip && /^[[:space:]]{2}[A-Za-z0-9_-]+:[[:space:]]*$/ && $0 !~ /videohost-/ { skip = 0 }
             skip && /^[A-Za-z]/ { skip = 0 }
             skip == 0 { print }
         ' "${COMPOSE_FILE}" > "${COMPOSE_FILE}.tmp"
         mv "${COMPOSE_FILE}.tmp" "${COMPOSE_FILE}"
     else
-        echo "==> Сервисы blxck.hub отсутствуют в ${COMPOSE_FILE} — пропускаю."
+        echo "==> Сервисы видеохостинга отсутствуют в ${COMPOSE_FILE} — пропускаю."
     fi
 
     if grep -qF "${DOMAIN} {" "${CADDY_FILE}"; then
@@ -253,7 +246,7 @@ action_uninstall() {
     cat <<EOF
 
 ================================================================================
-blxck.hub удалён: контейнеры остановлены, сервисы и блок Caddy убраны,
+Видеохостинг удалён: контейнеры остановлены, сервисы и блок Caddy убраны,
 каталог ${APP_DIR} удалён. Бэкапы compose и Caddyfile с меткой времени
 остались рядом — можно откатиться вручную.
 ================================================================================

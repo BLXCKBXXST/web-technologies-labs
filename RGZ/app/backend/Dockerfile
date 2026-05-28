@@ -1,4 +1,4 @@
-# Образ бэкенда blxck.hub — ASGI-сервер Daphne.
+# Образ бэкенда — Django + Gunicorn.
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -16,7 +16,7 @@ RUN { grep -rlZ 'deb.debian.org' /etc/apt/ || true; } \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 COPY . .
 RUN chmod +x entrypoint.sh

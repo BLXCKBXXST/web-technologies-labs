@@ -1,47 +1,41 @@
-# Самодостаточный стек blxck.hub: `docker compose up --build` поднимает всё
-# приложение целиком (БД, Redis, бэкенд, фронтенд) и публикует его на :8080.
+# Самодостаточный стек: `docker compose up --build` поднимает приложение
+# целиком (БД, бэкенд, фронтенд) и публикует его на :8080.
 #
 # Локальная разработка ведётся нативно (venv + npm run dev). Этот compose —
 # для демонстрации, проверки «как на сервере» и как образец прод-развёртывания.
-# Имена сервисов с префиксом blxckhub- совпадают с теми, что deploy.sh
-# добавляет в общий стек сервера, — поэтому nginx.conf един для обоих окружений.
+# Имена сервисов с префиксом videohost- совпадают с теми, что deploy.sh
+# добавляет в общий стек сервера.
 
 services:
-  blxckhub-db:
+  videohost-db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: blxckhub
-      POSTGRES_USER: blxckhub
-      POSTGRES_PASSWORD: blxckhub
+      POSTGRES_DB: videohost
+      POSTGRES_USER: videohost
+      POSTGRES_PASSWORD: videohost
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U blxckhub']
+      test: ['CMD-SHELL', 'pg_isready -U videohost']
       interval: 5s
       retries: 10
 
-  blxckhub-redis:
-    image: redis:7-alpine
-
-  blxckhub-backend:
+  videohost-backend:
     build: ./app/backend
     environment:
       DJANGO_SECRET_KEY: compose-demo-secret-key
       DJANGO_DEBUG: 'False'
       DJANGO_ALLOWED_HOSTS: '*'
-      DATABASE_URL: postgres://blxckhub:blxckhub@blxckhub-db:5432/blxckhub
-      REDIS_URL: redis://blxckhub-redis:6379/0
+      DATABASE_URL: postgres://videohost:videohost@videohost-db:5432/videohost
       CORS_ALLOWED_ORIGINS: http://localhost:8080
     volumes:
       - media:/app/media
       - static:/app/staticfiles
     depends_on:
-      blxckhub-db:
+      videohost-db:
         condition: service_healthy
-      blxckhub-redis:
-        condition: service_started
 
-  blxckhub-frontend:
+  videohost-frontend:
     build: ./app/frontend
     ports:
       - '8080:80'
@@ -49,7 +43,7 @@ services:
       - media:/srv/media:ro
       - static:/srv/static:ro
     depends_on:
-      - blxckhub-backend
+      - videohost-backend
 
 volumes:
   pgdata:
