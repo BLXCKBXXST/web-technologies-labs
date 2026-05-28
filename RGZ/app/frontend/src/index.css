@@ -1,5 +1,4 @@
 @import './styles/tokens.css';
-@import './styles/seans-theme.css';
 
 /* Сброс и базовые стили */
 *,
@@ -72,8 +71,8 @@ code {
   outline-offset: 2px;
 }
 
-/* Полоса прокрутки в тёмной теме */
+/* Полоса прокрутки */
 * {
-  scrollbar-color: var(--color-surface-3) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
   scrollbar-width: thin;
 }

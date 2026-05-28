@@ -1,34 +1,24 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useTheme } from '../context/ThemeContext.jsx'
 import Button from './ui/Button.jsx'
 import './Header.css'
+
+const APP_NAME = import.meta.env.VITE_APP_NAME || 'Видеохостинг'
 
 // Шапка приложения: логотип, кнопка загрузки, профиль и выход.
 export default function Header() {
   const { user, isAuthenticated, isGuest, logout } = useAuth()
-  const { theme } = useTheme()
 
   return (
     <header className="header">
       <div className="header__inner">
         <Link to="/" className="header__brand">
-          {theme === 'seans' ? (
-            <>СЕ<span>АНС</span></>
-          ) : (
-            <>blxck<span>.hub</span></>
-          )}
+          {APP_NAME}
         </Link>
 
         <nav className="header__nav">
           {isAuthenticated ? (
             <>
-              <Link to="/catalog">
-                <Button variant="ghost">Каталог</Button>
-              </Link>
-              <Link to="/rooms/new">
-                <Button variant="ghost">Сеанс по ссылке</Button>
-              </Link>
               <Link to="/upload">
                 <Button variant="secondary">Загрузить видео</Button>
               </Link>

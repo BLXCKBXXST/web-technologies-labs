@@ -3,7 +3,7 @@ import axios from 'axios'
 // Базовый URL относительный: в разработке его проксирует Vite, в продакшене —
 // Caddy (тот же origin). Переопределяется через VITE_API_BASE при необходимости.
 const baseURL = import.meta.env.VITE_API_BASE || '/api'
-const REFRESH_KEY = 'blxckhub_refresh'
+const REFRESH_KEY = 'videohost_refresh'
 
 // Access-токен хранится только в памяти; refresh-токен — в localStorage.
 let accessToken = null

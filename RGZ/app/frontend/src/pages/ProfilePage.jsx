@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext.jsx'
 import VideoGrid from '../components/video/VideoGrid.jsx'
 import Button from '../components/ui/Button.jsx'
 import TextField from '../components/ui/TextField.jsx'
-import ThemeMenu from '../components/ThemeMenu.jsx'
 import './ProfilePage.css'
 
 // Профиль пользователя: данные, имя в чате и управление своими видео.
@@ -56,18 +55,15 @@ export default function ProfilePage() {
         </div>
         <div>
           <h1 className="profile__name">{user.display_name}</h1>
-          <p className="profile__email">
-            @{user.username}
-            <ThemeMenu />
-          </p>
+          <p className="profile__email">@{user.username}</p>
         </div>
       </div>
 
       {isGuest && (
         <p className="profile__guest-note">
           Это гостевой аккаунт. Он будет удалён после 24 часов простоя вместе
-          со всеми загруженными видео и комнатами. Зарегистрируйтесь, чтобы
-          сохранить доступ.
+          со всеми загруженными видео. Зарегистрируйтесь, чтобы сохранить
+          доступ.
         </p>
       )}
 
@@ -75,9 +71,9 @@ export default function ProfilePage() {
         {editingName ? (
           <>
             <TextField
-              label="Имя в чате"
+              label="Видимое имя"
               name="chatName"
-              placeholder="Как вас видно в комнатах просмотра"
+              placeholder="Имя, которое видят другие пользователи"
               value={chatName}
               onChange={(e) => setChatName(e.target.value)}
             />

@@ -1,4 +1,4 @@
-# Образ фронтенда blxck.hub: сборка SPA + раздача статики через nginx.
+# Образ фронтенда: сборка SPA + раздача статики через nginx.
 # Этап 1 — сборка React-приложения.
 FROM node:20-alpine AS build
 WORKDIR /app

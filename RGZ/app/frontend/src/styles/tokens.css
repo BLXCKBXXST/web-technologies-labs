@@ -1,35 +1,35 @@
-/* Дизайн-токены blxck.hub.
-   Структура и компоненты взяты из выданного макета Figma, палитра перекрашена
-   под бренд blxck.hub — тёмная, близкая к чёрному, с индигово-фиолетовым акцентом. */
+/* Дизайн-токены стоковой темы.
+   Меняйте значения здесь, чтобы быстро перекрасить весь интерфейс:
+   цвета, отступы, скругления, шрифты. */
 
 :root {
   /* Поверхности */
-  --color-bg: #0c0c0e;
-  --color-surface: #161619;
-  --color-surface-2: #1f1f24;
-  --color-surface-3: #2a2a30;
-  --color-border: #2c2c33;
-  --color-border-strong: #3a3a43;
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F8FAFC;
+  --color-surface-3: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
 
   /* Текст */
-  --color-text: #f3f3f5;
-  --color-text-muted: #9a9aa6;
-  --color-text-faint: #6b6b76;
+  --color-text: #1E293B;
+  --color-text-muted: #64748B;
+  --color-text-faint: #94A3B8;
 
   /* Акцент и статусы */
-  --color-accent: #6157ff;
-  --color-accent-hover: #7a72ff;
-  --color-accent-soft: rgba(97, 87, 255, 0.14);
-  --color-on-accent: #ffffff;
-  --color-danger: #ff5a6a;
-  --color-danger-soft: rgba(255, 90, 106, 0.12);
-  --color-success: #3ddc84;
-  --color-like: #ff5a6a;
+  --color-accent: #1E40AF;
+  --color-accent-hover: #1E3A8A;
+  --color-accent-soft: rgba(30, 64, 175, 0.10);
+  --color-on-accent: #FFFFFF;
+  --color-danger: #B91C1C;
+  --color-danger-soft: rgba(185, 28, 28, 0.10);
+  --color-success: #15803D;
+  --color-like: #B91C1C;
 
   /* Скругления */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
   --radius-pill: 999px;
 
   /* Отступы (шаг 4px) */
@@ -42,19 +42,19 @@
   --space-8: 48px;
 
   /* Тени */
-  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.45);
-  --shadow-pop: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-pop: 0 10px 25px rgba(15, 23, 42, 0.10);
 
-  /* Семантические токены — переопределяются альтернативной темой */
-  --color-header-bg: rgba(12, 12, 14, 0.92);
-  --color-auth-glow-1: rgba(97, 87, 255, 0.22);
-  --color-auth-glow-2: rgba(97, 87, 255, 0.14);
+  /* Семантические токены */
+  --color-header-bg: rgba(255, 255, 255, 0.95);
+  --color-auth-glow-1: rgba(30, 64, 175, 0.08);
+  --color-auth-glow-2: rgba(30, 64, 175, 0.04);
 
   /* Типографика */
-  --font-sans: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
-  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Точки адаптива (синхронизированы с дизайн-лабами репозитория) */
+  /* Адаптив */
   --bp-tablet: 768px;
   --bp-mobile: 360px;
 
