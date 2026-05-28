@@ -93,7 +93,7 @@ export default function LoginPage() {
         </Button>
         <p className="auth-note auth-note--center">
           Гостевой аккаунт временный — он удаляется после 24 часов простоя
-          вместе со всеми загруженными видео и комнатами.
+          вместе со всеми загруженными видео.
         </p>
       </div>
     </AuthLayout>

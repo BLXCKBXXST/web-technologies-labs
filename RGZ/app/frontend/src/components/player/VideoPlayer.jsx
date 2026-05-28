@@ -1,10 +1,9 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import './VideoPlayer.css'
 
-// Плеер-обёртка над <video>. Через ref наружу выдаёт императивное управление —
-// нужно для синхронизации в комнатах совместного просмотра. Поддерживает
-// HLS (.m3u8) через динамический импорт hls.js — на сайтах без нативного HLS
-// (всё кроме Safari).
+// Плеер-обёртка над <video>. Через ref наружу выдаёт императивное управление.
+// Поддерживает HLS (.m3u8) через динамический импорт hls.js — на сайтах без
+// нативного HLS (всё кроме Safari).
 const VideoPlayer = forwardRef(function VideoPlayer(
   {
     src,

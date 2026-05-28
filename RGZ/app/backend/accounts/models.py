@@ -57,8 +57,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('e-mail', blank=True, default='')
     first_name = models.CharField('имя', max_length=150, blank=True)
     last_name = models.CharField('фамилия', max_length=150, blank=True)
-    # «Имя в чате» из дизайна — отдельное редактируемое имя для комнат.
-    chat_display_name = models.CharField('имя в чате', max_length=150, blank=True)
+    # Отдельное редактируемое имя для показа в карточках видео и профиле.
+    chat_display_name = models.CharField('видимое имя', max_length=150, blank=True)
     is_guest = models.BooleanField('гостевой аккаунт', default=False, db_index=True)
     is_active = models.BooleanField('активен', default=True)
     is_staff = models.BooleanField('доступ в админку', default=False)
@@ -81,5 +81,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def display_name(self):
-        """Имя для показа в чате: явное «имя в чате» или имя по умолчанию."""
+        """Видимое имя: явное редактируемое или имя по умолчанию."""
         return self.chat_display_name or self.first_name or self.username

@@ -13,7 +13,6 @@ export function setAccessToken(token) {
   accessToken = token || null
 }
 
-// Текущий access-токен нужен для авторизации WebSocket-соединения (query-параметр).
 export function getAccessToken() {
   return accessToken
 }

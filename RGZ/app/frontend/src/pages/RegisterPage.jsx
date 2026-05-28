@@ -63,9 +63,9 @@ export default function RegisterPage() {
           required
         />
         <TextField
-          label="Имя в чате"
+          label="Видимое имя"
           name="chat_display_name"
-          placeholder="Как вас видно в комнатах (необязательно)"
+          placeholder="Имя, которое видят другие (необязательно)"
           value={form.chat_display_name}
           onChange={update('chat_display_name')}
           error={errors.chat_display_name}
